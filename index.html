@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Money Manager</title>
     
-    <link rel="icon" href="icon-app.jpg">
-    <link rel="apple-touch-icon" href="icon-app.jpg">
+    <link rel="icon" type="image/png" href="logo.png?v=999">
+    <link rel="apple-touch-icon" href="logo.png?v=999">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Money Manager">
@@ -36,7 +37,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow: hidden; transition: background-color 0.4s var(--ios-ease); }
         
-        /* CHỐNG KHUẤT UI BẰNG 100DVH CHO IPHONE */
+        /* Chống khuất UI bằng 100dvh cho iPhone */
         .app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
         
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-border); border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s, opacity 0.2s; }
@@ -44,12 +45,11 @@
         
         .tab-content { flex: 1; overflow-y: auto; padding: calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 90px) 20px; display: none; }
         .tab-content.active { display: block; animation: slideFade 0.4s var(--ios-ease) forwards; }
-        
         #tab-tools.active { display: flex; flex-direction: column; padding-bottom: calc(var(--safe-bottom) + 90px); overflow: hidden;}
         
         @keyframes slideFade { 0% { opacity: 0; transform: translateY(15px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(24px); display: flex; justify-content: space-around; padding-top: 14px; padding-bottom: calc(var(--safe-bottom) + 10px); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; transition: background 0.4s var(--ios-ease); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; transition: color 0.2s;}
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; transition: color 0.2s; }
         .nav-item ion-icon { font-size: 24px; transition: transform 0.2s var(--ios-ease); margin-bottom: 2px;}
         .nav-item.active { color: var(--primary); }
         .nav-item.active ion-icon { transform: translateY(-3px) scale(1.1); }
@@ -158,7 +158,7 @@
 
 <div class="app-container">
     
-    <div id="tab-spending" class="tab-content">
+    <div id="tab-spending" class="tab-content active">
         <div class="mascot-box"><span style="font-size: 54px;">🐧🌸</span></div>
         <div class="glass-card main-wallet clickable" onclick="openEditModal('totalBalance', 'Tổng số dư')">
             <div class="wallet-header"><span><ion-icon name="wallet"></ion-icon> Tổng Số Dư</span></div>
@@ -246,7 +246,7 @@
 
 <button class="fab" id="mainFab" onclick="openAddTxModal()">+</button>
 <nav class="bottom-nav">
-    <a class="nav-item" onclick="switchTab('spending', this)"><ion-icon name="wallet"></ion-icon>Chi tiêu</a>
+    <a class="nav-item active" onclick="switchTab('spending', this)"><ion-icon name="wallet"></ion-icon>Chi tiêu</a>
     <a class="nav-item" onclick="switchTab('debts', this)"><ion-icon name="card"></ion-icon>Khoản nợ</a>
     <a class="nav-item" onclick="switchTab('transactions', this)"><ion-icon name="list"></ion-icon>Lịch sử</a>
     <a class="nav-item" onclick="switchTab('savings', this)"><ion-icon name="server"></ion-icon>Tiết kiệm</a>
@@ -299,12 +299,12 @@
 </div>
 
 <script>
-    // === TÊN BIẾN LƯU TRỮ (BẢO VỆ DỮ LIỆU) ===
+    // BẢO VỆ DỮ LIỆU
     const STORAGE_KEY = 'MoneyManagerDataV15'; 
 
     let appData = {};
     try {
-        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV14') || localStorage.getItem('MoneyManagerDataV13');
+        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV14') || localStorage.getItem('MoneyManagerDataV13') || localStorage.getItem('MoneyManagerDataV12');
         if(savedData) appData = JSON.parse(savedData);
     } catch(e) {}
     
@@ -321,7 +321,7 @@
     let chatHistory = []; let currentImageBase64 = null; let currentImageMimeType = null;
     const formatVND = (num) => '₫' + parseInt(num || 0).toLocaleString('vi-VN');
 
-    // === HỆ THỐNG GHI LƯU TỨC THÌ (CHỐNG MẤT DỮ LIỆU KHI TẮT APP) ===
+    // === HỆ THỐNG GHI LƯU TỨC THÌ BẤT TỬ ===
     function forceSave() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
     }
@@ -355,7 +355,7 @@
     function saveAiConfig() { localStorage.setItem('mmApiKey', keyInput.value.trim()); localStorage.setItem('mmAiPersona', personaInput.value.trim()); }
     function setDefaultDate() { const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); document.getElementById('txDate').value = now.toISOString().slice(0, 16); }
 
-    // === HỆ THỐNG GHI NHỚ TAB (GIỮ NGUYÊN VỊ TRÍ KHI RA/VÀO APP) ===
+    // === HỆ THỐNG GHI NHỚ TAB ===
     function switchTab(tabId, element) {
         currentActiveTab = tabId; 
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -368,18 +368,18 @@
         const fab = document.getElementById('mainFab'); 
         if(tabId === 'settings' || tabId === 'tools') fab.style.display = 'none'; else fab.style.display = 'flex';
         
-        // Lưu Tab hiện tại vào bộ nhớ
+        // Lưu lại vị trí Tab đang xem
         localStorage.setItem('mmSavedTab', tabId);
     }
 
-    // Khôi phục Tab khi mở lại App
+    // Tự động mở lại đúng Tab khi vào lại App
     document.addEventListener("DOMContentLoaded", () => {
         let savedTab = localStorage.getItem('mmSavedTab') || 'spending';
         let navEl = document.querySelector(`.nav-item[onclick*="${savedTab}"]`);
         if(navEl) {
             switchTab(savedTab, navEl);
         } else {
-            switchTab('spending', document.querySelector('.nav-item')); // Fallback an toàn
+            switchTab('spending', document.querySelector('.nav-item')); // Dự phòng an toàn
         }
     });
 
