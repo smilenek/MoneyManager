@@ -24,8 +24,9 @@
             --income: #10ac84; --income-light: #c8d6e5; --fab-bg: #222f3e; --glass-bg: rgba(255,255,255,0.75);
             --glass-border: rgba(255,255,255,0.6); --nav-bg: rgba(255,255,255,0.92); --input-bg: #f1f2f6;
             --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1); 
-            --safe-top: max(env(safe-area-inset-top), 20px); 
-            --safe-bottom: max(env(safe-area-inset-bottom), 20px);
+            /* THÔNG SỐ VÙNG AN TOÀN TỪ BẢN V26 */
+            --safe-top: env(safe-area-inset-top, 20px); 
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
         body.dark-mode {
             --bg-color: #1e2227; --primary: #48dbfb; --primary-light: rgba(72,219,251,0.15); --primary-border: rgba(72,219,251,0.3);
@@ -34,47 +35,31 @@
             --income: #1dd1a1; --income-light: rgba(29,209,161,0.15); --fab-bg: #48dbfb; --glass-bg: rgba(43,48,56,0.65);
             --glass-border: rgba(255,255,255,0.06); --nav-bg: rgba(30,34,39,0.85); --input-bg: #2b3038;
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* BỎ FIX BODY - ĐÂY LÀ CHÌA KHÓA TRỊ LỖI KẸT TAB TRÊN IPHONE */
-        html, body { 
-            width: 100%; height: 100%; 
-            margin: 0; padding: 0; overflow: hidden; 
-            background-color: var(--bg-color); color: var(--text-main); transition: background-color 0.4s var(--ios-ease); 
-        }
-        
-        .app-container { width: 100%; height: 100%; display: flex; flex-direction: column; }
+        /* CẤU TRÚC BODY VÀ CONTAINER CHUẨN TỪ BẢN V26 */
+        body { background-color: var(--bg-color); color: var(--text-main); overflow: hidden; transition: background-color 0.4s var(--ios-ease); }
+        .app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
         
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-border); border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s, opacity 0.2s; }
         .clickable:active { transform: scale(0.96); opacity: 0.8; }
         
-        /* CĂN CHỈNH KHOẢNG CÁCH NỘI DUNG */
-        .tab-content { 
-            flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; 
-            padding: 15px 20px; 
-            padding-top: calc(var(--safe-top) + 10px); 
-            padding-bottom: calc(var(--safe-bottom) + 90px); 
-            display: none; 
-        }
+        /* KHOẢNG CÁCH TAB TỪ BẢN V26 */
+        .tab-content { flex: 1; overflow-y: auto; padding: calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 90px) 20px; display: none; }
         .tab-content.active { display: block; animation: slideFade 0.4s var(--ios-ease) forwards; }
-        #tab-tools.active { display: flex; flex-direction: column; overflow: hidden; }
+        #tab-tools.active { display: flex; flex-direction: column; padding-bottom: calc(var(--safe-bottom) + 90px); overflow: hidden;}
         
         @keyframes slideFade { 0% { opacity: 0; transform: translateY(15px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         
-        /* THANH ĐIỀU HƯỚNG SÁT ĐÁY, KHÔNG NHẢY */
-        .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: var(--nav-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            display: flex; justify-content: space-around; 
-            padding-top: 14px; 
-            padding-bottom: calc(var(--safe-bottom) + 5px); 
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; transition: background 0.4s var(--ios-ease); 
-        }
+        /* THANH ĐIỀU HƯỚNG TỪ BẢN V26 */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(24px); display: flex; justify-content: space-around; padding-top: 14px; padding-bottom: calc(var(--safe-bottom) + 10px); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; transition: background 0.4s var(--ios-ease); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; transition: color 0.2s; }
         .nav-item ion-icon { font-size: 24px; transition: transform 0.2s var(--ios-ease); margin-bottom: 2px;}
         .nav-item.active { color: var(--primary); }
         .nav-item.active ion-icon { transform: translateY(-3px) scale(1.1); }
         
-        .fab { position: fixed; bottom: calc(var(--safe-bottom) + 80px); right: 20px; width: 58px; height: 58px; background-color: var(--fab-bg); color: white; border-radius: 29px; display: flex; justify-content: center; align-items: center; font-size: 32px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 101; transition: transform 0.2s var(--ios-ease); }
+        /* NÚT FAB TỪ BẢN V26 */
+        .fab { position: fixed; bottom: calc(var(--safe-bottom) + 85px); right: 20px; width: 58px; height: 58px; background-color: var(--fab-bg); color: white; border-radius: 29px; display: flex; justify-content: center; align-items: center; font-size: 32px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 101; transition: transform 0.2s var(--ios-ease); }
         .fab:active { transform: scale(0.9); }
         
         h2.page-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
@@ -168,7 +153,7 @@
 
 <div class="app-container">
     
-    <div id="tab-spending" class="tab-content">
+    <div id="tab-spending" class="tab-content active">
         <div class="mascot-box"><span style="font-size: 54px;">🐧🌸</span></div>
         <div class="glass-card main-wallet clickable" onclick="openEditModal('totalBalance', 'Tổng số dư')">
             <div class="wallet-header"><span><ion-icon name="wallet"></ion-icon> Tổng Số Dư</span></div>
@@ -222,11 +207,13 @@
                 <ion-icon name="settings-outline" style="font-size: 24px; color: var(--text-muted); cursor: pointer;" onclick="document.getElementById('ai-settings-panel').classList.toggle('hidden')"></ion-icon>
             </div>
         </div>
+        
         <div id="ai-settings-panel" class="glass-card hidden" style="padding: 15px; margin-bottom: 10px;">
             <div class="input-group" style="margin-bottom: 10px;"><label style="color: var(--primary);">Mã kết nối (API Key)</label><input type="text" id="geminiApiKey" placeholder="Nhập API Key..." onchange="saveAiConfig()" style="font-family: monospace;"></div>
             <div class="input-group" style="margin-bottom: 0;"><label style="color: var(--warning);">Huấn luyện tính cách</label><textarea id="aiPersona" rows="2" placeholder="Ví dụ: Bạn là chuyên gia khó tính..." onchange="saveAiConfig()"></textarea></div>
             <button class="btn-primary" onclick="document.getElementById('ai-settings-panel').classList.add('hidden')" style="padding: 12px; font-size: 14px; margin-top: 10px;">Hoàn tất</button>
         </div>
+        
         <div id="chat-box" class="chat-box">
             <div class="msg msg-ai">Chào bạn! Mình là AI quản lý tài chính. Bạn có thể nhắn tin hỏi đáp, dán ảnh (Ctrl+V) hoặc tải ảnh hóa đơn/chuyển khoản để mình tự động đọc và ghi sổ giúp nhé! ✨</div>
         </div>
@@ -256,7 +243,7 @@
 
 <button class="fab" id="mainFab" onclick="openAddTxModal()">+</button>
 <nav class="bottom-nav">
-    <a class="nav-item" onclick="switchTab('spending', this)"><ion-icon name="wallet"></ion-icon>Chi tiêu</a>
+    <a class="nav-item active" onclick="switchTab('spending', this)"><ion-icon name="wallet"></ion-icon>Chi tiêu</a>
     <a class="nav-item" onclick="switchTab('debts', this)"><ion-icon name="card"></ion-icon>Khoản nợ</a>
     <a class="nav-item" onclick="switchTab('transactions', this)"><ion-icon name="list"></ion-icon>Lịch sử</a>
     <a class="nav-item" onclick="switchTab('savings', this)"><ion-icon name="server"></ion-icon>Tiết kiệm</a>
@@ -360,7 +347,7 @@
 
     const keyInput = document.getElementById('geminiApiKey'); const personaInput = document.getElementById('aiPersona');
     keyInput.value = localStorage.getItem('mmApiKey') || ''; personaInput.value = localStorage.getItem('mmAiPersona') || '';
-    if(!keyInput.value) document.getElementById('ai-settings-panel').classList.remove('hidden');
+    // ĐÃ GỠ BỎ: if(!keyInput.value) document.getElementById('ai-settings-panel').classList.remove('hidden');
 
     function saveAiConfig() { localStorage.setItem('mmApiKey', keyInput.value.trim()); localStorage.setItem('mmAiPersona', personaInput.value.trim()); }
     function setDefaultDate() { const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); document.getElementById('txDate').value = now.toISOString().slice(0, 16); }
