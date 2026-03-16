@@ -34,32 +34,46 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* FIX LỖI NHẢY TAB VÀ NHẢY CHIỀU CAO TRÊN IPHONE */
+        /* CHỈNH LẠI CHUẨN KHUNG CHO IPHONE */
         html, body { 
             width: 100%; height: 100%; 
-            margin: 0; padding: 0; overflow: hidden; position: fixed; 
+            margin: 0; padding: 0; overflow: hidden; 
             background-color: var(--bg-color); color: var(--text-main); transition: background-color 0.4s var(--ios-ease); 
         }
-        .app-container { width: 100%; height: 100%; display: flex; flex-direction: column; }
+        
+        .app-container { width: 100%; height: 100dvh; display: flex; flex-direction: column; }
         
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-border); border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s, opacity 0.2s; }
         .clickable:active { transform: scale(0.96); opacity: 0.8; }
         
-        /* FIX VÙNG ĐỆM AN TOÀN CHUẨN XÁC, KHÔNG BỊ PHÌNH TO */
-        .tab-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 15px 20px 100px 20px; padding-top: max(env(safe-area-inset-top), 20px); padding-bottom: calc(env(safe-area-inset-bottom) + 90px); display: none; }
+        /* CĂN CHỈNH KHOẢNG CÁCH NỘI DUNG */
+        .tab-content { 
+            flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; 
+            padding: 15px 20px; 
+            padding-top: max(env(safe-area-inset-top), 20px); 
+            padding-bottom: calc(env(safe-area-inset-bottom) + 100px); 
+            display: none; 
+        }
         .tab-content.active { display: block; animation: slideFade 0.4s var(--ios-ease) forwards; }
-        #tab-tools.active { display: flex; flex-direction: column; overflow: hidden;}
+        #tab-tools.active { display: flex; flex-direction: column; overflow: hidden; }
         
         @keyframes slideFade { 0% { opacity: 0; transform: translateY(15px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         
-        /* THANH ĐIỀU HƯỚNG CỐ ĐỊNH, KHÔNG BAO GIỜ NHẢY */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(24px); display: flex; justify-content: space-around; padding-top: 12px; padding-bottom: max(env(safe-area-inset-bottom), 15px); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; transition: background 0.4s var(--ios-ease); }
+        /* THANH ĐIỀU HƯỚNG SÁT ĐÁY */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: var(--nav-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            display: flex; justify-content: space-around; 
+            padding-top: 12px; 
+            padding-bottom: calc(env(safe-area-inset-bottom) + 10px); 
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; transition: background 0.4s var(--ios-ease); 
+        }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; transition: color 0.2s; }
         .nav-item ion-icon { font-size: 24px; transition: transform 0.2s var(--ios-ease); margin-bottom: 2px;}
         .nav-item.active { color: var(--primary); }
         .nav-item.active ion-icon { transform: translateY(-3px) scale(1.1); }
         
-        .fab { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 75px); right: 20px; width: 58px; height: 58px; background-color: var(--fab-bg); color: white; border-radius: 29px; display: flex; justify-content: center; align-items: center; font-size: 32px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 101; transition: transform 0.2s var(--ios-ease); }
+        .fab { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 85px); right: 20px; width: 58px; height: 58px; background-color: var(--fab-bg); color: white; border-radius: 29px; display: flex; justify-content: center; align-items: center; font-size: 32px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 101; transition: transform 0.2s var(--ios-ease); }
         .fab:active { transform: scale(0.9); }
         
         h2.page-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
@@ -294,11 +308,12 @@
 </div>
 
 <script>
+    // BẢO VỆ DỮ LIỆU
     const STORAGE_KEY = 'MoneyManagerDataV15'; 
 
     let appData = {};
     try {
-        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV14') || localStorage.getItem('MoneyManagerDataV13');
+        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV14') || localStorage.getItem('MoneyManagerDataV13') || localStorage.getItem('MoneyManagerDataV12');
         if(savedData) appData = JSON.parse(savedData);
     } catch(e) {}
     
@@ -315,6 +330,7 @@
     let chatHistory = []; let currentImageBase64 = null; let currentImageMimeType = null;
     const formatVND = (num) => '₫' + parseInt(num || 0).toLocaleString('vi-VN');
 
+    // === HỆ THỐNG GHI LƯU TỨC THÌ BẤT TỬ ===
     function forceSave() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
     }
@@ -348,6 +364,7 @@
     function saveAiConfig() { localStorage.setItem('mmApiKey', keyInput.value.trim()); localStorage.setItem('mmAiPersona', personaInput.value.trim()); }
     function setDefaultDate() { const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); document.getElementById('txDate').value = now.toISOString().slice(0, 16); }
 
+    // === HỆ THỐNG GHI NHỚ TAB (GIỮ NGUYÊN VỊ TRÍ KHI RA/VÀO APP) ===
     function switchTab(tabId, element) {
         currentActiveTab = tabId; 
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
