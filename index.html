@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Money Manager</title>
     
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="https://smilenek.github.io/MoneyManager/logo.png">
     <link rel="apple-touch-icon" href="https://smilenek.github.io/MoneyManager/logo.png">
     
@@ -37,7 +38,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow: hidden; transition: background-color 0.4s var(--ios-ease); }
         
-        /* Chống khuất UI bằng 100dvh cho iPhone */
         .app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
         
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-border); border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s, opacity 0.2s; }
@@ -299,6 +299,7 @@
 </div>
 
 <script>
+    // BẢO VỆ DỮ LIỆU
     const STORAGE_KEY = 'MoneyManagerDataV15'; 
 
     let appData = {};
@@ -320,6 +321,7 @@
     let chatHistory = []; let currentImageBase64 = null; let currentImageMimeType = null;
     const formatVND = (num) => '₫' + parseInt(num || 0).toLocaleString('vi-VN');
 
+    // === HỆ THỐNG GHI LƯU TỨC THÌ BẤT TỬ ===
     function forceSave() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
     }
@@ -353,6 +355,7 @@
     function saveAiConfig() { localStorage.setItem('mmApiKey', keyInput.value.trim()); localStorage.setItem('mmAiPersona', personaInput.value.trim()); }
     function setDefaultDate() { const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); document.getElementById('txDate').value = now.toISOString().slice(0, 16); }
 
+    // === HỆ THỐNG GHI NHỚ TAB (GIỮ NGUYÊN VỊ TRÍ KHI RA/VÀO APP) ===
     function switchTab(tabId, element) {
         currentActiveTab = tabId; 
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -365,16 +368,18 @@
         const fab = document.getElementById('mainFab'); 
         if(tabId === 'settings' || tabId === 'tools') fab.style.display = 'none'; else fab.style.display = 'flex';
         
+        // Lưu lại vị trí Tab đang xem
         localStorage.setItem('mmSavedTab', tabId);
     }
 
+    // Tự động mở lại đúng Tab khi vào lại App
     document.addEventListener("DOMContentLoaded", () => {
         let savedTab = localStorage.getItem('mmSavedTab') || 'spending';
         let navEl = document.querySelector(`.nav-item[onclick*="${savedTab}"]`);
         if(navEl) {
             switchTab(savedTab, navEl);
         } else {
-            switchTab('spending', document.querySelector('.nav-item'));
+            switchTab('spending', document.querySelector('.nav-item')); // Dự phòng an toàn
         }
     });
 
@@ -630,6 +635,13 @@
     function resetData() { appData = { totalBalance: 0, savings: 0, jars: { jar_1: 0, jar_2: 0, jar_3: 0, jar_4: 0 }, jarNames: { jar_1: "Thiết Yếu", jar_2: "Giải Trí", jar_3: "Học Tập", jar_4: "Khác" }, debts: { debt_1: 0, debt_2: 0 }, debtNames: { debt_1: "Người thân", debt_2: "Ngân hàng" }, totalDebt: 0, transactions: [] }; updateUI(); uiAlert('Đã khôi phục cài đặt gốc.'); }
 
     updateUI();
+    
+    // Đăng ký Service Worker để App chạy Offline hoàn toàn
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW failed', err));
+        });
+    }
 </script>
 
 </body>
