@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Money Manager</title>
     
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y3ZjlmYyIvPjx0ZXh0IHk9IjUwJSIgeD0iNTAlIiBkeT0iLjM1ZW0iIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iNjAiPvCfkKc8L3RleHQ+PC9zdmc+">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y3ZjlmYyIvPjx0ZXh0IHk9IjUwJSIgeD0iNTAlIiBkeT0iLjM1ZW0iIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iNjAiPvCfkKc8L3RleHQ+PC9zdmc+">
+    <link rel="icon" href="logo.jpg">
+    <link rel="apple-touch-icon" href="logo.jpg">
+    <meta name="apple-mobile-web-app-title" content="Money Manager">
 
     <meta name="theme-color" content="#fcfcfc" id="theme-color-meta">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -33,7 +34,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow: hidden; transition: background-color 0.4s var(--ios-ease); }
         
-        /* CHỐNG KHUẤT UI CHO IPHONE BẰNG 100DVH */
+        /* CHỐNG KHUẤT UI BẰNG 100DVH */
         .app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
         
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-border); border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s, opacity 0.2s; }
@@ -42,16 +43,15 @@
         .tab-content { flex: 1; overflow-y: auto; padding: calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 90px) 20px; display: none; }
         .tab-content.active { display: block; animation: slideFade 0.4s var(--ios-ease) forwards; }
         
-        /* FIX LỖI KHUẤT TAB AI */
         #tab-tools.active { display: flex; flex-direction: column; padding-bottom: calc(var(--safe-bottom) + 90px); overflow: hidden;}
         
         @keyframes slideFade { 0% { opacity: 0; transform: translateY(15px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(24px); display: flex; justify-content: space-around; padding-top: 14px; padding-bottom: calc(var(--safe-bottom) + 10px); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(24px); display: flex; justify-content: space-around; padding-top: 14px; padding-bottom: calc(var(--safe-bottom) + 10px); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; transition: background 0.4s var(--ios-ease); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; transition: color 0.2s;}
         .nav-item ion-icon { font-size: 24px; transition: transform 0.2s var(--ios-ease); margin-bottom: 2px;}
         .nav-item.active { color: var(--primary); }
         .nav-item.active ion-icon { transform: translateY(-3px) scale(1.1); }
-        .fab { position: fixed; bottom: calc(var(--safe-bottom) + 85px); right: 20px; width: 58px; height: 58px; background-color: var(--fab-bg); color: white; border-radius: 29px; display: flex; justify-content: center; align-items: center; font-size: 32px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 101; }
+        .fab { position: fixed; bottom: calc(var(--safe-bottom) + 85px); right: 20px; width: 58px; height: 58px; background-color: var(--fab-bg); color: white; border-radius: 29px; display: flex; justify-content: center; align-items: center; font-size: 32px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 101; transition: transform 0.2s var(--ios-ease); }
         .fab:active { transform: scale(0.9); }
         h2.page-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
         p.page-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.5; font-weight: 500;}
@@ -156,7 +156,7 @@
 
 <div class="app-container">
     
-    <div id="tab-spending" class="tab-content active">
+    <div id="tab-spending" class="tab-content">
         <div class="mascot-box"><span style="font-size: 54px;">🐧🌸</span></div>
         <div class="glass-card main-wallet clickable" onclick="openEditModal('totalBalance', 'Tổng số dư')">
             <div class="wallet-header"><span><ion-icon name="wallet"></ion-icon> Tổng Số Dư</span></div>
@@ -244,7 +244,7 @@
 
 <button class="fab" id="mainFab" onclick="openAddTxModal()">+</button>
 <nav class="bottom-nav">
-    <a class="nav-item active" onclick="switchTab('spending', this)"><ion-icon name="wallet"></ion-icon>Chi tiêu</a>
+    <a class="nav-item" onclick="switchTab('spending', this)"><ion-icon name="wallet"></ion-icon>Chi tiêu</a>
     <a class="nav-item" onclick="switchTab('debts', this)"><ion-icon name="card"></ion-icon>Khoản nợ</a>
     <a class="nav-item" onclick="switchTab('transactions', this)"><ion-icon name="list"></ion-icon>Lịch sử</a>
     <a class="nav-item" onclick="switchTab('savings', this)"><ion-icon name="server"></ion-icon>Tiết kiệm</a>
@@ -297,7 +297,7 @@
 </div>
 
 <script>
-    // TÊN BIẾN LƯU TRỮ MỚI ĐỂ TRÁNH LỖI PHIÊN BẢN CŨ
+    // TÊN BIẾN LƯU TRỮ MỚI
     const STORAGE_KEY = 'MoneyManagerDataV14'; 
 
     let appData = {};
@@ -319,12 +319,11 @@
     let chatHistory = []; let currentImageBase64 = null; let currentImageMimeType = null;
     const formatVND = (num) => '₫' + parseInt(num || 0).toLocaleString('vi-VN');
 
-    // === HỆ THỐNG LƯU DỮ LIỆU BẤT TỬ (CHỐNG MẤT KHI TẮT APP) ===
+    // === HỆ THỐNG LƯU DỮ LIỆU BẤT TỬ ===
     function forceSave() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
     }
     
-    // Ép lưu khi tải trang, ẩn trang, hoặc tắt app
     window.addEventListener('beforeunload', forceSave);
     window.addEventListener('pagehide', forceSave);
     window.addEventListener('visibilitychange', () => {
@@ -354,13 +353,33 @@
     function saveAiConfig() { localStorage.setItem('mmApiKey', keyInput.value.trim()); localStorage.setItem('mmAiPersona', personaInput.value.trim()); }
     function setDefaultDate() { const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); document.getElementById('txDate').value = now.toISOString().slice(0, 16); }
 
+    // === HỆ THỐNG GHI NHỚ TAB ===
     function switchTab(tabId, element) {
-        currentActiveTab = tabId; document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        currentActiveTab = tabId; 
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-        document.getElementById('tab-' + tabId).classList.add('active'); element.classList.add('active');
+        
+        document.getElementById('tab-' + tabId).classList.add('active'); 
+        if(element) element.classList.add('active');
+        
         if(tabId === 'tools') { const chatBox = document.getElementById('chat-box'); chatBox.scrollTop = chatBox.scrollHeight; }
-        const fab = document.getElementById('mainFab'); if(tabId === 'settings' || tabId === 'tools') fab.style.display = 'none'; else fab.style.display = 'flex';
+        const fab = document.getElementById('mainFab'); 
+        if(tabId === 'settings' || tabId === 'tools') fab.style.display = 'none'; else fab.style.display = 'flex';
+        
+        // Lưu Tab hiện tại vào bộ nhớ
+        localStorage.setItem('mmSavedTab', tabId);
     }
+
+    // Khôi phục Tab khi mở lại App
+    document.addEventListener("DOMContentLoaded", () => {
+        let savedTab = localStorage.getItem('mmSavedTab') || 'spending';
+        let navEl = document.querySelector(`.nav-item[onclick*="${savedTab}"]`);
+        if(navEl) {
+            switchTab(savedTab, navEl);
+        } else {
+            switchTab('spending', document.querySelector('.nav-item')); // Fallback an toàn
+        }
+    });
 
     function toggleSelectAllJars() { isAllJarsSelected = !isAllJarsSelected; document.querySelectorAll('.saving-cb').forEach(cb => cb.checked = isAllJarsSelected); document.getElementById('btn-select-all').innerText = isAllJarsSelected ? "Bỏ chọn" : "Chọn tất cả"; }
 
@@ -492,7 +511,7 @@
                 });
                 txList.innerHTML = html;
             }
-            forceSave(); // LƯU DỮ LIỆU TỨC THÌ MỖI KHI CẬP NHẬT UI
+            forceSave();
         } catch(e) {}
     }
 
