@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Money Manager</title>
     
-    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="https://smilenek.github.io/MoneyManager/logo.png">
     <link rel="apple-touch-icon" href="https://smilenek.github.io/MoneyManager/logo.png">
     
@@ -636,7 +635,7 @@
 
     updateUI();
     
-    // Đăng ký Service Worker để App chạy Offline hoàn toàn
+    // === ĐĂNG KÝ SERVICE WORKER ĐỂ APP CHẠY OFFLINE ===
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js').catch(err => console.log('SW failed', err));
