@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Money Manager</title>
+    <link rel="icon" type="image/jpeg" href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAgACADASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAYHCP/EAC4QAAEDAgIIBgMAAAAAAAAAAAECAwQFEQASBhMhMTJBUXEUYZGhwfCBsdHh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAgP/xAAZEQEBAQEAAAAAAAAAAAAAAAAAATES/9oADAMBAAIRAxEAPwD2u460y2XHVobQOalqAA+zjOq7Tmjw3lsUymLqRQSFPB3VNn9SUkq9Bb1wPpHUHKtpvKafdcTTKW+YwaQohLi0EBSlDmL3AB6AHng7Wb6p5h8uT2wE1D05o8x5EepU1dM1hsHw7rW0f1NkEeoNvXGiNuNvtIdaWlaFpCkrSbgg8iD1xj9UpzFTiKYdABHFC+qT/OeNK0XkuStFaU48SXBHDaid908N/a2AxXSuivw9KqpUEqV4OfIXJbdTtaKlklSCocjcH1tizptWh1ONrmHUlQF1t3F0+o3H1G7F9UKfCqtPep9QjNyoUgZHWHRdK0/wDe+POulejtY/jbTFFL0UqNQplRqC9TCK/6YilX4V5TYEbwqx3HkQCbVqszU4iY8N9ClKUEvOqIQhlNxxKUqwH3s5m2NuplPZpVLi0+PfUxmktIJ3kAbyepO/GL6B/xpToEmnVLTtqNXKu41YQ3TnjiFzY3VwuGxtwgpFzxHdi70R0tqdSrFQ0a0lpcem6QU5IecahOqcivNE2S40pViQeRB+kggE141B0R0h/kGnVDTKlT5FG0f0hQ6mnPxFpS7LKbFKXUKG2yhflcg+WM+n1LT/RTQitfxS9Ww9G/3N1f+QajKclzGZBSltxKl7S4Bvtu4bWtbHsfxx6Jfw+nUnTXR4+Bi1d2y2mgAkTAoELR/o7Dcd/I3vY9b9H9J4n8a1fSyrz5Tlaq7A8OqW5mEdkKCgkD9iAbCwuP8wH/2Q==">
     <meta name="theme-color" content="#fcfcfc" id="theme-color-meta">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -15,7 +16,7 @@
             --text-main: #2d3436; --text-muted: #8395a7; --expense: #ff7675; --expense-light: #ffeaa7;
             --income: #10ac84; --income-light: #c8d6e5; --fab-bg: #222f3e; --glass-bg: rgba(255,255,255,0.75);
             --glass-border: rgba(255,255,255,0.6); --nav-bg: rgba(255,255,255,0.92); --input-bg: #f1f2f6;
-            --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1); --safe-top: env(safe-area-inset-top, 20px); --safe-bottom: env(safe-area-inset-bottom, 20px);
+            --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1); --safe-top: max(env(safe-area-inset-top, 20px), 20px); --safe-bottom: max(env(safe-area-inset-bottom, 20px), 20px);
         }
         body.dark-mode {
             --bg-color: #1e2227; --primary: #48dbfb; --primary-light: rgba(72,219,251,0.15); --primary-border: rgba(72,219,251,0.3);
@@ -34,7 +35,7 @@
         #tab-tools.active { display: flex; flex-direction: column; padding-bottom: calc(var(--safe-bottom) + 100px); overflow: hidden;}
         @keyframes slideFade { 0% { opacity: 0; transform: translateY(15px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(24px); display: flex; justify-content: space-around; padding-top: 14px; padding-bottom: calc(var(--safe-bottom) + 10px); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; text-align: center;}
         .nav-item ion-icon { font-size: 24px; transition: transform 0.2s var(--ios-ease); margin-bottom: 2px;}
         .nav-item.active { color: var(--primary); }
         .nav-item.active ion-icon { transform: translateY(-3px) scale(1.1); }
@@ -43,6 +44,7 @@
         h2.page-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
         p.page-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.5; font-weight: 500;}
         .mascot-box { text-align: center; margin-bottom: 24px; }
+        .app-logo { width: 80px; height: 80px; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); margin: 0 auto; display: block; object-fit: cover;}
         .main-wallet { background: var(--primary-light); border: 1px solid var(--primary-border); cursor: pointer; }
         .wallet-header { display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--text-muted); font-weight: 700; font-size: 15px;}
         .wallet-balance { font-size: 34px; font-weight: 800; color: var(--primary); letter-spacing: -1px;}
@@ -145,7 +147,7 @@
 <div class="app-container">
     
     <div id="tab-spending" class="tab-content active">
-        <div class="mascot-box"><span style="font-size: 54px;">🤖</span></div>
+        <div class="mascot-box"><span style="font-size: 54px;">🐧🌸</span></div>
         <div class="glass-card main-wallet clickable" onclick="openEditModal('totalBalance', 'Tổng số dư')">
             <div class="wallet-header"><span><ion-icon name="wallet"></ion-icon> Tổng Số Dư</span></div>
             <div class="wallet-balance" id="home-total">₫0</div>
@@ -155,7 +157,9 @@
     </div>
 
     <div id="tab-debts" class="tab-content">
-        <div class="mascot-box"><span style="font-size: 54px;">💸</span></div>
+        <div class="mascot-box">
+             <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAgACADASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAYHCP/EAC4QAAEDAgIIBgMAAAAAAAAAAAECAwQFEQASBhMhMTJBUXEUYZGhwfCBsdHh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAgP/xAAZEQEBAQEAAAAAAAAAAAAAAAAAATES/9oADAMBAAIRAxEAPwD2u460y2XHVobQOalqAA+zjOq7Tmjw3lsUymLqRQSFPB3VNn9SUkq9Bb1wPpHUHKtpvKafdcTTKW+YwaQohLi0EBSlDmL3AB6AHng7Wb6p5h8uT2wE1D05o8x5EepU1dM1hsHw7rW0f1NkEeoNvXGiNuNvtIdaWlaFpCkrSbgg8iD1xj9UpzFTiKYdABHFC+qT/OeNK0XkuStFaU48SXBHDaid908N/a2AxXSuivw9KqpUEqV4OfIXJbdTtaKlklSCocjcH1tizptWh1ONrmHUlQF1t3F0+o3H1G7F9UKfCqtPep9QjNyoUgZHWHRdK0/wDe+POulejtY/jbTFFL0UqNQplRqC9TCK/6YilX4V5TYEbwqx3HkQCbVqszU4iY8N9ClKUEvOqIQhlNxxKUqwH3s5m2NuplPZpVLi0+PfUxmktIJ3kAbyepO/GL6B/xpToEmnVLTtqNXKu41YQ3TnjiFzY3VwuGxtwgpFzxHdi70R0tqdSrFQ0a0lpcem6QU5IecahOqcivNE2S40pViQeRB+kggE141B0R0h/kGnVDTKlT5FG0f0hQ6mnPxFpS7LKbFKXUKG2yhflcg+WM+n1LT/RTQitfxS9Ww9G/3N1f+QajKclzGZBSltxKl7S4Bvtu4bWtbHsfxx6Jfw+nUnTXR4+Bi1d2y2mgAkTAoELR/o7Dcd/I3vY9b9H9J4n8a1fSyrz5Tlaq7A8OqW5mEdkKCgkD9iAbCwuP8wH/2Q==" alt="App Logo" class="app-logo">
+        </div>
         <div class="glass-card main-wallet clickable" onclick="openEditModal('totalDebt', 'Tổng Nợ')" style="background: var(--expense-light); border-color: rgba(255, 159, 243, 0.3);">
             <div class="wallet-header"><span style="color: var(--expense);"><ion-icon name="card"></ion-icon> Tổng Nợ Hiện Tại</span></div>
             <div class="wallet-balance" id="debt-total" style="color: var(--expense);">₫0</div>
