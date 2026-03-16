@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Money Manager</title>
     
-    <link rel="icon" href="logo.jpg">
-    <link rel="apple-touch-icon" href="logo.jpg">
+    <link rel="icon" type="image/png" href="https://smilenek.github.io/MoneyManager/logo.png">
+    <link rel="apple-touch-icon" href="https://smilenek.github.io/MoneyManager/logo.png">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -37,6 +37,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow: hidden; transition: background-color 0.4s var(--ios-ease); }
         
+        /* Chống khuất UI bằng 100dvh cho iPhone */
         .app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
         
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-border); border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s, opacity 0.2s; }
@@ -44,9 +45,7 @@
         
         .tab-content { flex: 1; overflow-y: auto; padding: calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 90px) 20px; display: none; }
         .tab-content.active { display: block; animation: slideFade 0.4s var(--ios-ease) forwards; }
-        
-        /* Cấu trúc flex cho tab AI */
-        #tab-tools.active { display: flex; flex-direction: column; overflow-y: auto;}
+        #tab-tools.active { display: flex; flex-direction: column; padding-bottom: calc(var(--safe-bottom) + 90px); overflow: hidden;}
         
         @keyframes slideFade { 0% { opacity: 0; transform: translateY(15px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(24px); display: flex; justify-content: space-around; padding-top: 14px; padding-bottom: calc(var(--safe-bottom) + 10px); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; transition: background 0.4s var(--ios-ease); }
@@ -79,13 +78,25 @@
         .tx-amount.chi { color: var(--expense); font-weight: 800; font-size: 17px; }
         
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .saving-cb-wrapper { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; gap: 12px !important; background: var(--input-bg); padding: 15px; border-radius: 16px; border: 1px solid var(--glass-border); cursor: pointer; transition: transform 0.1s var(--ios-ease); }
+        .saving-cb-wrapper { 
+            display: flex !important; flex-direction: row !important; align-items: center !important; 
+            justify-content: flex-start !important; gap: 12px !important;
+            background: var(--input-bg); padding: 15px; border-radius: 16px; 
+            border: 1px solid var(--glass-border); cursor: pointer; transition: transform 0.1s var(--ios-ease); 
+        }
         .saving-cb-wrapper:active { transform: scale(0.96); }
         .saving-cb-wrapper input[type="checkbox"] { display: none; }
-        .custom-cb { width: 24px !important; height: 24px !important; border-radius: 6px; border: 2px solid var(--text-muted); display: flex; align-items: center; justify-content: center; margin: 0 !important; flex-shrink: 0; transition: all 0.2s var(--ios-ease); }
+        .custom-cb { 
+            width: 24px !important; height: 24px !important; border-radius: 6px; 
+            border: 2px solid var(--text-muted); display: flex; align-items: center; justify-content: center; 
+            margin: 0 !important; flex-shrink: 0; transition: all 0.2s var(--ios-ease); 
+        }
         .saving-cb-wrapper input[type="checkbox"]:checked + .custom-cb { background: var(--primary); border-color: var(--primary); }
         .saving-cb-wrapper input[type="checkbox"]:checked + .custom-cb::after { content: '✔'; color: white; font-size: 15px; font-weight: 900; }
-        .cb-text { font-size: 15px !important; font-weight: 700 !important; color: var(--text-main) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 !important; padding-top: 1px; }
+        .cb-text { 
+            font-size: 15px !important; font-weight: 700 !important; color: var(--text-main) !important; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 !important; padding-top: 1px;
+        }
 
         .chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding-bottom: 10px; margin-top: 10px;}
         .msg { max-width: 85%; padding: 12px 18px; border-radius: 20px; font-size: 15px; line-height: 1.5; font-weight: 500; word-wrap: break-word; animation: fadeInMsg 0.3s var(--ios-ease); }
@@ -93,13 +104,11 @@
         .msg-user { align-self: flex-end; background: var(--primary); color: #1e2227; border-bottom-right-radius: 4px; font-weight: 600;}
         .msg-ai { align-self: flex-start; background: var(--input-bg); color: var(--text-main); border-bottom-left-radius: 4px; border: 1px solid var(--glass-border); }
         .msg-sys { align-self: center; background: rgba(29, 209, 161, 0.15); color: var(--income); font-size: 12px; border-radius: 12px; padding: 6px 12px; font-weight: 700; border: 1px solid rgba(29, 209, 161, 0.3); text-align: center;}
-        
-        .chat-input-area { display: flex; gap: 8px; margin-top: 10px; align-items: center; flex-shrink: 0;}
+        .chat-input-area { display: flex; gap: 8px; margin-top: 15px; align-items: center;}
         .image-upload-btn { width: 50px; height: 50px; border-radius: 25px; background: var(--input-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--text-muted); cursor: pointer; flex-shrink: 0; }
         .image-upload-btn.has-image { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
         .chat-input-area input[type="text"] { flex: 1; padding: 15px 20px; border-radius: 25px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); font-size: 15px; outline: none;}
         .chat-input-area button { width: 50px; height: 50px; border-radius: 25px; background: var(--primary); color: #1e2227; border: none; font-size: 22px; cursor: pointer; flex-shrink: 0; display: flex; justify-content: center; align-items: center;}
-        
         .typing-indicator { display: inline-flex; align-items: center; gap: 4px; height: 20px;}
         .typing-indicator span { width: 6px; height: 6px; background-color: var(--text-muted); border-radius: 50%; animation: typing 1.4s infinite ease-in-out both; }
         .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
@@ -143,9 +152,6 @@
         .alert-btn-cancel { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--glass-border); }
         .alert-btn-ok { background: var(--primary); color: #1e2227; }
         .hidden { display: none !important; }
-        
-        /* CỤC ĐỆN CHỐNG LÚN CHO TAB AI TRÊN IPHONE */
-        .bottom-spacer { height: 110px; width: 100%; flex-shrink: 0; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -223,7 +229,6 @@
             <input type="text" id="chat-input" placeholder="Nhắn tin hoặc Dán ảnh..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
             <button onclick="sendChatMessage()"><ion-icon name="send"></ion-icon></button>
         </div>
-        <div class="bottom-spacer"></div>
     </div>
 
     <div id="tab-settings" class="tab-content">
@@ -294,11 +299,11 @@
 </div>
 
 <script>
-    const STORAGE_KEY = 'MoneyManagerDataV16'; 
+    const STORAGE_KEY = 'MoneyManagerDataV15'; 
 
     let appData = {};
     try {
-        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV15') || localStorage.getItem('MoneyManagerDataV14') || localStorage.getItem('MoneyManagerDataV13') || localStorage.getItem('MoneyManagerDataV12');
+        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV14') || localStorage.getItem('MoneyManagerDataV13') || localStorage.getItem('MoneyManagerDataV12');
         if(savedData) appData = JSON.parse(savedData);
     } catch(e) {}
     
@@ -315,7 +320,6 @@
     let chatHistory = []; let currentImageBase64 = null; let currentImageMimeType = null;
     const formatVND = (num) => '₫' + parseInt(num || 0).toLocaleString('vi-VN');
 
-    // === HỆ THỐNG GHI LƯU TỨC THÌ (CHỐNG MẤT DỮ LIỆU) ===
     function forceSave() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
     }
@@ -349,7 +353,6 @@
     function saveAiConfig() { localStorage.setItem('mmApiKey', keyInput.value.trim()); localStorage.setItem('mmAiPersona', personaInput.value.trim()); }
     function setDefaultDate() { const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); document.getElementById('txDate').value = now.toISOString().slice(0, 16); }
 
-    // === HỆ THỐNG GHI NHỚ TAB ===
     function switchTab(tabId, element) {
         currentActiveTab = tabId; 
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -362,18 +365,16 @@
         const fab = document.getElementById('mainFab'); 
         if(tabId === 'settings' || tabId === 'tools') fab.style.display = 'none'; else fab.style.display = 'flex';
         
-        // Lưu vị trí
         localStorage.setItem('mmSavedTab', tabId);
     }
 
-    // Phục hồi vị trí khi mở App
     document.addEventListener("DOMContentLoaded", () => {
         let savedTab = localStorage.getItem('mmSavedTab') || 'spending';
         let navEl = document.querySelector(`.nav-item[onclick*="${savedTab}"]`);
         if(navEl) {
             switchTab(savedTab, navEl);
         } else {
-            switchTab('spending', document.querySelector('.nav-item')); 
+            switchTab('spending', document.querySelector('.nav-item'));
         }
     });
 
