@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Money Manager</title>
     
-    <link rel="icon" type="image/png" href="./logo.png">
-    <link rel="apple-touch-icon" href="./logo.png">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y3ZjlmYyIvPjx0ZXh0IHk9IjUwJSIgeD0iNTAlIiBkeT0iLjM1ZW0iIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iNjAiPvCfkKc8L3RleHQ+PC9zdmc+">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y3ZjlmYyIvPjx0ZXh0IHk9IjUwJSIgeD0iNTAlIiBkeT0iLjM1ZW0iIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iNjAiPvCfkKc8L3RleHQ+PC9zdmc+">
 
     <meta name="theme-color" content="#fcfcfc" id="theme-color-meta">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -19,7 +19,9 @@
             --text-main: #2d3436; --text-muted: #8395a7; --expense: #ff7675; --expense-light: #ffeaa7;
             --income: #10ac84; --income-light: #c8d6e5; --fab-bg: #222f3e; --glass-bg: rgba(255,255,255,0.75);
             --glass-border: rgba(255,255,255,0.6); --nav-bg: rgba(255,255,255,0.92); --input-bg: #f1f2f6;
-            --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1); --safe-top: env(safe-area-inset-top, 20px); --safe-bottom: env(safe-area-inset-bottom, 20px);
+            --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1); 
+            --safe-top: env(safe-area-inset-top, 20px); 
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
         body.dark-mode {
             --bg-color: #1e2227; --primary: #48dbfb; --primary-light: rgba(72,219,251,0.15); --primary-border: rgba(72,219,251,0.3);
@@ -30,12 +32,19 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow: hidden; transition: background-color 0.4s var(--ios-ease); }
+        
+        /* CHỐNG KHUẤT UI CHO IPHONE BẰNG 100DVH */
+        .app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+        
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-border); border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s, opacity 0.2s; }
         .clickable:active { transform: scale(0.96); opacity: 0.8; }
-        .app-container { height: 100vh; display: flex; flex-direction: column; }
-        .tab-content { flex: 1; overflow-y: auto; padding: calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 100px) 20px; display: none; }
+        
+        .tab-content { flex: 1; overflow-y: auto; padding: calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 90px) 20px; display: none; }
         .tab-content.active { display: block; animation: slideFade 0.4s var(--ios-ease) forwards; }
-        #tab-tools.active { display: flex; flex-direction: column; padding-bottom: calc(var(--safe-bottom) + 100px); overflow: hidden;}
+        
+        /* FIX LỖI KHUẤT TAB AI */
+        #tab-tools.active { display: flex; flex-direction: column; padding-bottom: calc(var(--safe-bottom) + 90px); overflow: hidden;}
+        
         @keyframes slideFade { 0% { opacity: 0; transform: translateY(15px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(24px); display: flex; justify-content: space-around; padding-top: 14px; padding-bottom: calc(var(--safe-bottom) + 10px); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; }
@@ -66,7 +75,6 @@
         .tx-amount.thu { color: var(--income); font-weight: 800; font-size: 17px; }
         .tx-amount.chi { color: var(--expense); font-weight: 800; font-size: 17px; }
         
-        /* CẤU TRÚC LẠI HOÀN TOÀN CHECKBOX ĐỂ CHỐNG LỆCH */
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .saving-cb-wrapper { 
             display: flex !important; flex-direction: row !important; align-items: center !important; 
@@ -289,9 +297,12 @@
 </div>
 
 <script>
+    // TÊN BIẾN LƯU TRỮ MỚI ĐỂ TRÁNH LỖI PHIÊN BẢN CŨ
+    const STORAGE_KEY = 'MoneyManagerDataV14'; 
+
     let appData = {};
     try {
-        let savedData = localStorage.getItem('MoneyManagerDataV13') || localStorage.getItem('MoneyManagerDataV12');
+        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV13');
         if(savedData) appData = JSON.parse(savedData);
     } catch(e) {}
     
@@ -307,6 +318,18 @@
     let currentTxType = 'chi'; let currentActiveTab = 'spending'; let editingTxIndex = -1; let isAllJarsSelected = false;
     let chatHistory = []; let currentImageBase64 = null; let currentImageMimeType = null;
     const formatVND = (num) => '₫' + parseInt(num || 0).toLocaleString('vi-VN');
+
+    // === HỆ THỐNG LƯU DỮ LIỆU BẤT TỬ (CHỐNG MẤT KHI TẮT APP) ===
+    function forceSave() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    }
+    
+    // Ép lưu khi tải trang, ẩn trang, hoặc tắt app
+    window.addEventListener('beforeunload', forceSave);
+    window.addEventListener('pagehide', forceSave);
+    window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') forceSave();
+    });
 
     function uiAlert(msg, title = "Thông báo") {
         document.getElementById('customAlertTitle').innerText = title; document.getElementById('customAlertMsg').innerText = msg;
@@ -445,7 +468,6 @@
             let gridHtml = ''; let checkboxHtml = ''; let debtHtml = '';
             for (let key in appData.jars) {
                 gridHtml += `<div class="glass-card jar-card clickable" onclick="openEditModal('jarBalance', '${key}')"><ion-icon name="${getIconForJar(appData.jarNames[key])}" class="jar-icon"></ion-icon><div class="jar-name" onclick="event.stopPropagation(); openEditModal('jarName', '${key}')">${appData.jarNames[key] || 'Hũ'}</div><div class="jar-amount">${formatVND(appData.jars[key])}</div></div>`;
-                // CUSTOM CHECKBOX SỬA LỖI
                 checkboxHtml += `<label class="saving-cb-wrapper"><input type="checkbox" value="${key}" class="saving-cb"><div class="custom-cb"></div><span class="cb-text">${appData.jarNames[key] || 'Hũ'}</span></label>`;
             }
             gridHtml += `<div class="glass-card jar-card add-jar-card clickable" onclick="openEditModal('newJar', '')"><ion-icon name="add-circle-outline" class="jar-icon" style="color: var(--text-muted);"></ion-icon><div class="jar-name" style="color: var(--text-muted); background: transparent;">Thêm hũ mới</div></div>`;
@@ -470,7 +492,7 @@
                 });
                 txList.innerHTML = html;
             }
-            localStorage.setItem('MoneyManagerDataV13', JSON.stringify(appData));
+            forceSave(); // LƯU DỮ LIỆU TỨC THÌ MỖI KHI CẬP NHẬT UI
         } catch(e) {}
     }
 
