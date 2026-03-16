@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Money Manager</title>
     
-    <link rel="icon" href="logo.jpg">
-    <link rel="apple-touch-icon" href="logo.jpg">
+    <link rel="icon" href="icon-app.jpg">
+    <link rel="apple-touch-icon" href="icon-app.jpg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Money Manager">
 
     <meta name="theme-color" content="#fcfcfc" id="theme-color-meta">
@@ -21,8 +23,8 @@
             --income: #10ac84; --income-light: #c8d6e5; --fab-bg: #222f3e; --glass-bg: rgba(255,255,255,0.75);
             --glass-border: rgba(255,255,255,0.6); --nav-bg: rgba(255,255,255,0.92); --input-bg: #f1f2f6;
             --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1); 
-            --safe-top: env(safe-area-inset-top, 20px); 
-            --safe-bottom: env(safe-area-inset-bottom, 20px);
+            --safe-top: max(env(safe-area-inset-top), 20px); 
+            --safe-bottom: max(env(safe-area-inset-bottom), 20px);
         }
         body.dark-mode {
             --bg-color: #1e2227; --primary: #48dbfb; --primary-light: rgba(72,219,251,0.15); --primary-border: rgba(72,219,251,0.3);
@@ -34,7 +36,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-color); color: var(--text-main); overflow: hidden; transition: background-color 0.4s var(--ios-ease); }
         
-        /* CHỐNG KHUẤT UI BẰNG 100DVH */
+        /* CHỐNG KHUẤT UI BẰNG 100DVH CHO IPHONE */
         .app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
         
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-border); border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s, opacity 0.2s; }
@@ -297,12 +299,12 @@
 </div>
 
 <script>
-    // TÊN BIẾN LƯU TRỮ MỚI
-    const STORAGE_KEY = 'MoneyManagerDataV14'; 
+    // === TÊN BIẾN LƯU TRỮ (BẢO VỆ DỮ LIỆU) ===
+    const STORAGE_KEY = 'MoneyManagerDataV15'; 
 
     let appData = {};
     try {
-        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV13');
+        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV14') || localStorage.getItem('MoneyManagerDataV13');
         if(savedData) appData = JSON.parse(savedData);
     } catch(e) {}
     
@@ -319,7 +321,7 @@
     let chatHistory = []; let currentImageBase64 = null; let currentImageMimeType = null;
     const formatVND = (num) => '₫' + parseInt(num || 0).toLocaleString('vi-VN');
 
-    // === HỆ THỐNG LƯU DỮ LIỆU BẤT TỬ ===
+    // === HỆ THỐNG GHI LƯU TỨC THÌ (CHỐNG MẤT DỮ LIỆU KHI TẮT APP) ===
     function forceSave() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
     }
@@ -353,7 +355,7 @@
     function saveAiConfig() { localStorage.setItem('mmApiKey', keyInput.value.trim()); localStorage.setItem('mmAiPersona', personaInput.value.trim()); }
     function setDefaultDate() { const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); document.getElementById('txDate').value = now.toISOString().slice(0, 16); }
 
-    // === HỆ THỐNG GHI NHỚ TAB ===
+    // === HỆ THỐNG GHI NHỚ TAB (GIỮ NGUYÊN VỊ TRÍ KHI RA/VÀO APP) ===
     function switchTab(tabId, element) {
         currentActiveTab = tabId; 
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
