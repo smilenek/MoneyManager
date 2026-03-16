@@ -24,6 +24,8 @@
             --income: #10ac84; --income-light: #c8d6e5; --fab-bg: #222f3e; --glass-bg: rgba(255,255,255,0.75);
             --glass-border: rgba(255,255,255,0.6); --nav-bg: rgba(255,255,255,0.92); --input-bg: #f1f2f6;
             --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1); 
+            --safe-top: max(env(safe-area-inset-top), 20px); 
+            --safe-bottom: max(env(safe-area-inset-bottom), 20px);
         }
         body.dark-mode {
             --bg-color: #1e2227; --primary: #48dbfb; --primary-light: rgba(72,219,251,0.15); --primary-border: rgba(72,219,251,0.3);
@@ -32,16 +34,15 @@
             --income: #1dd1a1; --income-light: rgba(29,209,161,0.15); --fab-bg: #48dbfb; --glass-bg: rgba(43,48,56,0.65);
             --glass-border: rgba(255,255,255,0.06); --nav-bg: rgba(30,34,39,0.85); --input-bg: #2b3038;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* CHỈNH LẠI CHUẨN KHUNG CHO IPHONE */
+        /* BỎ FIX BODY - ĐÂY LÀ CHÌA KHÓA TRỊ LỖI KẸT TAB TRÊN IPHONE */
         html, body { 
             width: 100%; height: 100%; 
             margin: 0; padding: 0; overflow: hidden; 
             background-color: var(--bg-color); color: var(--text-main); transition: background-color 0.4s var(--ios-ease); 
         }
         
-        .app-container { width: 100%; height: 100dvh; display: flex; flex-direction: column; }
+        .app-container { width: 100%; height: 100%; display: flex; flex-direction: column; }
         
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-border); border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s, opacity 0.2s; }
         .clickable:active { transform: scale(0.96); opacity: 0.8; }
@@ -50,8 +51,8 @@
         .tab-content { 
             flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; 
             padding: 15px 20px; 
-            padding-top: max(env(safe-area-inset-top), 20px); 
-            padding-bottom: calc(env(safe-area-inset-bottom) + 100px); 
+            padding-top: calc(var(--safe-top) + 10px); 
+            padding-bottom: calc(var(--safe-bottom) + 90px); 
             display: none; 
         }
         .tab-content.active { display: block; animation: slideFade 0.4s var(--ios-ease) forwards; }
@@ -59,13 +60,13 @@
         
         @keyframes slideFade { 0% { opacity: 0; transform: translateY(15px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         
-        /* THANH ĐIỀU HƯỚNG SÁT ĐÁY */
+        /* THANH ĐIỀU HƯỚNG SÁT ĐÁY, KHÔNG NHẢY */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; right: 0; 
             background: var(--nav-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             display: flex; justify-content: space-around; 
-            padding-top: 12px; 
-            padding-bottom: calc(env(safe-area-inset-bottom) + 10px); 
+            padding-top: 14px; 
+            padding-bottom: calc(var(--safe-bottom) + 5px); 
             box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; transition: background 0.4s var(--ios-ease); 
         }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; transition: color 0.2s; }
@@ -73,7 +74,7 @@
         .nav-item.active { color: var(--primary); }
         .nav-item.active ion-icon { transform: translateY(-3px) scale(1.1); }
         
-        .fab { position: fixed; bottom: calc(env(safe-area-inset-bottom) + 85px); right: 20px; width: 58px; height: 58px; background-color: var(--fab-bg); color: white; border-radius: 29px; display: flex; justify-content: center; align-items: center; font-size: 32px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 101; transition: transform 0.2s var(--ios-ease); }
+        .fab { position: fixed; bottom: calc(var(--safe-bottom) + 80px); right: 20px; width: 58px; height: 58px; background-color: var(--fab-bg); color: white; border-radius: 29px; display: flex; justify-content: center; align-items: center; font-size: 32px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 101; transition: transform 0.2s var(--ios-ease); }
         .fab:active { transform: scale(0.9); }
         
         h2.page-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
@@ -136,7 +137,7 @@
         input:checked + .slider:before { transform: translateX(22px); }
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 200; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(6px); }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background: var(--bg-color); border-radius: 32px 32px 0 0; padding: 25px; padding-bottom: calc(env(safe-area-inset-bottom) + 25px); transform: translateY(100%); transition: transform 0.4s var(--ios-ease); max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: var(--bg-color); border-radius: 32px 32px 0 0; padding: 25px; padding-bottom: calc(var(--safe-bottom) + 25px); transform: translateY(100%); transition: transform 0.4s var(--ios-ease); max-height: 90vh; overflow-y: auto; }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
         .modal-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px;}
@@ -167,7 +168,7 @@
 
 <div class="app-container">
     
-    <div id="tab-spending" class="tab-content active">
+    <div id="tab-spending" class="tab-content">
         <div class="mascot-box"><span style="font-size: 54px;">🐧🌸</span></div>
         <div class="glass-card main-wallet clickable" onclick="openEditModal('totalBalance', 'Tổng số dư')">
             <div class="wallet-header"><span><ion-icon name="wallet"></ion-icon> Tổng Số Dư</span></div>
@@ -255,7 +256,7 @@
 
 <button class="fab" id="mainFab" onclick="openAddTxModal()">+</button>
 <nav class="bottom-nav">
-    <a class="nav-item active" onclick="switchTab('spending', this)"><ion-icon name="wallet"></ion-icon>Chi tiêu</a>
+    <a class="nav-item" onclick="switchTab('spending', this)"><ion-icon name="wallet"></ion-icon>Chi tiêu</a>
     <a class="nav-item" onclick="switchTab('debts', this)"><ion-icon name="card"></ion-icon>Khoản nợ</a>
     <a class="nav-item" onclick="switchTab('transactions', this)"><ion-icon name="list"></ion-icon>Lịch sử</a>
     <a class="nav-item" onclick="switchTab('savings', this)"><ion-icon name="server"></ion-icon>Tiết kiệm</a>
@@ -313,7 +314,7 @@
 
     let appData = {};
     try {
-        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV14') || localStorage.getItem('MoneyManagerDataV13') || localStorage.getItem('MoneyManagerDataV12');
+        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV14') || localStorage.getItem('MoneyManagerDataV13');
         if(savedData) appData = JSON.parse(savedData);
     } catch(e) {}
     
@@ -642,7 +643,7 @@
 
     updateUI();
     
-    // === ĐĂNG KÝ CHẠY OFFLINE BẰNG sw.js ===
+    // Đăng ký Service Worker để App chạy Offline hoàn toàn
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js').catch(err => console.log('SW failed', err));
