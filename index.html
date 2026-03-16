@@ -185,6 +185,7 @@
             flex-direction: column;
             padding-bottom: calc(var(--nav-total) + 10px);
             overflow: hidden;
+            /* on desktop this is overridden by media query */
         }
 
         @keyframes slideFade {
@@ -302,6 +303,10 @@
             margin-bottom: 6px;
             letter-spacing: -0.5px;
         }
+        @media (min-width: 768px) {
+            h2.page-title { font-size: 30px; margin-bottom: 8px; }
+            p.page-subtitle { font-size: 15px; }
+        }
 
         p.page-subtitle {
             color: var(--text-muted);
@@ -312,6 +317,7 @@
         }
 
         .mascot-box { text-align: center; margin-bottom: 10px; }
+        @media (min-width: 768px) { .mascot-box { display: none; } }
 
         /* ===== WALLET CARD ===== */
         .main-wallet {
@@ -384,6 +390,13 @@
             opacity: 0.5;
         }
 
+        @media (min-width: 768px) {
+            .wc-value { font-size: 32px; }
+            .wc-icon-wrap { width: 52px; height: 52px; border-radius: 16px; }
+            .wc-icon { width: 26px; height: 26px; }
+            .main-wallet { padding: 20px; }
+        }
+
         /* ===== JAR GRID ===== */
         .jar-grid {
             display: grid;
@@ -402,6 +415,13 @@
             align-items: center;
             border-radius: 18px;
             min-height: 118px;
+        }
+
+        @media (min-width: 768px) {
+            .jar-card { min-height: 140px; padding: 20px 12px; }
+            .jar-icon { width: 32px; height: 32px; margin-bottom: 10px; }
+            .jar-name { font-size: 13px; }
+            .jar-amount { font-size: 16px; }
         }
 
         .jar-icon {
@@ -1056,62 +1076,162 @@
         .chat-box::-webkit-scrollbar { display: none; }
 
         /* ===== DESKTOP RESPONSIVE ===== */
+        /* ═══════════════════════════════════════════════════
+           RESPONSIVE — tablet (≥768px): side nav + content
+           ═══════════════════════════════════════════════════ */
         @media (min-width: 768px) {
-            body {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background: linear-gradient(135deg, #667eea20, #764ba220);
+            :root {
+                --sat: 0px;
+                --sab: 0px;
+                --nav-width: 220px;   /* sidebar width */
+                --nav-total: 0px;     /* no bottom bar on desktop */
+                --header-pad: 28px;
+            }
+
+            html, body {
                 height: 100vh;
                 overflow: hidden;
             }
 
+            body {
+                background: var(--bg-color);
+            }
+
+            /* Root container: sidebar + main side by side */
             .app-container {
-                width: 390px;
-                height: 844px;
-                border-radius: 50px;
-                box-shadow: 0 40px 80px rgba(0,0,0,0.2), 0 0 0 10px rgba(0,0,0,0.08);
+                height: 100vh;
+                flex-direction: row;
                 overflow: hidden;
-                position: relative;
             }
 
+            /* ── Sidebar nav ── */
             .bottom-nav {
-                position: absolute;
-                left: 0; right: 0;
-                border-radius: 0 0 50px 50px;
+                position: relative;
+                flex-direction: column;
+                width: var(--nav-width);
+                height: 100vh;
+                padding: 24px 12px 24px 12px;
+                justify-content: flex-start;
+                align-items: stretch;
+                gap: 4px;
+                border-top: none;
+                border-right: 1px solid var(--glass-border);
+                box-shadow: 2px 0 16px rgba(0,0,0,0.04);
+                flex-shrink: 0;
+                overflow: visible;
             }
 
-            .fab {
-                position: absolute;
-                bottom: calc(var(--nav-total) + 10px);
-                right: 16px;
+            /* Logo/brand at top of sidebar */
+            .bottom-nav::before {
+                content: '🐧 Money';
+                display: block;
+                font-size: 17px;
+                font-weight: 800;
+                color: var(--primary);
+                padding: 0 12px 20px 12px;
+                border-bottom: 1px solid var(--glass-border);
+                margin-bottom: 12px;
+                letter-spacing: -0.3px;
             }
 
-            .modal-overlay {
-                position: absolute;
-                border-radius: 50px;
+            .nav-item {
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 12px;
+                padding: 12px 14px;
+                border-radius: 14px;
+                font-size: 13px;
+                font-weight: 700;
+                width: 100%;
+                transition: background 0.15s, color 0.2s;
+            }
+
+            .nav-item span { white-space: nowrap; font-size: 13px; }
+
+            .nav-item:hover {
+                background: var(--primary-light);
+                color: var(--primary);
+            }
+
+            .nav-item.active {
+                background: var(--primary-light);
+                color: var(--primary);
+                border-radius: 14px;
+            }
+
+            .nav-item.active .nav-icon {
+                transform: none;
+            }
+
+            .nav-icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+            /* ── Main content area ── */
+            .tab-content {
+                flex: 1;
+                height: 100vh;
+                overflow-y: auto;
+                padding: 28px 32px 28px 32px;
+                display: none;
+            }
+
+            .tab-content.active {
+                display: block;
+            }
+
+            #tab-tools.active {
+                display: flex;
+                padding: 28px 32px;
                 overflow: hidden;
             }
 
-            #customAlertOverlay {
-                position: fixed !important;
-                border-radius: 0 !important;
+            /* ── FAB floats in content area ── */
+            .fab {
+                position: fixed;
+                bottom: 28px;
+                right: 28px;
             }
 
-            :root {
-                --sat: 48px;
-                --sab: 12px;
+            /* ── Modals stay fixed on full screen ── */
+            .modal-overlay {
+                position: fixed;
             }
+
+            /* ── Desktop layout tweaks ── */
+            .jar-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+
+            h2.page-title { font-size: 28px; }
+
+            .glass-card { border-radius: 18px; }
+
+            .mascot-box { text-align: left; }
+
+            /* Alert centered */
+            .custom-alert-box { max-width: 420px; }
         }
 
-        @media (min-width: 1024px) {
-            body {
-                background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 50%, #fef9f0 100%);
-            }
+        /* ═══════════════════════════════════════════════════
+           DESKTOP (≥1200px): wider sidebar + more columns
+           ═══════════════════════════════════════════════════ */
+        @media (min-width: 1200px) {
+            :root { --nav-width: 240px; }
 
-            body.dark-mode {
-                background: linear-gradient(135deg, #0f1116 0%, #151921 50%, #1a1e24 100%);
-            }
+            .tab-content { padding: 32px 48px; }
+
+            #tab-tools.active { padding: 32px 48px; }
+
+            .jar-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        /* ═══════════════════════════════════════════════════
+           LARGE DESKTOP (≥1600px)
+           ═══════════════════════════════════════════════════ */
+        @media (min-width: 1600px) {
+            :root { --nav-width: 260px; }
+            .tab-content { padding: 36px 64px; }
+            #tab-tools.active { padding: 36px 64px; }
         }
     </style>
 </head>
