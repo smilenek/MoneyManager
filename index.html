@@ -23,10 +23,8 @@
             --text-main: #2d3436; --text-muted: #8395a7; --expense: #ff7675; --expense-light: #ffeaa7;
             --income: #10ac84; --income-light: #c8d6e5; --fab-bg: #222f3e; --glass-bg: rgba(255,255,255,0.75);
             --glass-border: rgba(255,255,255,0.6); --nav-bg: rgba(255,255,255,0.92); --input-bg: #f1f2f6;
-            --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1); 
-            /* THÔNG SỐ VÙNG AN TOÀN TỪ BẢN V26 */
-            --safe-top: env(safe-area-inset-top, 20px); 
-            --safe-bottom: env(safe-area-inset-bottom, 20px);
+            /* GIỮ NGUYÊN CSS GỐC CHO KHUNG */
+            --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1); --safe-top: env(safe-area-inset-top, 20px); --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
         body.dark-mode {
             --bg-color: #1e2227; --primary: #48dbfb; --primary-light: rgba(72,219,251,0.15); --primary-border: rgba(72,219,251,0.3);
@@ -37,29 +35,23 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* CẤU TRÚC BODY VÀ CONTAINER CHUẨN TỪ BẢN V26 */
+        /* CẤU TRÚC BODY CHÍNH XÁC TỪ MÃ BẠN GỬI */
         body { background-color: var(--bg-color); color: var(--text-main); overflow: hidden; transition: background-color 0.4s var(--ios-ease); }
-        .app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
-        
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-border); border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s, opacity 0.2s; }
         .clickable:active { transform: scale(0.96); opacity: 0.8; }
-        
-        /* KHOẢNG CÁCH TAB TỪ BẢN V26 */
-        .tab-content { flex: 1; overflow-y: auto; padding: calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 90px) 20px; display: none; }
+        .app-container { height: 100vh; display: flex; flex-direction: column; }
+        .tab-content { flex: 1; overflow-y: auto; padding: calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 100px) 20px; display: none; }
         .tab-content.active { display: block; animation: slideFade 0.4s var(--ios-ease) forwards; }
-        #tab-tools.active { display: flex; flex-direction: column; padding-bottom: calc(var(--safe-bottom) + 90px); overflow: hidden;}
-        
+        #tab-tools.active { display: flex; flex-direction: column; padding-bottom: calc(var(--safe-bottom) + 100px); overflow: hidden;}
         @keyframes slideFade { 0% { opacity: 0; transform: translateY(15px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         
-        /* THANH ĐIỀU HƯỚNG TỪ BẢN V26 */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(24px); display: flex; justify-content: space-around; padding-top: 14px; padding-bottom: calc(var(--safe-bottom) + 10px); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; transition: background 0.4s var(--ios-ease); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; transition: color 0.2s; }
+        /* CHÍNH XÁC CSS THANH TAB TỪ MÃ BẠN GỬI */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(24px); display: flex; justify-content: space-around; padding-top: 14px; padding-bottom: calc(var(--safe-bottom) + 10px); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; }
         .nav-item ion-icon { font-size: 24px; transition: transform 0.2s var(--ios-ease); margin-bottom: 2px;}
         .nav-item.active { color: var(--primary); }
         .nav-item.active ion-icon { transform: translateY(-3px) scale(1.1); }
-        
-        /* NÚT FAB TỪ BẢN V26 */
-        .fab { position: fixed; bottom: calc(var(--safe-bottom) + 85px); right: 20px; width: 58px; height: 58px; background-color: var(--fab-bg); color: white; border-radius: 29px; display: flex; justify-content: center; align-items: center; font-size: 32px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 101; transition: transform 0.2s var(--ios-ease); }
+        .fab { position: fixed; bottom: calc(var(--safe-bottom) + 85px); right: 20px; width: 58px; height: 58px; background-color: var(--fab-bg); color: white; border-radius: 29px; display: flex; justify-content: center; align-items: center; font-size: 32px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 101; }
         .fab:active { transform: scale(0.9); }
         
         h2.page-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
@@ -207,13 +199,11 @@
                 <ion-icon name="settings-outline" style="font-size: 24px; color: var(--text-muted); cursor: pointer;" onclick="document.getElementById('ai-settings-panel').classList.toggle('hidden')"></ion-icon>
             </div>
         </div>
-        
         <div id="ai-settings-panel" class="glass-card hidden" style="padding: 15px; margin-bottom: 10px;">
             <div class="input-group" style="margin-bottom: 10px;"><label style="color: var(--primary);">Mã kết nối (API Key)</label><input type="text" id="geminiApiKey" placeholder="Nhập API Key..." onchange="saveAiConfig()" style="font-family: monospace;"></div>
             <div class="input-group" style="margin-bottom: 0;"><label style="color: var(--warning);">Huấn luyện tính cách</label><textarea id="aiPersona" rows="2" placeholder="Ví dụ: Bạn là chuyên gia khó tính..." onchange="saveAiConfig()"></textarea></div>
             <button class="btn-primary" onclick="document.getElementById('ai-settings-panel').classList.add('hidden')" style="padding: 12px; font-size: 14px; margin-top: 10px;">Hoàn tất</button>
         </div>
-        
         <div id="chat-box" class="chat-box">
             <div class="msg msg-ai">Chào bạn! Mình là AI quản lý tài chính. Bạn có thể nhắn tin hỏi đáp, dán ảnh (Ctrl+V) hoặc tải ảnh hóa đơn/chuyển khoản để mình tự động đọc và ghi sổ giúp nhé! ✨</div>
         </div>
@@ -296,7 +286,6 @@
 </div>
 
 <script>
-    // BẢO VỆ DỮ LIỆU
     const STORAGE_KEY = 'MoneyManagerDataV15'; 
 
     let appData = {};
@@ -318,7 +307,6 @@
     let chatHistory = []; let currentImageBase64 = null; let currentImageMimeType = null;
     const formatVND = (num) => '₫' + parseInt(num || 0).toLocaleString('vi-VN');
 
-    // === HỆ THỐNG GHI LƯU TỨC THÌ BẤT TỬ ===
     function forceSave() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
     }
@@ -342,17 +330,16 @@
     }
     window.alert = uiAlert;
 
-    function getIconForJar(n) { n=n.toLowerCase(); if(/ăn|uống|cafe|cà phê|trà sữa|thực phẩm|nhậu|đói/.test(n)) return 'fast-food-outline'; if(/nhà|thuê|điện|nước|internet|wifi/.test(n)) return 'home-outline'; if(/xe|đi lại|xăng|grab|taxi/.test(n)) return 'car-outline'; if(/học|sách|khoá học|chứng chỉ/.test(n)) return 'book-outline'; if(/giải|chơi|game|phim|nhạc|kỷ niệm/.test(n)) return 'game-controller-outline'; if(/bay|nhảy|du lịch|phượt|nghỉ|biển/.test(n)) return 'airplane-outline'; if(/khoẻ|thuốc|y tế|bệnh|gym|thể thao/.test(n)) return 'medkit-outline'; if(/áo|sắm|giày|quần|mỹ phẩm/.test(n)) return 'shirt-outline'; if(/tình|người yêu|bạn gái|hẹn hò/.test(n)) return 'heart-outline'; if(/mèo|chó|thú cưng/.test(n)) return 'paw-outline'; return 'cube-outline'; }
+    function getIconForJar(n) { n=n.toLowerCase(); if(/ăn|uống|cafe|cà phê|trà sữa|thực phẩm|nhậu|đói/.test(n)) return 'fast-food-outline'; if(/nhà|thuê|điện|nước|internet|wifi/.test(n)) return 'home-outline'; if(/xe|đi lại|xăng|grab|taxi/.test(n)) return 'car-outline'; if(/học|sách|khoá học|chứng/i.test(n)) return 'book-outline'; if(/giải|chơi|game|phim|nhạc|kỷ niệm/.test(n)) return 'game-controller-outline'; if(/bay|nhảy|du lịch|phượt|nghỉ|biển/.test(n)) return 'airplane-outline'; if(/khoẻ|thuốc|y tế|bệnh|gym|thể thao/.test(n)) return 'medkit-outline'; if(/áo|sắm|giày|quần|mỹ phẩm/.test(n)) return 'shirt-outline'; if(/tình|người yêu|bạn gái|hẹn hò/.test(n)) return 'heart-outline'; if(/mèo|chó|thú cưng/.test(n)) return 'paw-outline'; return 'cube-outline'; }
     function renderBankLogoOrIcon(n) { if (!n) return `<ion-icon name="person-outline" class="jar-icon"></ion-icon>`; n=n.toLowerCase().replace(/\s/g, ''); const banks = { vcb: 'vcb', vietcombank: 'vcb', tcb: 'tcb', techcombank: 'tcb', mb: 'mb', mbbank: 'mb', vpb: 'vpbank', vpbank: 'vpbank', bidv: 'bidv', ctg: 'vietinbank', vietinbank: 'vietinbank', viettin: 'vietinbank', agri: 'agribank', agribank: 'agribank', acb: 'acb', tpb: 'tpbank', tpbank: 'tpbank', stb: 'sacombank', sacombank: 'sacombank', vib: 'vib', hdb: 'hdbank', hdbank: 'hdbank', momo: 'momo'}; for(let key in banks) { if(n.includes(key)) { let logoUrl = `https://api.vietqr.io/img/${banks[key]}.png`; if(banks[key] === 'momo') logoUrl = 'https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png'; return `<img src="${logoUrl}" class="bank-logo" onerror="this.outerHTML='<ion-icon name=\\'card-outline\\' class=\\'jar-icon\\'></ion-icon>'">`; } } return `<ion-icon name="person-outline" class="jar-icon"></ion-icon>`; }
 
     const keyInput = document.getElementById('geminiApiKey'); const personaInput = document.getElementById('aiPersona');
     keyInput.value = localStorage.getItem('mmApiKey') || ''; personaInput.value = localStorage.getItem('mmAiPersona') || '';
-    // ĐÃ GỠ BỎ: if(!keyInput.value) document.getElementById('ai-settings-panel').classList.remove('hidden');
+    if(!keyInput.value) document.getElementById('ai-settings-panel').classList.remove('hidden');
 
     function saveAiConfig() { localStorage.setItem('mmApiKey', keyInput.value.trim()); localStorage.setItem('mmAiPersona', personaInput.value.trim()); }
     function setDefaultDate() { const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); document.getElementById('txDate').value = now.toISOString().slice(0, 16); }
 
-    // === HỆ THỐNG GHI NHỚ TAB (GIỮ NGUYÊN VỊ TRÍ KHI RA/VÀO APP) ===
     function switchTab(tabId, element) {
         currentActiveTab = tabId; 
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
