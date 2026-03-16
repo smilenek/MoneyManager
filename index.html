@@ -4,1531 +4,285 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Money Manager</title>
-
-    <!-- PWA Manifest inline -->
-    <script>
-        const manifestData = {
-            name: "Money Manager",
-            short_name: "MoneyMgr",
-            description: "Quản lý tài chính cá nhân thông minh",
-            start_url: "./",
-            display: "standalone",
-            orientation: "portrait",
-            background_color: "#f7f9fc",
-            theme_color: "#00cec9",
-            icons: [
-                { src: "logo.png", sizes: "192x192", type: "image/png" },
-                { src: "logo.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
-            ]
-        };
-        const blob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-        const manifestURL = URL.createObjectURL(blob);
-        const link = document.createElement('link');
-        link.rel = 'manifest';
-        link.href = manifestURL;
-        document.head.appendChild(link);
-    </script>
-
-    <!-- iOS PWA Meta -->
+    
+    <link rel="icon" href="logo.jpg">
+    <link rel="apple-touch-icon" href="logo.jpg">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Money Manager">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#f7f9fc" id="theme-color-meta">
-    <meta name="format-detection" content="telephone=no">
 
-    <link rel="apple-touch-icon" href="logo.png">
-    <link rel="icon" type="image/png" href="logo.png">
-
-
+    <meta name="theme-color" content="#fcfcfc" id="theme-color-meta">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
         :root {
-            --bg-color: #f7f9fc;
-            --primary: #00cec9;
-            --primary-light: #e0f7fa;
-            --primary-border: #b2ebf2;
-            --warning: #ff9f43;
-            --warning-light: #ffebd6;
-            --info: #54a0ff;
-            --info-light: #e3f2fd;
-            --text-main: #2d3436;
-            --text-muted: #8395a7;
-            --expense: #ff7675;
-            --expense-light: rgba(255, 118, 117, 0.12);
-            --income: #10ac84;
-            --income-light: rgba(16,172,132,0.1);
-            --fab-bg: #222f3e;
-            --glass-bg: rgba(255,255,255,0.78);
-            --glass-border: rgba(255,255,255,0.65);
-            --nav-bg: rgba(255,255,255,0.94);
-            --input-bg: #f1f2f6;
-            --shadow: 0 4px 20px rgba(0,0,0,0.06);
-            --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-
-            /* Safe areas - iPhone 15 Pro Max has Dynamic Island */
-            --sat: env(safe-area-inset-top, 0px);
-            --sar: env(safe-area-inset-right, 0px);
-            --sab: env(safe-area-inset-bottom, 0px);
-            --sal: env(safe-area-inset-left, 0px);
-
-            --nav-height: 52px;
-            --nav-total: calc(var(--nav-height) + var(--sab) + 8px);
-            --header-pad: calc(var(--sat) + 16px);
+            --bg-color: #f7f9fc; --primary: #00cec9; --primary-light: #e0f7fa; --primary-border: #b2ebf2;
+            --warning: #ff9f43; --warning-light: #ffebd6; --info: #54a0ff; --info-light: #e3f2fd;
+            --text-main: #2d3436; --text-muted: #8395a7; --expense: #ff7675; --expense-light: #ffeaa7;
+            --income: #10ac84; --income-light: #c8d6e5; --fab-bg: #222f3e; --glass-bg: rgba(255,255,255,0.75);
+            --glass-border: rgba(255,255,255,0.6); --nav-bg: rgba(255,255,255,0.92); --input-bg: #f1f2f6;
+            --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1); 
+            --safe-top: max(env(safe-area-inset-top), 20px); 
+            --safe-bottom: max(env(safe-area-inset-bottom), 20px);
         }
-
         body.dark-mode {
-            --bg-color: #1a1e24;
-            --primary: #48dbfb;
-            --primary-light: rgba(72,219,251,0.12);
-            --primary-border: rgba(72,219,251,0.25);
-            --warning: #feca57;
-            --warning-light: rgba(254,202,87,0.12);
-            --info: #9c88ff;
-            --info-light: rgba(156,136,255,0.12);
-            --text-main: #f5f6fa;
-            --text-muted: #a4b0be;
-            --expense: #ff9ff3;
-            --expense-light: rgba(255,159,243,0.12);
-            --income: #1dd1a1;
-            --income-light: rgba(29,209,161,0.12);
-            --fab-bg: #48dbfb;
-            --glass-bg: rgba(32,38,46,0.72);
-            --glass-border: rgba(255,255,255,0.07);
-            --nav-bg: rgba(24,28,34,0.92);
-            --input-bg: #262c35;
-            --shadow: 0 4px 20px rgba(0,0,0,0.25);
+            --bg-color: #1e2227; --primary: #48dbfb; --primary-light: rgba(72,219,251,0.15); --primary-border: rgba(72,219,251,0.3);
+            --warning: #feca57; --warning-light: rgba(254,202,87,0.15); --info: #9c88ff; --info-light: rgba(156,136,255,0.15);
+            --text-main: #f5f6fa; --text-muted: #a4b0be; --expense: #ff9ff3; --expense-light: rgba(255,159,243,0.15);
+            --income: #1dd1a1; --income-light: rgba(29,209,161,0.15); --fab-bg: #48dbfb; --glass-bg: rgba(43,48,56,0.65);
+            --glass-border: rgba(255,255,255,0.06); --nav-bg: rgba(30,34,39,0.85); --input-bg: #2b3038;
         }
-
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-        }
-
-        html {
-            /* Prevent bounce scroll on iOS */
-            overscroll-behavior: none;
-            height: -webkit-fill-available;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            overflow: hidden;
-            /* iOS full height fix */
-            height: 100vh;
-            height: -webkit-fill-available;
-            height: 100dvh;
-            transition: background-color 0.35s var(--ios-ease);
-            overscroll-behavior: none;
-        }
-
-        .app-container {
-            height: 100vh;
-            height: -webkit-fill-available;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* ===== GLASS CARDS ===== */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 16px;
-            box-shadow: var(--shadow);
-            margin-bottom: 12px;
-            transition: transform 0.18s var(--ios-ease), opacity 0.18s var(--ios-ease);
-        }
-
-        .clickable {
-            cursor: pointer;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .clickable:active {
-            transform: scale(0.96) !important;
-            opacity: 0.8 !important;
-        }
-
-        /* ===== TAB CONTENT ===== */
-        .tab-content {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: var(--header-pad) 14px calc(var(--nav-total) + 16px) 14px;
-            display: none;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-y: contain;
-            /* Smooth scrolling on iOS */
-            scroll-behavior: smooth;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: slideFade 0.38s var(--ios-ease) both;
-        }
-
-        #tab-tools.active {
-            display: flex;
-            flex-direction: column;
-            padding-bottom: calc(var(--nav-total) + 10px);
-            overflow: hidden;
-            /* on desktop this is overridden by media query */
-        }
-
-        @keyframes slideFade {
-            from { opacity: 0; transform: translateY(12px) scale(0.985); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        /* ===== BOTTOM NAV ===== */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--nav-bg);
-            backdrop-filter: blur(28px) saturate(200%);
-            -webkit-backdrop-filter: blur(28px) saturate(200%);
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-start;
-            padding-top: 8px;
-            /* Key: respect home indicator on iPhone */
-            padding-bottom: max(var(--sab), 6px);
-            height: var(--nav-total);
-            border-top: 1px solid var(--glass-border);
-            box-shadow: 0 -2px 20px rgba(0,0,0,0.04);
-            z-index: 100;
-            transition: background 0.35s var(--ios-ease);
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            color: var(--text-muted);
-            font-size: 9.5px;
-            font-weight: 700;
-            gap: 2px;
-            cursor: pointer;
-            flex: 1;
-            padding: 0 2px;
-            min-width: 0;
-            transition: color 0.2s var(--ios-ease);
-            text-decoration: none;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-
-
-        .nav-icon {
-            width: 22px;
-            height: 22px;
-            transition: transform 0.25s var(--ios-ease);
-            flex-shrink: 0;
-        }
-
-        .nav-item.active .nav-icon {
-            transform: translateY(-2px) scale(1.15);
-        }
-
-        .nav-icon path, .nav-icon rect, .nav-icon circle, .nav-icon polyline, .nav-icon line, .nav-icon ellipse {
-            stroke: currentColor;
-        }
-
-        .nav-item span {
-            font-size: 9px;
-            letter-spacing: -0.2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-
-
-        .nav-item.active .nav-icon {
-            transform: translateY(-2px) scale(1.15);
-        }
-
-        /* ===== FAB ===== */
-        .fab {
-            position: fixed;
-            bottom: calc(var(--nav-total) + 10px);
-            right: 16px;
-            width: 40px;
-            height: 40px;
-            background-color: var(--fab-bg);
-            color: white;
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: none;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.22), 0 2px 5px rgba(0,0,0,0.1);
-            cursor: pointer;
-            z-index: 101;
-            transition: transform 0.2s var(--ios-ease), opacity 0.2s;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        body.dark-mode .fab { color: #1a1e24; }
-
-        .fab:active { transform: scale(0.88); }
-
-        /* ===== TYPOGRAPHY ===== */
-        h2.page-title {
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
-        }
-        @media (min-width: 768px) {
-            h2.page-title { font-size: 30px; margin-bottom: 8px; }
-            p.page-subtitle { font-size: 15px; }
-        }
-
-        p.page-subtitle {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 24px;
-            line-height: 1.5;
-            font-weight: 500;
-        }
-
-        .mascot-box { text-align: center; margin-bottom: 10px; }
-        @media (min-width: 768px) { .mascot-box { display: none; } }
-
-        /* ===== WALLET CARD ===== */
-        .main-wallet {
-            background: var(--primary-light);
-            border: 1px solid var(--primary-border);
-            cursor: pointer;
-            padding: 16px;
-        }
-
-        /* New compact wallet card layout */
-        .wc-row {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .wc-icon-wrap {
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .wc-teal  { background: rgba(0, 206, 201, 0.15); color: var(--primary); }
-        .wc-red   { background: rgba(255, 118, 117, 0.18); color: var(--expense); }
-        .wc-green { background: rgba(29, 209, 161, 0.15); color: var(--income); }
-
-        body.dark-mode .wc-teal  { background: rgba(72,219,251,0.15); }
-        body.dark-mode .wc-red   { background: rgba(255,159,243,0.15); }
-        body.dark-mode .wc-green { background: rgba(29,209,161,0.15); }
-
-        .wc-icon {
-            width: 22px;
-            height: 22px;
-            stroke: currentColor;
-        }
-
-        .wc-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .wc-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 0.3px;
-            text-transform: uppercase;
-            margin-bottom: 3px;
-        }
-
-        .wc-value {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--primary);
-            letter-spacing: -0.8px;
-            line-height: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .wc-edit {
-            width: 16px;
-            height: 16px;
-            color: var(--text-muted);
-            flex-shrink: 0;
-            opacity: 0.5;
-        }
-
-        @media (min-width: 768px) {
-            .wc-value { font-size: 32px; }
-            .wc-icon-wrap { width: 52px; height: 52px; border-radius: 16px; }
-            .wc-icon { width: 26px; height: 26px; }
-            .main-wallet { padding: 20px; }
-        }
-
-        /* ===== JAR GRID ===== */
-        .jar-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .jar-card {
-            text-align: center;
-            padding: 14px 8px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 18px;
-            min-height: 118px;
-        }
-
-        @media (min-width: 768px) {
-            .jar-card { min-height: 140px; padding: 20px 12px; }
-            .jar-icon { width: 32px; height: 32px; margin-bottom: 10px; }
-            .jar-name { font-size: 13px; }
-            .jar-amount { font-size: 16px; }
-        }
-
-        .jar-icon {
-            width: 22px;
-            height: 22px;
-            flex-shrink: 0;
-            display: block;
-        }
-
-        /* Pill bg wrapper for jar icons */
-        .jar-icon-pill {
-            width: 42px;
-            height: 42px;
-            border-radius: 13px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 7px;
-            flex-shrink: 0;
-            background: color-mix(in srgb, var(--pill-color, var(--info)) 14%, transparent);
-            border: 1px solid color-mix(in srgb, var(--pill-color, var(--info)) 25%, transparent);
-        }
-
-        .bank-logo {
-            width: 38px;
-            height: auto;
-            object-fit: contain;
-            margin-bottom: 8px;
-            border-radius: 6px;
-        }
-
-        .jar-name {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 700;
-            margin-bottom: 4px;
-            padding: 4px 8px;
-            border-radius: 8px;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            transition: background 0.15s;
-        }
-
-        .jar-name:active { background: var(--input-bg); }
-
-        .jar-amount {
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--text-main);
-        }
-
-        .add-jar-card {
-            border: 2px dashed var(--glass-border);
-            background: transparent;
-            opacity: 0.55;
-            box-shadow: none;
-        }
-
-        /* ===== TRANSACTIONS ===== */
-        .tx-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            padding: 13px 13px;
-        }
-
-        .tx-desc { font-weight: 800; font-size: 15px; margin-bottom: 4px; }
-        .tx-date { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-
-        .tx-jar {
-            font-size: 11px;
-            background: var(--input-bg);
-            padding: 4px 8px;
-            border-radius: 7px;
-            color: var(--text-muted);
-            display: inline-block;
-            margin-top: 5px;
-            font-weight: 700;
-        }
-
-        .tx-debt-link {
-            font-size: 11px;
-            background: var(--expense-light);
-            padding: 4px 8px;
-            border-radius: 7px;
-            color: var(--expense);
-            display: inline-block;
-            margin-top: 5px;
-            font-weight: 700;
-            margin-left: 4px;
-        }
-
-        .tx-amount.thu { color: var(--income); font-weight: 800; font-size: 16px; text-align: right; white-space: nowrap; }
-        .tx-amount.chi { color: var(--expense); font-weight: 800; font-size: 16px; text-align: right; white-space: nowrap; }
-
-        /* ===== SAVINGS CHECKBOXES ===== */
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .saving-cb-wrapper {
-            display: flex !important;
-            flex-direction: row !important;
-            align-items: center !important;
-            justify-content: flex-start !important;
-            gap: 10px !important;
-            background: var(--input-bg);
-            padding: 13px 12px;
-            border-radius: 14px;
-            border: 1px solid var(--glass-border);
-            cursor: pointer;
-            transition: transform 0.15s var(--ios-ease), background 0.15s;
-        }
-
-        .saving-cb-wrapper:active { transform: scale(0.95); }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow: hidden; transition: background-color 0.4s var(--ios-ease); }
+        
+        .app-container { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+        
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-border); border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); margin-bottom: 16px; transition: transform 0.2s, opacity 0.2s; }
+        .clickable:active { transform: scale(0.96); opacity: 0.8; }
+        
+        .tab-content { flex: 1; overflow-y: auto; padding: calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 90px) 20px; display: none; }
+        .tab-content.active { display: block; animation: slideFade 0.4s var(--ios-ease) forwards; }
+        
+        /* Cấu trúc flex cho tab AI */
+        #tab-tools.active { display: flex; flex-direction: column; overflow-y: auto;}
+        
+        @keyframes slideFade { 0% { opacity: 0; transform: translateY(15px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(24px); display: flex; justify-content: space-around; padding-top: 14px; padding-bottom: calc(var(--safe-bottom) + 10px); box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 100; transition: background 0.4s var(--ios-ease); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 10px; font-weight: 700; gap: 5px; cursor: pointer; width: 16%; transition: color 0.2s; }
+        .nav-item ion-icon { font-size: 24px; transition: transform 0.2s var(--ios-ease); margin-bottom: 2px;}
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active ion-icon { transform: translateY(-3px) scale(1.1); }
+        .fab { position: fixed; bottom: calc(var(--safe-bottom) + 85px); right: 20px; width: 58px; height: 58px; background-color: var(--fab-bg); color: white; border-radius: 29px; display: flex; justify-content: center; align-items: center; font-size: 32px; border: none; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 101; transition: transform 0.2s var(--ios-ease); }
+        .fab:active { transform: scale(0.9); }
+        h2.page-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+        p.page-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.5; font-weight: 500;}
+        .mascot-box { text-align: center; margin-bottom: 24px; }
+        .main-wallet { background: var(--primary-light); border: 1px solid var(--primary-border); cursor: pointer; }
+        .wallet-header { display: flex; justify-content: space-between; margin-bottom: 12px; color: var(--text-muted); font-weight: 700; font-size: 15px;}
+        .wallet-balance { font-size: 34px; font-weight: 800; color: var(--primary); letter-spacing: -1px;}
+        .jar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .jar-card { text-align: center; padding: 20px 10px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 18px;}
+        .jar-icon { font-size: 28px; margin-bottom: 10px; color: var(--info); }
+        .bank-logo { width: 40px; height: auto; object-fit: contain; margin-bottom: 10px; border-radius: 4px;}
+        .jar-name { font-size: 14px; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; padding: 4px 10px; border-radius: 8px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+        .jar-name:active { background: var(--input-bg); } 
+        .jar-amount { font-size: 18px; font-weight: 800; color: var(--text-main); }
+        .add-jar-card { border: 2px dashed var(--glass-border); background: transparent; opacity: 0.6; box-shadow: none;}
+        .tx-item { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 18px 15px;}
+        .tx-desc { font-weight: 800; font-size: 16px; margin-bottom: 6px; }
+        .tx-jar { font-size: 11px; background: var(--input-bg); padding: 5px 10px; border-radius: 8px; color: var(--text-muted); display: inline-block; margin-top: 6px; font-weight: 700;}
+        .tx-debt-link { font-size: 11px; background: rgba(255, 159, 243, 0.15); padding: 5px 10px; border-radius: 8px; color: var(--expense); display: inline-block; margin-top: 6px; font-weight: 700; margin-left: 5px;}
+        .tx-date { font-size: 13px; color: var(--text-muted); font-weight: 500;}
+        .tx-amount.thu { color: var(--income); font-weight: 800; font-size: 17px; }
+        .tx-amount.chi { color: var(--expense); font-weight: 800; font-size: 17px; }
+        
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .saving-cb-wrapper { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; gap: 12px !important; background: var(--input-bg); padding: 15px; border-radius: 16px; border: 1px solid var(--glass-border); cursor: pointer; transition: transform 0.1s var(--ios-ease); }
+        .saving-cb-wrapper:active { transform: scale(0.96); }
         .saving-cb-wrapper input[type="checkbox"] { display: none; }
+        .custom-cb { width: 24px !important; height: 24px !important; border-radius: 6px; border: 2px solid var(--text-muted); display: flex; align-items: center; justify-content: center; margin: 0 !important; flex-shrink: 0; transition: all 0.2s var(--ios-ease); }
+        .saving-cb-wrapper input[type="checkbox"]:checked + .custom-cb { background: var(--primary); border-color: var(--primary); }
+        .saving-cb-wrapper input[type="checkbox"]:checked + .custom-cb::after { content: '✔'; color: white; font-size: 15px; font-weight: 900; }
+        .cb-text { font-size: 15px !important; font-weight: 700 !important; color: var(--text-main) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 0 !important; padding-top: 1px; }
 
-        .custom-cb {
-            width: 22px !important;
-            height: 22px !important;
-            border-radius: 6px;
-            border: 2px solid var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.2s var(--ios-ease);
-        }
-
-        .saving-cb-wrapper input[type="checkbox"]:checked + .custom-cb {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .saving-cb-wrapper input[type="checkbox"]:checked + .custom-cb::after {
-            content: '✔';
-            color: white;
-            font-size: 13px;
-            font-weight: 900;
-        }
-
-        .cb-text {
-            font-size: 13px !important;
-            font-weight: 700 !important;
-            color: var(--text-main) !important;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* ===== DEBT CHECKBOX ROW ===== */
-        .debt-cb-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            padding: 10px 12px;
-            border-radius: 12px;
-            background: var(--input-bg);
-            border: 1px solid var(--glass-border);
-            transition: background 0.15s;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-        .debt-cb-row:active { background: var(--primary-light); }
-
-        /* ===== AI ICON BUTTONS ===== */
-        .ai-icon-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 10px;
-            background: var(--input-bg);
-            border: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-muted);
-            transition: all 0.2s var(--ios-ease);
-            flex-shrink: 0;
-        }
-        .ai-icon-btn:active { transform: scale(0.9); opacity: 0.7; }
-        .ai-icon-btn:first-child:hover { color: var(--expense); border-color: var(--expense); background: var(--expense-light); }
-        .ai-settings-btn.active {
-            color: var(--primary);
-            border-color: var(--primary);
-            background: var(--primary-light);
-        }
-
-        /* ===== AI SETTINGS PANEL (slide down) ===== */
-        .ai-settings-panel {
-            overflow: hidden;
-            max-height: 0;
-            opacity: 0;
-            transition: max-height 0.38s var(--ios-ease), opacity 0.28s var(--ios-ease), margin 0.3s;
-            margin-bottom: 0;
-        }
-        .ai-settings-panel.open {
-            max-height: 300px;
-            opacity: 1;
-            margin-bottom: 10px;
-        }
-        .ai-settings-inner { padding: 14px !important; }
-
-        /* ===== AI CHAT ===== */
-        .chat-box {
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-bottom: 8px;
-            margin-top: 10px;
-        }
-
-        .msg {
-            max-width: 87%;
-            padding: 12px 16px;
-            border-radius: 20px;
-            font-size: 15px;
-            line-height: 1.55;
-            font-weight: 500;
-            word-wrap: break-word;
-            word-break: break-word;
-            animation: fadeInMsg 0.28s var(--ios-ease) both;
-        }
-
-        @keyframes fadeInMsg {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .msg-user {
-            align-self: flex-end;
-            background: var(--primary);
-            color: #1e2227;
-            border-bottom-right-radius: 5px;
-            font-weight: 600;
-        }
-
-        .msg-ai {
-            align-self: flex-start;
-            background: var(--input-bg);
-            color: var(--text-main);
-            border-bottom-left-radius: 5px;
-            border: 1px solid var(--glass-border);
-        }
-
-        .msg-sys {
-            align-self: center;
-            background: rgba(29,209,161,0.12);
-            color: var(--income);
-            font-size: 12px;
-            border-radius: 12px;
-            padding: 6px 14px;
-            font-weight: 700;
-            border: 1px solid rgba(29,209,161,0.25);
-            text-align: center;
-            max-width: 95%;
-        }
-
-        .chat-input-area {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-            align-items: center;
-        }
-
-        .image-upload-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 20px;
-            background: var(--input-bg);
-            border: 1px solid var(--glass-border);
-            font-size: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            color: var(--text-muted);
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: background 0.2s, color 0.2s;
-        }
-
-        .image-upload-btn.has-image {
-            background: var(--primary-light);
-            color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .chat-input-area input[type="text"] {
-            flex: 1;
-            padding: 13px 18px;
-            border-radius: 23px;
-            border: 1px solid var(--glass-border);
-            background: var(--input-bg);
-            color: var(--text-main);
-            font-size: 15px;
-            outline: none;
-            /* iOS input fix */
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        .chat-input-area button {
-            width: 40px;
-            height: 40px;
-            border-radius: 20px;
-            background: var(--primary);
-            color: #1e2227;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            flex-shrink: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.15s;
-        }
-
-        .chat-input-area button:active { transform: scale(0.9); }
-
-        .typing-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            height: 18px;
-        }
-
-        .typing-indicator span {
-            width: 6px;
-            height: 6px;
-            background-color: var(--text-muted);
-            border-radius: 50%;
-            animation: typing 1.4s infinite ease-in-out both;
-        }
-
+        .chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding-bottom: 10px; margin-top: 10px;}
+        .msg { max-width: 85%; padding: 12px 18px; border-radius: 20px; font-size: 15px; line-height: 1.5; font-weight: 500; word-wrap: break-word; animation: fadeInMsg 0.3s var(--ios-ease); }
+        @keyframes fadeInMsg { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .msg-user { align-self: flex-end; background: var(--primary); color: #1e2227; border-bottom-right-radius: 4px; font-weight: 600;}
+        .msg-ai { align-self: flex-start; background: var(--input-bg); color: var(--text-main); border-bottom-left-radius: 4px; border: 1px solid var(--glass-border); }
+        .msg-sys { align-self: center; background: rgba(29, 209, 161, 0.15); color: var(--income); font-size: 12px; border-radius: 12px; padding: 6px 12px; font-weight: 700; border: 1px solid rgba(29, 209, 161, 0.3); text-align: center;}
+        
+        .chat-input-area { display: flex; gap: 8px; margin-top: 10px; align-items: center; flex-shrink: 0;}
+        .image-upload-btn { width: 50px; height: 50px; border-radius: 25px; background: var(--input-bg); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--text-muted); cursor: pointer; flex-shrink: 0; }
+        .image-upload-btn.has-image { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+        .chat-input-area input[type="text"] { flex: 1; padding: 15px 20px; border-radius: 25px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); font-size: 15px; outline: none;}
+        .chat-input-area button { width: 50px; height: 50px; border-radius: 25px; background: var(--primary); color: #1e2227; border: none; font-size: 22px; cursor: pointer; flex-shrink: 0; display: flex; justify-content: center; align-items: center;}
+        
+        .typing-indicator { display: inline-flex; align-items: center; gap: 4px; height: 20px;}
+        .typing-indicator span { width: 6px; height: 6px; background-color: var(--text-muted); border-radius: 50%; animation: typing 1.4s infinite ease-in-out both; }
         .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
         .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0); }
-            40%            { transform: scale(1); }
-        }
-
-        /* ===== SETTINGS ===== */
-        .setting-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            cursor: pointer;
-            justify-content: space-between;
-            padding: 15px 14px;
-        }
-
-        .setting-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            flex: 1;
-        }
-
-        .setting-icon { width: 22px; height: 22px; flex-shrink: 0; color: var(--text-muted); }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        .setting-item { display: flex; align-items: center; gap: 15px; cursor: pointer; justify-content: space-between; padding: 20px 15px;}
+        .setting-left { display: flex; align-items: center; gap: 16px; flex: 1; }
+        .setting-icon { font-size: 24px; color: var(--text-muted); }
         .setting-text { font-weight: 700; font-size: 15px; }
-
-        /* ===== TOGGLE SWITCH ===== */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 28px;
-            pointer-events: none;
-            flex-shrink: 0;
-        }
-
+        .switch { position: relative; display: inline-block; width: 52px; height: 30px; pointer-events: none; }
         .switch input { opacity: 0; width: 0; height: 0; }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #d1d1d6;
-            transition: .35s var(--ios-ease);
-            border-radius: 34px;
-        }
-
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #d1d1d6; transition: .4s; border-radius: 34px; }
         body.dark-mode .slider { background-color: #4a4f59; }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 24px;
-            width: 24px;
-            left: 2px;
-            bottom: 2px;
-            background-color: white;
-            transition: .35s var(--ios-ease);
-            border-radius: 50%;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--income); }
         input:checked + .slider:before { transform: translateX(22px); }
-
-        /* ===== MODALS ===== */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background: var(--bg-color);
-            border-radius: 32px 32px 0 0;
-            padding: 24px 20px;
-            /* Critical: account for home indicator */
-            padding-bottom: max(calc(var(--sab) + 24px), 32px);
-            transform: translateY(100%);
-            transition: transform 0.42s var(--ios-ease);
-            max-height: 92vh;
-            max-height: 92dvh;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 22px;
-        }
-
-        .modal-title { font-size: 21px; font-weight: 800; letter-spacing: -0.4px; }
-
-        .close-btn {
-            font-size: 30px;
-            color: var(--text-muted);
-            cursor: pointer;
-            border: none;
-            background: none;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-        }
-
-        /* ===== FORM ELEMENTS ===== */
-        .type-toggle {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-
-        .type-btn {
-            flex: 1;
-            padding: 13px;
-            border-radius: 14px;
-            border: 1px solid var(--glass-border);
-            background: var(--input-bg);
-            font-weight: 800;
-            font-size: 15px;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s var(--ios-ease);
-            -webkit-appearance: none;
-        }
-
-        .type-btn.active-chi {
-            background: var(--expense);
-            color: #fff;
-            border-color: var(--expense);
-            transform: scale(1.02);
-        }
-
-        .type-btn.active-thu {
-            background: var(--income);
-            color: #fff;
-            border-color: var(--income);
-            transform: scale(1.02);
-        }
-
-        .input-group { margin-bottom: 16px; }
-
-        .input-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: var(--text-muted);
-            letter-spacing: 0.3px;
-        }
-
-        .input-group input:not([type="checkbox"]),
-        .input-group select,
-        .input-group textarea {
-            width: 100%;
-            padding: 14px 16px;
-            border-radius: 14px;
-            border: 1.5px solid var(--glass-border);
-            background: var(--input-bg);
-            color: var(--text-main);
-            font-size: 16px; /* Prevent iOS zoom */
-            font-weight: 500;
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-            font-family: inherit;
-            transition: border-color 0.2s;
-        }
-
-        .input-group input:focus,
-        .input-group select:focus,
-        .input-group textarea:focus {
-            border-color: var(--primary);
-        }
-
-        /* Prevent iOS select arrow overlap */
-        .input-group select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238395a7' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            padding-right: 36px;
-        }
-
-        /* ===== BUTTONS ===== */
-        .btn-primary {
-            width: 100%;
-            padding: 16px;
-            background: var(--primary);
-            color: #1e2227;
-            border: none;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 800;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: transform 0.18s var(--ios-ease), opacity 0.18s;
-            -webkit-appearance: none;
-        }
-
-        .btn-primary:active { transform: scale(0.96); opacity: 0.85; }
-        .btn-danger { background: var(--expense); color: #fff; margin-top: 12px; }
-        .btn-success { background: var(--income); color: #fff; }
-
-        /* ===== CUSTOM ALERT ===== */
-        .custom-alert-box {
-            background: var(--glass-bg);
-            backdrop-filter: blur(28px) saturate(200%);
-            -webkit-backdrop-filter: blur(28px) saturate(200%);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 24px;
-            width: 88%;
-            margin: auto;
-            text-align: center;
-            transform: scale(0.88);
-            opacity: 0;
-            transition: all 0.28s var(--ios-ease);
-        }
-
-        .modal-overlay.active .custom-alert-box {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        .alert-title { font-size: 19px; font-weight: 800; margin-bottom: 10px; }
-
-        .alert-msg {
-            font-size: 15px;
-            color: var(--text-muted);
-            margin-bottom: 22px;
-            line-height: 1.5;
-            font-weight: 500;
-        }
-
-        .alert-btn-row { display: flex; gap: 10px; }
-
-        .alert-btn {
-            flex: 1;
-            padding: 14px;
-            border-radius: 13px;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            -webkit-appearance: none;
-        }
-
-        .alert-btn-cancel {
-            background: var(--input-bg);
-            color: var(--text-main);
-            border: 1px solid var(--glass-border);
-        }
-
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 200; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(6px); }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--bg-color); border-radius: 32px 32px 0 0; padding: 25px; padding-bottom: calc(var(--safe-bottom) + 25px); transform: translateY(100%); transition: transform 0.4s var(--ios-ease); max-height: 90vh; overflow-y: auto; }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .modal-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px;}
+        .close-btn { font-size: 32px; color: var(--text-muted); cursor: pointer; border: none; background: none; }
+        .type-toggle { display: flex; gap: 12px; margin-bottom: 20px; }
+        .type-btn { flex: 1; padding: 14px; border-radius: 14px; border: 1px solid var(--glass-border); background: var(--input-bg); font-weight: 800; font-size: 15px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+        .type-btn.active-chi { background: var(--expense); color: #1e2227; border-color: var(--expense); transform: scale(1.02); }
+        .type-btn.active-thu { background: var(--income); color: #1e2227; border-color: var(--income); transform: scale(1.02); }
+        .input-group { margin-bottom: 18px; }
+        .input-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
+        .input-group input:not([type="checkbox"]), .input-group select, .input-group textarea { width: 100%; padding: 16px; border-radius: 16px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main); font-size: 16px; font-weight: 500; outline: none; -webkit-appearance: none; font-family: 'Inter', sans-serif; }
+        .btn-primary { width: 100%; padding: 18px; background: var(--primary); color: #1e2227; border: none; border-radius: 18px; font-size: 17px; font-weight: 800; cursor: pointer; margin-top: 10px; transition: transform 0.2s; }
+        .btn-primary:active { transform: scale(0.96); }
+        .btn-danger { background: var(--expense); margin-top: 15px;}
+        .btn-success { background: var(--income); }
+        .custom-alert-box { background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 25px; width: 85%; margin: auto; text-align: center; transform: scale(0.9); opacity: 0; transition: all 0.3s; }
+        .modal-overlay.active .custom-alert-box { transform: scale(1); opacity: 1; }
+        .alert-title { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
+        .alert-msg { font-size: 15px; color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; font-weight: 500;}
+        .alert-btn-row { display: flex; gap: 12px; }
+        .alert-btn { flex: 1; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; border: none; }
+        .alert-btn-cancel { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--glass-border); }
         .alert-btn-ok { background: var(--primary); color: #1e2227; }
-
-        /* ===== AI SETTINGS ===== */
-        #ai-settings-panel textarea {
-            resize: none;
-            min-height: 70px;
-        }
-
-        /* ===== EMPTY STATE ===== */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-            font-size: 15px;
-            font-weight: 500;
-            line-height: 2;
-        }
-
-        /* ===== DEBT LINK SECTION ===== */
-        #debt-link-section {
-            background: rgba(255,118,117,0.04);
-            padding: 14px;
-            border-radius: 16px;
-            border: 1px dashed rgba(255,118,117,0.3);
-        }
-
-        /* ===== UTILITIES ===== */
         .hidden { display: none !important; }
-
-        /* ===== SCROLLBAR ===== */
-        .tab-content::-webkit-scrollbar,
-        .modal-content::-webkit-scrollbar,
-        .chat-box::-webkit-scrollbar { display: none; }
-
-        /* ===== DESKTOP RESPONSIVE ===== */
-        /* ═══════════════════════════════════════════════════
-           RESPONSIVE — tablet (≥768px): side nav + content
-           ═══════════════════════════════════════════════════ */
-        @media (min-width: 768px) {
-            :root {
-                --sat: 0px;
-                --sab: 0px;
-                --nav-width: 220px;   /* sidebar width */
-                --nav-total: 0px;     /* no bottom bar on desktop */
-                --header-pad: 28px;
-            }
-
-            html, body {
-                height: 100vh;
-                overflow: hidden;
-            }
-
-            body {
-                background: var(--bg-color);
-            }
-
-            /* Root container: sidebar + main side by side */
-            .app-container {
-                height: 100vh;
-                flex-direction: row;
-                overflow: hidden;
-            }
-
-            /* ── Sidebar nav ── */
-            .bottom-nav {
-                position: relative;
-                flex-direction: column;
-                width: var(--nav-width);
-                height: 100vh;
-                padding: 24px 12px 24px 12px;
-                justify-content: flex-start;
-                align-items: stretch;
-                gap: 4px;
-                border-top: none;
-                border-right: 1px solid var(--glass-border);
-                box-shadow: 2px 0 16px rgba(0,0,0,0.04);
-                flex-shrink: 0;
-                overflow: visible;
-            }
-
-            /* Logo/brand at top of sidebar */
-            .bottom-nav::before {
-                content: '🐧 Money';
-                display: block;
-                font-size: 17px;
-                font-weight: 800;
-                color: var(--primary);
-                padding: 0 12px 20px 12px;
-                border-bottom: 1px solid var(--glass-border);
-                margin-bottom: 12px;
-                letter-spacing: -0.3px;
-            }
-
-            .nav-item {
-                flex-direction: row;
-                justify-content: flex-start;
-                gap: 12px;
-                padding: 12px 14px;
-                border-radius: 14px;
-                font-size: 13px;
-                font-weight: 700;
-                width: 100%;
-                transition: background 0.15s, color 0.2s;
-            }
-
-            .nav-item span { white-space: nowrap; font-size: 13px; }
-
-            .nav-item:hover {
-                background: var(--primary-light);
-                color: var(--primary);
-            }
-
-            .nav-item.active {
-                background: var(--primary-light);
-                color: var(--primary);
-                border-radius: 14px;
-            }
-
-            .nav-item.active .nav-icon {
-                transform: none;
-            }
-
-            .nav-icon { width: 20px; height: 20px; flex-shrink: 0; }
-
-            /* ── Main content area ── */
-            .tab-content {
-                flex: 1;
-                height: 100vh;
-                overflow-y: auto;
-                padding: 28px 32px 28px 32px;
-                display: none;
-            }
-
-            .tab-content.active {
-                display: block;
-            }
-
-            #tab-tools.active {
-                display: flex;
-                padding: 28px 32px;
-                overflow: hidden;
-            }
-
-            /* ── FAB floats in content area ── */
-            .fab {
-                position: fixed;
-                bottom: 28px;
-                right: 28px;
-            }
-
-            /* ── Modals stay fixed on full screen ── */
-            .modal-overlay {
-                position: fixed;
-            }
-
-            /* ── Desktop layout tweaks ── */
-            .jar-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 16px;
-            }
-
-            h2.page-title { font-size: 28px; }
-
-            .glass-card { border-radius: 18px; }
-
-            .mascot-box { text-align: left; }
-
-            /* Alert centered */
-            .custom-alert-box { max-width: 420px; }
-        }
-
-        /* ═══════════════════════════════════════════════════
-           DESKTOP (≥1200px): wider sidebar + more columns
-           ═══════════════════════════════════════════════════ */
-        @media (min-width: 1200px) {
-            :root { --nav-width: 240px; }
-
-            .tab-content { padding: 32px 48px; }
-
-            #tab-tools.active { padding: 32px 48px; }
-
-            .jar-grid { grid-template-columns: repeat(4, 1fr); }
-        }
-
-        /* ═══════════════════════════════════════════════════
-           LARGE DESKTOP (≥1600px)
-           ═══════════════════════════════════════════════════ */
-        @media (min-width: 1600px) {
-            :root { --nav-width: 260px; }
-            .tab-content { padding: 36px 64px; }
-            #tab-tools.active { padding: 36px 64px; }
-        }
+        
+        /* CỤC ĐỆN CHỐNG LÚN CHO TAB AI TRÊN IPHONE */
+        .bottom-spacer { height: 110px; width: 100%; flex-shrink: 0; pointer-events: none; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-
-    <!-- TAB: Chi tiêu -->
+    
     <div id="tab-spending" class="tab-content active">
-        <div class="mascot-box"><span style="font-size: 36px;">🐧🌸</span></div>
-        <div class="glass-card main-wallet clickable" onclick="openEditModal('totalBalance', 'totalBalance')">
-            <div class="wc-row">
-                <div class="wc-icon-wrap wc-teal">
-                    <svg class="wc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><circle cx="17" cy="12" r="1" fill="currentColor" stroke="none"/><path d="M18 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v2"/></svg>
-                </div>
-                <div class="wc-info">
-                    <div class="wc-label">Tổng Số Dư</div>
-                    <div class="wc-value" id="home-total">₫0</div>
-                </div>
-                <svg class="wc-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </div>
+        <div class="mascot-box"><span style="font-size: 54px;">🐧🌸</span></div>
+        <div class="glass-card main-wallet clickable" onclick="openEditModal('totalBalance', 'Tổng số dư')">
+            <div class="wallet-header"><span><ion-icon name="wallet"></ion-icon> Tổng Số Dư</span></div>
+            <div class="wallet-balance" id="home-total">₫0</div>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin: 10px 0 8px;">
-            <h2 class="page-title" style="font-size:16px; margin:0; color:var(--text-muted); font-weight:700; letter-spacing:0.3px; text-transform:uppercase;">Các hũ chi tiêu</h2>
-        </div>
+        <h2 class="page-title" style="font-size: 20px; margin-top: 24px; margin-bottom: 12px;">Các hũ chi tiêu</h2>
         <div class="jar-grid" id="jar-grid-container"></div>
     </div>
 
-    <!-- TAB: Khoản nợ -->
     <div id="tab-debts" class="tab-content">
-        <div class="mascot-box"><span style="font-size: 36px;">💸</span></div>
-        <div class="glass-card main-wallet clickable" onclick="openEditModal('totalDebt', 'totalDebt')" style="background:var(--expense-light); border-color:rgba(255,118,117,0.25);">
-            <div class="wc-row">
-                <div class="wc-icon-wrap wc-red">
-                    <svg class="wc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg>
-                </div>
-                <div class="wc-info">
-                    <div class="wc-label" style="color:var(--expense);">Tổng Nợ</div>
-                    <div class="wc-value" id="debt-total" style="color:var(--expense);">₫0</div>
-                </div>
-                <svg class="wc-edit" style="color:var(--expense);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </div>
+        <div class="mascot-box"><span style="font-size: 54px;">💸</span></div>
+        <div class="glass-card main-wallet clickable" onclick="openEditModal('totalDebt', 'Tổng Nợ')" style="background: var(--expense-light); border-color: rgba(255, 159, 243, 0.3);">
+            <div class="wallet-header"><span style="color: var(--expense);"><ion-icon name="card"></ion-icon> Tổng Nợ Hiện Tại</span></div>
+            <div class="wallet-balance" id="debt-total" style="color: var(--expense);">₫0</div>
         </div>
-        <div style="margin: 10px 0 8px;">
-            <h2 class="page-title" style="font-size:16px; margin:0; color:var(--text-muted); font-weight:700; letter-spacing:0.3px; text-transform:uppercase;">Chi tiết khoản nợ</h2>
-        </div>
+        <h2 class="page-title" style="font-size: 20px; margin-top: 24px; margin-bottom: 12px;">Chi tiết khoản nợ</h2>
         <div class="jar-grid" id="debt-grid-container"></div>
     </div>
 
-    <!-- TAB: Lịch sử -->
     <div id="tab-transactions" class="tab-content">
-        <h2 class="page-title" style="margin-bottom: 4px; font-size:22px;">Lịch sử</h2>
-        <p class="page-subtitle" style="margin-bottom:14px; font-size:13px;">Nhấn vào giao dịch để sửa hoặc xóa.</p>
+        <h2 class="page-title" style="margin-bottom: 20px;">Lịch sử giao dịch</h2>
+        <p class="page-subtitle">Nhấn vào một giao dịch để chỉnh sửa hoặc xóa.</p>
         <div id="tx-list"></div>
     </div>
 
-    <!-- TAB: Tiết kiệm -->
     <div id="tab-savings" class="tab-content">
-        <div class="glass-card main-wallet clickable" onclick="openEditModal('savings', 'savings')" style="margin-bottom:18px; background:var(--income-light); border-color:rgba(29,209,161,0.25);">
-            <div class="wc-row">
-                <div class="wc-icon-wrap wc-green">
-                    <svg class="wc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4 3 9 3s9-1.34 9-3v-4"/></svg>
-                </div>
-                <div class="wc-info">
-                    <div class="wc-label" style="color:var(--income);">Quỹ Tiết Kiệm</div>
-                    <div class="wc-value" id="savings-display" style="color:var(--income);">₫0</div>
-                </div>
-                <svg class="wc-edit" style="color:var(--income);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </div>
+        <div class="glass-card main-wallet clickable" onclick="openEditModal('savings', 'Quỹ Tiết Kiệm')" style="margin-bottom: 30px;">
+            <div class="wallet-header"><span><ion-icon name="server"></ion-icon> Quỹ Tiết Kiệm</span></div>
+            <div class="wallet-balance" id="savings-display" style="color: var(--income);">₫0</div>
         </div>
-        <h2 class="page-title" style="font-size:18px; margin-bottom:4px;">Trích Tiền Cuối Ngày</h2>
-        <p class="page-subtitle" style="margin-bottom:14px; font-size:13px;">Tích chọn hũ và nhập % để chuyển vào tiết kiệm.</p>
+        <h2 class="page-title">Trích Tiền Cuối Ngày</h2>
+        <p class="page-subtitle">Tích chọn các hũ nguồn và nhập % để chuyển tiền.</p>
         <div class="glass-card">
             <div class="input-group">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
-                    <label style="margin-bottom:0; font-size:14px; color:var(--text-main); font-weight:700;">Nguồn tiền trích ra</label>
-                    <button id="btn-select-all" onclick="toggleSelectAllJars()" style="background:none; border:none; color:var(--primary); font-weight:700; font-size:13px; cursor:pointer; padding:4px 8px;">Chọn tất cả</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <label style="margin-bottom: 0;">Nguồn tiền trích ra</label>
+                    <button onclick="toggleSelectAllJars()" style="background: none; border: none; color: var(--primary); font-weight: 700; font-size: 14px; cursor: pointer;">Chọn tất cả</button>
                 </div>
                 <div class="checkbox-group" id="savings-checkboxes"></div>
             </div>
-            <div class="input-group">
-                <label>Tỷ lệ trích (%)</label>
-                <input type="number" id="save-percent" value="10" min="1" max="100">
-            </div>
-            <button class="btn-primary btn-success" onclick="executeSavings()">✦ Thực hiện trích tiết kiệm</button>
+            <div class="input-group"><label>Tỷ lệ trích phần trăm (%)</label><input type="number" id="save-percent" value="10"></div>
+            <button class="btn-primary btn-success" onclick="executeSavings()">Thực hiện trích tiết kiệm</button>
         </div>
     </div>
 
-    <!-- TAB: Trợ lý AI -->
     <div id="tab-tools" class="tab-content">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; padding-top: 2px; flex-shrink:0;">
-            <h2 class="page-title" style="margin:0; font-size:19px;">Trợ lý AI 🤖</h2>
-            <div style="display:flex; gap:8px; align-items:center;">
-                <button class="ai-icon-btn" onclick="uiConfirm('Xóa toàn bộ đoạn chat?', clearChatHistory)" title="Xóa chat">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-                </button>
-                <button class="ai-icon-btn ai-settings-btn" id="ai-settings-toggle" onclick="toggleAiSettings()" title="Cài đặt AI">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                </button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 class="page-title" style="margin: 0; font-size: 22px;">Trợ lý tư vấn AI</h2>
+            <div style="display: flex; gap: 15px;">
+                <ion-icon name="trash-outline" style="font-size: 24px; color: var(--expense); cursor: pointer;" onclick="uiConfirm('Bạn có muốn xóa toàn bộ đoạn chat hiện tại?', clearChatHistory)" title="Xóa lịch sử chat"></ion-icon>
+                <ion-icon name="settings-outline" style="font-size: 24px; color: var(--text-muted); cursor: pointer;" onclick="document.getElementById('ai-settings-panel').classList.toggle('hidden')"></ion-icon>
             </div>
         </div>
-
-        <div id="ai-settings-panel" class="ai-settings-panel" style="flex-shrink:0;">
-            <div class="ai-settings-inner glass-card" style="margin-bottom:0;">
-                <div class="input-group" style="margin-bottom: 10px;">
-                    <label style="color:var(--primary); font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">🔑 API Key (Gemini)</label>
-                    <input type="password" id="geminiApiKey" placeholder="Dán Gemini API Key tại đây..." onchange="saveAiConfig()" autocomplete="off" autocorrect="off" spellcheck="false">
-                </div>
-                <div class="input-group" style="margin-bottom:0;">
-                    <label style="color:var(--warning); font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">🎭 Tính cách AI</label>
-                    <textarea id="aiPersona" rows="2" placeholder="VD: Bạn là chuyên gia tài chính thân thiện..." onchange="saveAiConfig()"></textarea>
-                </div>
-            </div>
+        <div id="ai-settings-panel" class="glass-card hidden" style="padding: 15px; margin-bottom: 10px;">
+            <div class="input-group" style="margin-bottom: 10px;"><label style="color: var(--primary);">Mã kết nối (API Key)</label><input type="text" id="geminiApiKey" placeholder="Nhập API Key..." onchange="saveAiConfig()" style="font-family: monospace;"></div>
+            <div class="input-group" style="margin-bottom: 0;"><label style="color: var(--warning);">Huấn luyện tính cách</label><textarea id="aiPersona" rows="2" placeholder="Ví dụ: Bạn là chuyên gia khó tính..." onchange="saveAiConfig()"></textarea></div>
+            <button class="btn-primary" onclick="document.getElementById('ai-settings-panel').classList.add('hidden')" style="padding: 12px; font-size: 14px; margin-top: 10px;">Hoàn tất</button>
         </div>
-
         <div id="chat-box" class="chat-box">
-            <div class="msg msg-ai">Chào! Mình là AI quản lý tài chính. Bạn có thể nhắn tin, dán ảnh (Ctrl+V) hoặc tải ảnh hóa đơn để mình tự động đọc và ghi sổ giúp nhé! ✨</div>
+            <div class="msg msg-ai">Chào bạn! Mình là AI quản lý tài chính. Bạn có thể nhắn tin hỏi đáp, dán ảnh (Ctrl+V) hoặc tải ảnh hóa đơn/chuyển khoản để mình tự động đọc và ghi sổ giúp nhé! ✨</div>
         </div>
-
-        <div id="image-preview" class="hidden" style="position:relative; margin-top:8px; width:fit-content; flex-shrink:0;">
-            <img id="preview-img" src="" style="width:60px; height:60px; border-radius:10px; object-fit:cover; border:2px solid var(--primary);">
-            <svg style="position:absolute; top:-8px; right:-8px; color:var(--expense); font-size:24px; cursor:pointer; background:white; border-radius:50%;" onclick="clearImage()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div id="image-preview" class="hidden" style="position: relative; margin-top: 10px; width: fit-content; background: var(--glass-bg); padding: 6px; border-radius: 12px; border: 1px solid var(--glass-border);">
+            <img id="preview-img" src="" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+            <ion-icon name="close-circle" style="position:absolute; top:-8px; right:-8px; color:var(--expense); font-size:26px; cursor:pointer; background: white; border-radius: 50%;" onclick="clearImage()"></ion-icon>
         </div>
-
         <div class="chat-input-area">
-            <label class="image-upload-btn" id="upload-btn-label">
-                <input type="file" id="chat-image" accept="image/*" hidden onchange="handleImageUpload(event)">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            </label>
-            <input type="text" id="chat-input" placeholder="Nhắn tin hoặc dán ảnh..." onkeypress="if(event.key==='Enter')sendChatMessage()" autocomplete="off" autocorrect="off" spellcheck="false">
-            <button onclick="sendChatMessage()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2" fill="currentColor" stroke="none"/></svg></button>
+            <label class="image-upload-btn" id="upload-btn-label"><input type="file" id="chat-image" accept="image/*" hidden onchange="handleImageUpload(event)"><ion-icon name="image-outline"></ion-icon></label>
+            <input type="text" id="chat-input" placeholder="Nhắn tin hoặc Dán ảnh..." onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()"><ion-icon name="send"></ion-icon></button>
         </div>
+        <div class="bottom-spacer"></div>
     </div>
 
-    <!-- TAB: Cài đặt -->
     <div id="tab-settings" class="tab-content">
-        <h2 class="page-title" style="margin-bottom: 16px; font-size:22px;">Cài đặt</h2>
-
+        <h2 class="page-title" style="margin-bottom: 24px;">Cài đặt hệ thống</h2>
         <div class="glass-card setting-item" onclick="document.getElementById('darkModeToggle').click()">
-            <div class="setting-left">
-                <svg class="setting-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                <div class="setting-text">Giao diện tối</div>
-            </div>
-            <label class="switch" onclick="event.stopPropagation();">
-                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
-                <span class="slider"></span>
-            </label>
+            <div class="setting-left"><ion-icon name="moon-outline" class="setting-icon"></ion-icon><div class="setting-text">Giao diện Tối Pastel</div></div>
+            <label class="switch" onclick="event.stopPropagation();"><input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()"><span class="slider"></span></label>
         </div>
-
-        <div class="glass-card setting-item clickable" onclick="exportData()">
-            <div class="setting-left">
-                <svg class="setting-icon" style="color:var(--info)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                <div class="setting-text">Lưu tệp (MoneyManager.json)</div>
-            </div>
-            <svg style="width:16px;height:16px;flex-shrink:0;color:var(--text-muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-
-        <div class="glass-card setting-item clickable" onclick="document.getElementById('importFile').click()">
-            <div class="setting-left">
-                <svg class="setting-icon" style="color:var(--primary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                <div class="setting-text">Nhập tệp dữ liệu (Import)</div>
-                <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
-            </div>
-            <svg style="width:16px;height:16px;flex-shrink:0;color:var(--text-muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-
-        <div style="height:1px; background:var(--glass-border); margin: 8px 0 20px;"></div>
-
-        <div class="glass-card setting-item clickable" onclick="uiConfirm('Xóa toàn bộ dữ liệu hiện tại? Hành động này không thể hoàn tác.', resetData)" style="border-color: rgba(255,118,117,0.3);">
-            <div class="setting-left">
-                <svg class="setting-icon" style="color:var(--expense)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-                <div class="setting-text" style="color:var(--expense)">Xóa toàn bộ dữ liệu</div>
-            </div>
-        </div>
-
-        <p style="text-align:center; color:var(--text-muted); font-size:12px; margin-top:30px; font-weight:500; opacity:0.6;">Money Manager v2.0 • iPhone 15 Pro Max Ready</p>
+        <div class="glass-card setting-item clickable" onclick="exportData()"><div class="setting-left"><ion-icon name="download-outline" class="setting-icon" style="color: var(--info)"></ion-icon><div class="setting-text">Lưu tệp (MoneyManager.json)</div></div></div>
+        <div class="glass-card setting-item clickable" onclick="document.getElementById('importFile').click()"><div class="setting-left"><ion-icon name="push-outline" class="setting-icon" style="color: var(--primary)"></ion-icon><div class="setting-text">Nhập tệp dữ liệu (Import)</div><input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)"></div></div>
+        <div class="glass-card setting-item clickable" style="margin-top: 35px;" onclick="uiConfirm('Xóa toàn bộ dữ liệu hiện tại? Hành động này không thể hoàn tác.', resetData)"><div class="setting-left"><ion-icon name="trash-outline" class="setting-icon" style="color: var(--expense)"></ion-icon><div class="setting-text" style="color: var(--expense)">Xóa toàn bộ dữ liệu</div></div></div>
     </div>
 
-</div><!-- /app-container -->
+</div>
 
-<!-- FAB -->
-<button class="fab" id="mainFab" onclick="openAddTxModal()">
-    <svg style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-</button>
-
-<!-- Bottom Nav -->
+<button class="fab" id="mainFab" onclick="openAddTxModal()">+</button>
 <nav class="bottom-nav">
-    <a class="nav-item active" onclick="switchTab('spending', this)">
-        <!-- wallet -->
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 13a1 1 0 1 0 2 0 1 1 0 0 0-2 0z" fill="currentColor" stroke="none"/><path d="M18 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v2"/>
-        </svg>
-        <span>Chi tiêu</span>
-    </a>
-    <a class="nav-item" onclick="switchTab('debts', this)">
-        <!-- card -->
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/>
-        </svg>
-        <span>Khoản nợ</span>
-    </a>
-    <a class="nav-item" onclick="switchTab('transactions', this)">
-        <!-- list -->
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3.5" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1" fill="currentColor" stroke="none"/>
-        </svg>
-        <span>Lịch sử</span>
-    </a>
-    <a class="nav-item" onclick="switchTab('savings', this)">
-        <!-- server/piggy -->
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/>
-        </svg>
-        <span>Tiết kiệm</span>
-    </a>
-    <a class="nav-item" onclick="switchTab('tools', this)">
-        <!-- chat bubbles -->
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-        <span>Trợ lý AI</span>
-    </a>
-    <a class="nav-item" onclick="switchTab('settings', this)">
-        <!-- settings gear -->
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-        <span>Cài đặt</span>
-    </a>
+    <a class="nav-item active" onclick="switchTab('spending', this)"><ion-icon name="wallet"></ion-icon>Chi tiêu</a>
+    <a class="nav-item" onclick="switchTab('debts', this)"><ion-icon name="card"></ion-icon>Khoản nợ</a>
+    <a class="nav-item" onclick="switchTab('transactions', this)"><ion-icon name="list"></ion-icon>Lịch sử</a>
+    <a class="nav-item" onclick="switchTab('savings', this)"><ion-icon name="server"></ion-icon>Tiết kiệm</a>
+    <a class="nav-item" onclick="switchTab('tools', this)"><ion-icon name="chatbubbles"></ion-icon>Trợ lý AI</a>
+    <a class="nav-item" onclick="switchTab('settings', this)"><ion-icon name="settings"></ion-icon>Cài đặt</a>
 </nav>
 
-<!-- Modal: Thêm/Sửa giao dịch -->
-<div class="modal-overlay" id="addModal" onclick="if(event.target===this)toggleModal('addModal',false)">
+<div class="modal-overlay" id="addModal" onclick="if(event.target === this) toggleModal('addModal', false)">
     <div class="modal-content">
-        <div class="modal-header">
-            <span class="modal-title" id="modal-tx-title">Thêm Giao Dịch</span>
-            <button class="close-btn" onclick="toggleModal('addModal',false)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></button>
+        <div class="modal-header"><span class="modal-title" id="modal-tx-title">Thêm Giao Dịch</span><button class="close-btn" onclick="toggleModal('addModal', false)"><ion-icon name="close-circle"></ion-icon></button></div>
+        <div class="type-toggle"><button class="type-btn active-chi" id="btnTypeChi" onclick="setTxType('chi')">- Chi Tiền</button><button class="type-btn" id="btnTypeThu" onclick="setTxType('thu')">+ Thu Tiền</button></div>
+        <div class="input-group"><label>Ngày giao dịch</label><input type="datetime-local" id="txDate"></div>
+        <div class="input-group"><label>Số tiền (VNĐ)</label><input type="number" id="txAmount" placeholder="VD: 50000"></div>
+        <div class="input-group"><label>Nguồn / Hũ</label><select id="txJar"></select></div>
+        
+        <div class="input-group" id="debt-link-section" style="background: rgba(255, 159, 243, 0.05); padding: 12px; border-radius: 16px; border: 1px dashed rgba(255, 159, 243, 0.3);">
+            <label class="saving-cb-wrapper" style="border:none; padding:0; background:transparent;">
+                <input type="checkbox" id="txHasDebt" onchange="toggleDebtSelect()">
+                <div class="custom-cb"></div>
+                <span class="cb-text" style="color: var(--expense);" id="debt-checkbox-text">Thanh toán khoản nợ?</span>
+            </label>
+            <select id="txLinkedDebt" style="margin-top: 12px; display: none;"></select>
         </div>
 
-        <div class="type-toggle">
-            <button class="type-btn active-chi" id="btnTypeChi" onclick="setTxType('chi')">− Chi Tiền</button>
-            <button class="type-btn" id="btnTypeThu" onclick="setTxType('thu')">+ Thu Tiền</button>
-        </div>
-
-        <div class="input-group">
-            <label>Ngày giao dịch</label>
-            <input type="datetime-local" id="txDate">
-        </div>
-        <div class="input-group">
-            <label>Số tiền (VNĐ)</label>
-            <input type="number" id="txAmount" placeholder="Nhập số tiền..." inputmode="numeric">
-        </div>
-        <div class="input-group">
-            <label>Nguồn / Hũ</label>
-            <select id="txJar"></select>
-        </div>
-
-        <div class="input-group" id="debt-link-section">
-            <div class="debt-cb-row" onclick="document.getElementById('txHasDebt').click()">
-                <input type="checkbox" id="txHasDebt" onchange="toggleDebtSelect()" style="display:none;">
-                <div class="custom-cb" id="debtCbVisual"></div>
-                <span class="cb-text" style="color:var(--expense); font-size:14px !important;" id="debt-checkbox-text">Thanh toán khoản nợ?</span>
-            </div>
-            <select id="txLinkedDebt" style="margin-top:10px; display:none;"></select>
-        </div>
-
-        <div class="input-group">
-            <label>Mô tả</label>
-            <input type="text" id="txDesc" placeholder="VD: Mua cafe, ăn trưa...">
-        </div>
-
+        <div class="input-group"><label>Mô tả</label><input type="text" id="txDesc" placeholder="VD: Mua cafe..."></div>
         <input type="hidden" id="txIsTransfer" value="false">
         <button class="btn-primary" id="btn-save-tx" onclick="saveTransaction()">Lưu Giao Dịch</button>
         <button class="btn-primary btn-danger" id="btn-delete-tx" style="display:none;" onclick="uiConfirm('Xóa giao dịch này? Số dư sẽ được hoàn lại.', deleteTransaction)">Xóa Giao Dịch</button>
     </div>
 </div>
 
-<!-- Modal: Sửa giá trị -->
-<div class="modal-overlay" id="editModal" onclick="if(event.target===this)toggleModal('editModal',false)">
+<div class="modal-overlay" id="editModal" onclick="if(event.target === this) toggleModal('editModal', false)">
     <div class="modal-content">
-        <div class="modal-header">
-            <span class="modal-title" id="edit-title">Chỉnh sửa</span>
-            <button class="close-btn" onclick="toggleModal('editModal',false)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></button>
-        </div>
-        <div class="input-group">
-            <label id="edit-label">Giá trị mới</label>
-            <input type="text" id="editValue" placeholder="Nhập giá trị...">
-            <input type="hidden" id="editKey">
-            <input type="hidden" id="editType">
-        </div>
+        <div class="modal-header"><span class="modal-title" id="edit-title">Chỉnh sửa</span><button class="close-btn" onclick="toggleModal('editModal', false)"><ion-icon name="close-circle"></ion-icon></button></div>
+        <div class="input-group"><label id="edit-label">Giá trị mới</label><input type="text" id="editValue" placeholder="Nhập giá trị..."><input type="hidden" id="editKey"><input type="hidden" id="editType"></div>
         <button class="btn-primary" onclick="saveEdit()">Cập nhật</button>
         <button class="btn-primary btn-danger" id="btn-delete-item" style="display:none;" onclick="deleteItem()">Xóa mục này</button>
     </div>
 </div>
 
-<!-- Custom Alert / Confirm -->
-<div class="modal-overlay" id="customAlertOverlay" style="z-index: 9999; justify-content: center; padding: 20px;">
+<div class="modal-overlay" id="customAlertOverlay" style="z-index: 9999;">
     <div class="custom-alert-box">
         <div class="alert-title" id="customAlertTitle">Thông báo</div>
         <div class="alert-msg" id="customAlertMsg"></div>
@@ -1540,1120 +294,342 @@
 </div>
 
 <script>
-// ============================================================
-// DATA LAYER
-// ============================================================
-const STORAGE_KEY = 'MoneyManagerDataV15';
+    const STORAGE_KEY = 'MoneyManagerDataV16'; 
 
-let appData = {};
-try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-        || localStorage.getItem('MoneyManagerDataV14')
-        || localStorage.getItem('MoneyManagerDataV13')
-        || localStorage.getItem('MoneyManagerDataV12');
-    if (raw) appData = JSON.parse(raw);
-} catch(e) {}
-
-appData.totalBalance = parseFloat(appData.totalBalance) || 0;
-appData.savings      = parseFloat(appData.savings)      || 0;
-appData.totalDebt    = parseFloat(appData.totalDebt)    || 0;
-
-if (!appData.jars     || typeof appData.jars     !== 'object') appData.jars     = { jar_1:0, jar_2:0, jar_3:0, jar_4:0 };
-if (!appData.jarNames || typeof appData.jarNames !== 'object') appData.jarNames = { jar_1:"Thiết Yếu", jar_2:"Giải Trí", jar_3:"Học Tập", jar_4:"Khác" };
-if (!appData.debts    || typeof appData.debts    !== 'object') appData.debts    = { debt_1:0, debt_2:0 };
-if (!appData.debtNames|| typeof appData.debtNames!== 'object') appData.debtNames= { debt_1:"Người thân", debt_2:"Ngân hàng" };
-if (!Array.isArray(appData.transactions)) appData.transactions = [];
-
-// ============================================================
-// STATE
-// ============================================================
-let currentTxType      = 'chi';
-let currentActiveTab   = 'spending';
-let editingTxIndex     = -1;
-let isAllJarsSelected  = false;
-let chatHistory        = [];
-let currentImageBase64 = null;
-let currentImageMimeType = null;
-
-const formatVND = (num) => '₫' + parseInt(num || 0).toLocaleString('vi-VN');
-
-// ============================================================
-// PERSIST
-// ============================================================
-function forceSave() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); } catch(e) {}
-}
-
-window.addEventListener('beforeunload',      forceSave);
-window.addEventListener('pagehide',          forceSave);
-window.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') forceSave(); });
-
-// ============================================================
-// ALERT / CONFIRM
-// ============================================================
-function uiAlert(msg, title = "Thông báo") {
-    document.getElementById('customAlertTitle').innerText = title;
-    document.getElementById('customAlertMsg').innerText   = msg;
-    document.getElementById('customConfirmCancel').style.display = 'none';
-    document.getElementById('customAlertOverlay').classList.add('active');
-    document.getElementById('customAlertOk').onclick = () => {
-        document.getElementById('customAlertOverlay').classList.remove('active');
-    };
-}
-
-function uiConfirm(msg, callback, title = "Xác nhận") {
-    document.getElementById('customAlertTitle').innerText = title;
-    document.getElementById('customAlertMsg').innerText   = msg;
-    document.getElementById('customConfirmCancel').style.display = 'block';
-    document.getElementById('customAlertOverlay').classList.add('active');
-    document.getElementById('customAlertOk').onclick = () => {
-        document.getElementById('customAlertOverlay').classList.remove('active');
-        if (callback) callback();
-    };
-    document.getElementById('customConfirmCancel').onclick = () => {
-        document.getElementById('customAlertOverlay').classList.remove('active');
-    };
-}
-
-window.alert = uiAlert;
-
-// ============================================================
-// ICONS & LOGOS
-// ============================================================
-// ICONS & LOGOS
-// ============================================================
-const ICONS = {
-    'food':    `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
-    'coffee':  `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>`,
-    'home':    `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
-    'car':     `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h11l4 4v4a2 2 0 0 1-2 2h-1"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>`,
-    'book':    `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
-    'game':    `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="15.5" cy="11.5" r="0.5" fill="currentColor"/><circle cx="17.5" cy="13.5" r="0.5" fill="currentColor"/><path d="M17 3H7a4 4 0 0 0-4 4v8a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4V7a4 4 0 0 0-4-4z"/></svg>`,
-    'plane':   `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2h-1A1.5 1.5 0 0 0 9 3.5V9l-8 5v2l8-2.5V17l-2 1.5V20l3.5-1 3.5 1v-1.5L12 17v-3.5l9 2.5z"/></svg>`,
-    'health':  `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>`,
-    'shirt':   `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg>`,
-    'heart':   `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
-    'paw':     `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/></svg>`,
-    'phone':   `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></svg>`,
-    'gift':    `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>`,
-    'baby':    `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M12 11v4"/><path d="M8 21l2-4h4l2 4"/><path d="M5 21h14"/></svg>`,
-    'savings': `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v6l4 2"/></svg>`,
-    'bank':    `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 2 7 22 7"/></svg>`,
-    'person':  `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
-    'friend':  `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-    'credit':  `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg>`,
-    'cube':    `<svg class="jar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
-};
-
-// Each icon category gets its own color
-const ICON_COLORS = {
-    'food':'#ff9f43',  'coffee':'#c0842a', 'home':'#54a0ff',  'car':'#5f27cd',
-    'book':'#00b894',  'game':'#fd79a8',   'plane':'#0984e3', 'health':'#00cec9',
-    'shirt':'#e84393', 'heart':'#ff6b6b',  'paw':'#fdcb6e',   'phone':'#6c5ce7',
-    'gift':'#e17055',  'baby':'#a29bfe',   'savings':'#00b894',
-    'bank':'#636e72',  'person':'#636e72', 'friend':'#74b9ff',
-    'credit':'#b2bec3','cube':'#a0aec0',
-};
-
-// ─── Icon detection: test trực tiếp trên tên có dấu ─────────────────────────
-// Dùng regex trên tên gốc (lowercase, có dấu) — đơn giản, chính xác.
-function normStr(s) {
-    // Chỉ dùng cho bank matching, KHÔNG dùng cho icon detection
-    return (s || '').toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/\u0111/g, 'd').replace(/đ/g, 'd')
-        .replace(/\s+/g, ' ').trim();
-}
-
-function detectIcon(name, isDebt = false) {
-    if (!name) return isDebt ? 'person' : 'cube';
-    const n = name.toLowerCase();
-
-    // ── Ăn uống & đồ uống ────────────────────────────────────────────────────
-    if (/cà phê|cafe|coffee|trà sữa|trà chanh|nước ngọt|sinh tố|trà|tea/.test(n)) return 'coffee';
-    if (/ăn uống|thực phẩm|nhà hàng|quán ăn|bữa ăn|cơm|bún|phở|pizza|burger|nhậu|đói|bếp/.test(n)) return 'food';
-
-    // ── Nhà ở & hóa đơn ──────────────────────────────────────────────────────
-    if (/nhà|thuê|điện|nước|internet|wifi|phòng|căn hộ|chung cư|phí dịch vụ/.test(n)) return 'home';
-
-    // ── Đi lại & xe ──────────────────────────────────────────────────────────
-    if (/xe|đi lại|xăng|grab|taxi|giao thông|bus|xe ôm|ship|giao hàng/.test(n)) return 'car';
-
-    // ── Học tập ───────────────────────────────────────────────────────────────
-    if (/học|sách|khóa|chứng chỉ|trường|giáo dục|đào tạo/.test(n)) return 'book';
-
-    // ── Giải trí ──────────────────────────────────────────────────────────────
-    if (/giải trí|game|phim|nhạc|karaoke|concert|thư giãn|xem/.test(n)) return 'game';
-
-    // ── Du lịch ───────────────────────────────────────────────────────────────
-    if (/bay|du lịch|phượt|nghỉ|biển|khách sạn|resort|tour/.test(n)) return 'plane';
-
-    // ── Sức khỏe & thể thao ──────────────────────────────────────────────────
-    if (/sức khỏe|thuốc|y tế|bệnh|gym|thể thao|bác sĩ|spa|fitness|yoga/.test(n)) return 'health';
-
-    // ── Thời trang & mua sắm ─────────────────────────────────────────────────
-    if (/áo|mua sắm|sắm|giày|quần|mỹ phẩm|thời trang|đẹp|túi/.test(n)) return 'shirt';
-
-    // ── Tình cảm & kỷ niệm ───────────────────────────────────────────────────
-    if (/tình|người yêu|bạn gái|bạn trai|hẹn hò|cưới|đám cưới|anniversary/.test(n)) return 'heart';
-
-    // ── Thú cưng ─────────────────────────────────────────────────────────────
-    if (/mèo|chó|thú cưng|pet/.test(n)) return 'paw';
-
-    // ── Công nghệ & điện thoại ────────────────────────────────────────────────
-    if (/điện thoại|phone|máy tính|laptop|công nghệ|thiết bị|iphone|samsung/.test(n)) return 'phone';
-
-    // ── Quà tặng & lễ ────────────────────────────────────────────────────────
-    if (/quà|tặng|sinh nhật|gift|lễ|tết/.test(n)) return 'gift';
-
-    // ── Con cái & gia đình nhỏ ────────────────────────────────────────────────
-    if (/trẻ em|con|bé|baby|sữa|đồ chơi/.test(n)) return 'baby';
-
-    // ── Tiết kiệm & dự phòng ─────────────────────────────────────────────────
-    if (/tiết kiệm|tích lũy|dự phòng|quỹ|saving/.test(n)) return 'savings';
-
-    // ── Thiết yếu (catch-all cho tên mặc định) ────────────────────────────────
-    if (/thiết yếu|cần thiết|essential/.test(n)) return 'home';
-
-    // ── Khác (default) ────────────────────────────────────────────────────────
-    if (/khác|other|misc/.test(n)) return 'cube';
-
-    // ── Debt-specific ─────────────────────────────────────────────────────────
-    if (isDebt) {
-        // Bank codes exact: tách từ rồi so khớp
-        const low = normStr(name);
-        const words = low.split(/[\s\-\/]+/);
-        const bankCodes = ['vcb','tcb','mb','mbb','bidv','agri','acb','tpb','stb',
-            'vib','hdb','ocb','msb','shb','eib','abb','lpb','nab','pgb','bvb',
-            'cbb','gpb','dab','klb','ncb','scb','vab','pvcb','vrb','uob','hsbc',
-            'cimb','ibk','ivb','vid','hlb','shbvn','scvn','woori','shinhan'];
-        if (words.some(w => bankCodes.includes(w))) return 'bank';
-        if (/ngân hàng|bank|tín dụng/.test(n)) return 'bank';
-        if (/thẻ tín dụng|credit/.test(n)) return 'credit';
-        if (/bạn bè|bạn|anh|chị|em|người thân|gia đình|bố|mẹ|cha|ba|ông|bà/.test(n)) return 'friend';
-        return 'person';
-    }
-
-    return 'cube';
-}
-
-function buildIconSvg(name, isDebt) {
-    const key   = detectIcon(name, isDebt);
-    const color = ICON_COLORS[key] || '#a0aec0';
-    return (ICONS[key] || ICONS['cube']).replace('class="jar-icon"', `class="jar-icon" style="color:${color}"`);
-}
-
-function getJarIconSvg(name)  { return buildIconSvg(name, false); }
-function getDebtIconSvg(name) { return buildIconSvg(name, true);  }
-
-
-// ── Nhận diện khoản nợ: ngân hàng / ví / người ───────────────────────────────
-// Tất cả dùng SVG icon — không dùng logo ảnh bên ngoài.
-
-// Chuẩn hoá tên: bỏ dấu, lowercase, bỏ khoảng trắng
-function normStr(s) {
-    return (s || '').toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/đ/g, 'd').replace(/\s+/g, '');
-}
-
-// Danh sách từ khoá ngân hàng VN (bao gồm viết tắt phổ biến)
-// normStr sẽ được áp dụng khi so sánh → không cần gõ đúng dấu
-const BANK_KEYWORDS = [
-    // Tên đầy đủ & viết tắt ký tự
-    'vietcombank','vcb','ngoaithuong','ngoai thuong',
-    'vietinbank','viettinbank','viettin','vietin','ctg','icb','cong thuong',
-    'bidv','dautuvaphat','dau tu',
-    'agribank','agri','nongthon','nong nghiep','nhno',
-    'techcombank','techcom','tech','tcb',
-    'mbbank','mb','quandoi','quan doi',
-    'vpbank','vpb',
-    'acb','achau','a chau',
-    'sacombank','sai gon thuong tin','stb',
-    'hdbank','hdb',
-    'tpbank','tpb','tienphuong','tien phuong',
-    'vib',
-    'ocb','phuong dong',
-    'msb','maritime','hanh hai',
-    'shb','saigon hanoi',
-    'seabank','dong nam a',
-    'eximbank','xuat nhap khau','eib','exim',
-    'abbank','an binh','abb',
-    'lienvietpostbank','lienviet','lpb','buu dien lien viet',
-    'namabank','nama','nam a','nab',
-    'pgbank','petrolimex','pgb',
-    'vietbank',
-    'bvbank','baoviet','bao viet','bvb',
-    'cbbank','xay dung','cbb',
-    'gpbank','dau khi','gpb',
-    'oceanbank','dai duong',
-    'dongabank','dong a','dab',
-    'kienlongbank','kienlong','kien long','klb',
-    'ncb','quoc dan',
-    'scb','saigon commercial',
-    'vietabank','viet a','vab',
-    'bacabank','bac a','baca',
-    'vccb','ban viet','banviet',
-    'pvcombank','pvcom','pvcb','dai chung',
-    'saigonbank',
-    'wooribank','woori',
-    'shinhan','shinhanbank','shbvn',
-    'hsbc',
-    'uob',
-    'cimb',
-    'standardchartered','scvn',
-    'indovina','ivb',
-    'vrb','viet nga',
-    'hlbank','hlb',
-    'ibk',
-    // Ví điện tử
-    'momo','vi momo',
-    'zalopay','zalo',
-    'vnpay',
-    'shopeepay','spay','shopee',
-    'viettelmoney','viettelpay','viettel',
-    'payoo','napas','vnptpay',
-    // Chung
-    'ngan hang','bank','the tin dung','credit',
-];
-
-// Từ khoá ví điện tử (icon wallet)
-const EWALLET_KEYWORDS = [
-    'momo','zalopay','zalo','vnpay','shopeepay','spay','shopee',
-    'viettelmoney','viettelpay','viettel','payoo','napas','vnptpay',
-    'vi dien tu','e-wallet','ewallet',
-];
-
-// Từ khoá người thân / bạn bè
-const PERSON_KEYWORDS_RE = /\bba\b|\bbố\b|\bmẹ\b|\bme\b|\banh\b|\bchi\b|\bchị\b|\bem\b|\bông\b|\bbà\b|\bchú\b|\bdì\b|\bdương\b|người thân|gia đình|bạn bè|bạn thân|friend|relative|family/;
-
-function isBank(name) {
-    const k = normStr(name);
-    return BANK_KEYWORDS.some(kw => k.includes(normStr(kw)));
-}
-function isEwallet(name) {
-    const k = normStr(name);
-    return EWALLET_KEYWORDS.some(kw => k.includes(normStr(kw)));
-}
-function isPerson(name) {
-    return PERSON_KEYWORDS_RE.test(name.toLowerCase());
-}
-
-// Trả về SVG icon phù hợp cho khoản nợ
-function renderDebtIcon(name) {
-    if (!name) return ICONS['person'].replace('class="jar-icon"', `class="jar-icon" style="color:#636e72"`);
-
-    if (isEwallet(name)) {
-        // Ví điện tử: icon smartphone/wallet
-        return `<svg class="jar-icon" style="color:#6c5ce7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></svg>`;
-    }
-    if (isBank(name)) {
-        // Ngân hàng: icon thẻ
-        return ICONS['credit'].replace('class="jar-icon"', `class="jar-icon" style="color:#0984e3"`);
-    }
-    if (isPerson(name)) {
-        // Bạn bè / người thân gần: icon 2 người
-        return ICONS['friend'].replace('class="jar-icon"', `class="jar-icon" style="color:#74b9ff"`);
-    }
-    // Mặc định: icon người
-    return ICONS['person'].replace('class="jar-icon"', `class="jar-icon" style="color:#636e72"`);
-}
-
-// ============================================================
-// AI CONFIG
-// ============================================================
-const keyInput    = document.getElementById('geminiApiKey');
-const personaInput= document.getElementById('aiPersona');
-keyInput.value    = localStorage.getItem('mmApiKey')     || '';
-personaInput.value= localStorage.getItem('mmAiPersona') || '';
-// AI settings panel hidden by default
-
-function saveAiConfig() {
-    localStorage.setItem('mmApiKey',    keyInput.value.trim());
-    localStorage.setItem('mmAiPersona', personaInput.value.trim());
-}
-
-function toggleAiSettings() {
-    const panel  = document.getElementById('ai-settings-panel');
-    const btn    = document.getElementById('ai-settings-toggle');
-    const isOpen = panel.classList.contains('open');
-    panel.classList.toggle('open', !isOpen);
-    btn.classList.toggle('active', !isOpen);
-}
-
-// ============================================================
-// HELPERS
-// ============================================================
-function setDefaultDate() {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    document.getElementById('txDate').value = now.toISOString().slice(0, 16);
-}
-
-// ============================================================
-// TAB NAVIGATION
-// ============================================================
-function switchTab(tabId, element) {
-    currentActiveTab = tabId;
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-    document.getElementById('tab-' + tabId).classList.add('active');
-    if (element) element.classList.add('active');
-
-    const fab = document.getElementById('mainFab');
-    if (tabId === 'settings' || tabId === 'tools') fab.style.display = 'none';
-    else fab.style.display = 'flex';
-
-    if (tabId === 'tools') {
-        const cb = document.getElementById('chat-box');
-        requestAnimationFrame(() => { cb.scrollTop = cb.scrollHeight; });
-    }
-
-    localStorage.setItem('mmSavedTab', tabId);
-}
-
-// Restore tab on load
-document.addEventListener("DOMContentLoaded", () => {
-    const saved  = localStorage.getItem('mmSavedTab') || 'spending';
-    const navEl  = document.querySelector(`.nav-item[onclick*="'${saved}'"]`);
-    switchTab(saved, navEl || document.querySelector('.nav-item'));
-});
-
-// ============================================================
-// SAVINGS CHECKBOXES
-// ============================================================
-function toggleSelectAllJars() {
-    isAllJarsSelected = !isAllJarsSelected;
-    document.querySelectorAll('.saving-cb').forEach(cb => cb.checked = isAllJarsSelected);
-    const btn = document.getElementById('btn-select-all');
-    if (btn) btn.innerText = isAllJarsSelected ? 'Bỏ chọn tất cả' : 'Chọn tất cả';
-}
-
-// ============================================================
-// DEBT TOGGLE
-// ============================================================
-function syncDebtCb() {
-    const cb  = document.getElementById('txHasDebt');
-    const vis = document.getElementById('debtCbVisual');
-    if (!cb || !vis) return;
-    if (cb.checked) {
-        vis.style.background   = 'var(--primary)';
-        vis.style.borderColor  = 'var(--primary)';
-        vis.innerHTML          = '<span style="color:white;font-size:13px;font-weight:900;">✔</span>';
-    } else {
-        vis.style.background   = '';
-        vis.style.borderColor  = '';
-        vis.innerHTML          = '';
-    }
-}
-
-function toggleDebtSelect() {
+    let appData = {};
     try {
-        syncDebtCb();
-        const debtSelect = document.getElementById('txLinkedDebt');
-        const hasDebtCb  = document.getElementById('txHasDebt');
-        if (hasDebtCb && hasDebtCb.checked) {
-            debtSelect.style.display = 'block';
-            let html = '';
-            for (let k in appData.debts) html += `<option value="${k}">${appData.debtNames[k] || 'Nợ'}</option>`;
-            debtSelect.innerHTML = html || '<option value="">Chưa có khoản nợ nào</option>';
-        } else if (debtSelect) {
-            debtSelect.style.display = 'none';
-        }
+        let savedData = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('MoneyManagerDataV15') || localStorage.getItem('MoneyManagerDataV14') || localStorage.getItem('MoneyManagerDataV13') || localStorage.getItem('MoneyManagerDataV12');
+        if(savedData) appData = JSON.parse(savedData);
     } catch(e) {}
-}
+    
+    appData.totalBalance = parseFloat(appData.totalBalance) || 0;
+    appData.savings = parseFloat(appData.savings) || 0;
+    appData.totalDebt = parseFloat(appData.totalDebt) || 0;
+    if (!appData.jars || typeof appData.jars !== 'object') appData.jars = { jar_1: 0, jar_2: 0, jar_3: 0, jar_4: 0 };
+    if (!appData.jarNames || typeof appData.jarNames !== 'object') appData.jarNames = { jar_1: "Thiết Yếu", jar_2: "Giải Trí", jar_3: "Học Tập", jar_4: "Khác" };
+    if (!appData.debts || typeof appData.debts !== 'object') appData.debts = { debt_1: 0, debt_2: 0 };
+    if (!appData.debtNames || typeof appData.debtNames !== 'object') appData.debtNames = { debt_1: "Người thân", debt_2: "Ngân hàng" };
+    if (!Array.isArray(appData.transactions)) appData.transactions = [];
+    
+    let currentTxType = 'chi'; let currentActiveTab = 'spending'; let editingTxIndex = -1; let isAllJarsSelected = false;
+    let chatHistory = []; let currentImageBase64 = null; let currentImageMimeType = null;
+    const formatVND = (num) => '₫' + parseInt(num || 0).toLocaleString('vi-VN');
 
-// ============================================================
-// JAR DROPDOWN
-// ============================================================
-function updateTxJarDropdown() {
-    try {
-        const select          = document.getElementById('txJar');
-        const currentVal      = select.value;
-        const debtLinkSection = document.getElementById('debt-link-section');
-        let html              = '';
-
-        if (currentActiveTab === 'savings' && editingTxIndex === -1) {
-            html = `<option value="savings">💰 Quỹ Tiết Kiệm</option>`;
-            if (debtLinkSection) debtLinkSection.style.display = 'block';
-        } else if (currentActiveTab === 'debts' && editingTxIndex === -1) {
-            for (let k in appData.debts) html += `<option value="${k}">💸 ${appData.debtNames[k]||'Nợ'}</option>`;
-            if (debtLinkSection) debtLinkSection.style.display = 'none';
-        } else {
-            for (let k in appData.jars) html += `<option value="${k}">${appData.jarNames[k]||'Hũ'}</option>`;
-            if (editingTxIndex > -1) {
-                const etx = appData.transactions[editingTxIndex];
-                if (etx.jarId === 'savings') html += `<option value="savings">💰 Quỹ Tiết Kiệm</option>`;
-                if ((etx.jarId||'').includes('debt')) {
-                    for (let k in appData.debts) {
-                        if (!html.includes(`value="${k}"`)) html += `<option value="${k}">💸 ${appData.debtNames[k]}</option>`;
-                    }
-                }
-            }
-            if (debtLinkSection) debtLinkSection.style.display = 'block';
-        }
-
-        select.innerHTML = html;
-        let found = false;
-        for (let i = 0; i < select.options.length; i++) {
-            if (select.options[i].value === currentVal) { select.selectedIndex = i; found = true; break; }
-        }
-        if (!found && select.options.length > 0) select.selectedIndex = 0;
-    } catch(e) {}
-}
-
-// ============================================================
-// MODALS
-// ============================================================
-function toggleModal(modalId, show) {
-    const modal = document.getElementById(modalId);
-    if (!modal) return;
-    if (show) {
-        modal.classList.add('active');
-        if (modalId === 'addModal' && editingTxIndex === -1) {
-            setDefaultDate();
-            const cb = document.getElementById('txHasDebt');
-            if (cb) cb.checked = false;
-            toggleDebtSelect();
-            updateTxJarDropdown();
-        }
-    } else {
-        modal.classList.remove('active');
+    // === HỆ THỐNG GHI LƯU TỨC THÌ (CHỐNG MẤT DỮ LIỆU) ===
+    function forceSave() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
     }
-}
-
-function setTxType(type) {
-    try {
-        currentTxType = type;
-        document.getElementById('btnTypeChi').className = type === 'chi' ? 'type-btn active-chi' : 'type-btn';
-        document.getElementById('btnTypeThu').className = type === 'thu' ? 'type-btn active-thu' : 'type-btn';
-        const debtText   = document.getElementById('debt-checkbox-text');
-        const debtLinkSec= document.getElementById('debt-link-section');
-        if (debtText && debtLinkSec) {
-            if (type === 'chi') {
-                debtText.innerText           = 'Thanh toán khoản nợ?';
-                debtText.style.color         = 'var(--expense)';
-                debtLinkSec.style.background = 'rgba(255,118,117,0.04)';
-                debtLinkSec.style.borderColor= 'rgba(255,118,117,0.3)';
-            } else {
-                debtText.innerText           = 'Vay mượn thêm?';
-                debtText.style.color         = 'var(--income)';
-                debtLinkSec.style.background = 'rgba(29,209,161,0.04)';
-                debtLinkSec.style.borderColor= 'rgba(29,209,161,0.3)';
-            }
-        }
-        updateTxJarDropdown();
-    } catch(e) {}
-}
-
-// ============================================================
-// DARK MODE
-// ============================================================
-function toggleDarkMode() {
-    const on = document.getElementById('darkModeToggle').checked;
-    document.body.classList.toggle('dark-mode', on);
-    localStorage.setItem('mmDarkMode', on);
-    document.getElementById('theme-color-meta').setAttribute('content', on ? '#1a1e24' : '#f7f9fc');
-}
-
-if (localStorage.getItem('mmDarkMode') === 'true') {
-    document.getElementById('darkModeToggle').checked = true;
-    toggleDarkMode();
-}
-
-// ============================================================
-// EDIT MODAL
-// ============================================================
-function openEditModal(type, key) {
-    try {
-        const titleEl    = document.getElementById('edit-title');
-        const inputEl    = document.getElementById('editValue');
-        const deleteBtn  = document.getElementById('btn-delete-item');
-        document.getElementById('editType').value = type;
-        document.getElementById('editKey').value  = key;
-        inputEl.type = 'number';
-        document.getElementById('edit-label').innerText = 'Giá trị mới (₫)';
-        deleteBtn.style.display = 'none';
-
-        if (type === 'newJar') {
-            titleEl.innerText = 'Tạo Hũ Mới';
-            inputEl.type  = 'text'; inputEl.value = '';
-            document.getElementById('edit-label').innerText = 'Tên hũ';
-        } else if (type === 'newDebt') {
-            titleEl.innerText = 'Tạo Khoản Nợ Mới';
-            inputEl.type  = 'text'; inputEl.value = '';
-            document.getElementById('edit-label').innerText = 'Tên (tự tìm logo ngân hàng)';
-        } else if (type === 'totalBalance') {
-            titleEl.innerText = 'Sửa Tổng Số Dư'; inputEl.value = appData.totalBalance;
-        } else if (type === 'savings') {
-            titleEl.innerText = 'Sửa Quỹ Tiết Kiệm'; inputEl.value = appData.savings;
-        } else if (type === 'totalDebt') {
-            titleEl.innerText = 'Sửa Tổng Nợ'; inputEl.value = appData.totalDebt;
-        } else if (type === 'jarBalance') {
-            titleEl.innerText = `Sửa ${appData.jarNames[key]||''}`; inputEl.value = appData.jars[key]; deleteBtn.style.display = 'block';
-        } else if (type === 'debtBalance') {
-            titleEl.innerText = `Sửa ${appData.debtNames[key]||''}`; inputEl.value = appData.debts[key]; deleteBtn.style.display = 'block';
-        } else if (type === 'jarName') {
-            titleEl.innerText = `Đổi tên hũ`; inputEl.type = 'text'; inputEl.value = appData.jarNames[key]||''; deleteBtn.style.display = 'block';
-        } else if (type === 'debtName') {
-            titleEl.innerText = `Đổi tên nợ`; inputEl.type = 'text'; inputEl.value = appData.debtNames[key]||''; deleteBtn.style.display = 'block';
-        }
-
-        toggleModal('editModal', true);
-        setTimeout(() => inputEl.focus(), 400);
-    } catch(e) {}
-}
-
-function saveEdit() {
-    const type   = document.getElementById('editType').value;
-    const key    = document.getElementById('editKey').value;
-    const rawVal = document.getElementById('editValue').value;
-
-    if (type === 'newJar' || type === 'newDebt') {
-        if (!rawVal.trim()) return uiAlert('Tên không được để trống!');
-        if (type === 'newJar') { const id = 'jar_' + Date.now(); appData.jars[id] = 0; appData.jarNames[id] = rawVal.trim(); }
-        else                   { const id = 'debt_'+ Date.now(); appData.debts[id]= 0; appData.debtNames[id]= rawVal.trim(); }
-    } else if (type === 'jarName' || type === 'debtName') {
-        if (!rawVal.trim()) return uiAlert('Tên không được để trống!');
-        if (type === 'jarName') appData.jarNames[key]  = rawVal.trim();
-        else                    appData.debtNames[key] = rawVal.trim();
-    } else {
-        let numVal = 0;
-        if (rawVal.trim() !== '') {
-            numVal = parseFloat(rawVal);
-            if (isNaN(numVal)) return uiAlert('Vui lòng nhập số hợp lệ!');
-        }
-        if      (type === 'totalBalance') appData.totalBalance = numVal;
-        else if (type === 'savings')      appData.savings      = numVal;
-        else if (type === 'totalDebt')    appData.totalDebt    = numVal;
-        else if (type === 'jarBalance')   appData.jars[key]    = numVal;
-        else if (type === 'debtBalance')  appData.debts[key]   = numVal;
-    }
-
-    updateUI();
-    toggleModal('editModal', false);
-}
-
-function deleteItem() {
-    const type = document.getElementById('editType').value;
-    const key  = document.getElementById('editKey').value;
-    const name = type.includes('jar') ? appData.jarNames[key] : appData.debtNames[key];
-
-    uiConfirm(`Xóa "${name||'mục này'}"? Lịch sử giao dịch cũ sẽ được giữ lại.`, () => {
-        if (type.includes('jar')) {
-            if (appData.jars[key] !== 0) {
-                uiConfirm(`Hũ đang có ${formatVND(appData.jars[key])}. Xóa sẽ trừ vào Tổng số dư. Tiếp tục?`, () => {
-                    appData.totalBalance -= appData.jars[key];
-                    delete appData.jars[key]; delete appData.jarNames[key];
-                    updateUI(); toggleModal('editModal', false);
-                });
-                return;
-            }
-            delete appData.jars[key]; delete appData.jarNames[key];
-        } else if (type.includes('debt')) {
-            if (appData.debts[key] !== 0) {
-                uiConfirm(`Nợ đang có ${formatVND(appData.debts[key])}. Xóa sẽ trừ vào Tổng Nợ. Tiếp tục?`, () => {
-                    appData.totalDebt -= appData.debts[key];
-                    delete appData.debts[key]; delete appData.debtNames[key];
-                    updateUI(); toggleModal('editModal', false);
-                });
-                return;
-            }
-            delete appData.debts[key]; delete appData.debtNames[key];
-        }
-        updateUI();
-        toggleModal('editModal', false);
+    
+    window.addEventListener('beforeunload', forceSave);
+    window.addEventListener('pagehide', forceSave);
+    window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') forceSave();
     });
-}
 
-// ============================================================
-// RENDER UI
-// ============================================================
-function updateUI() {
-    try {
-        document.getElementById('home-total').innerText       = formatVND(appData.totalBalance);
-        document.getElementById('savings-display').innerText  = formatVND(appData.savings);
-        document.getElementById('debt-total').innerText       = formatVND(appData.totalDebt);
+    function uiAlert(msg, title = "Thông báo") {
+        document.getElementById('customAlertTitle').innerText = title; document.getElementById('customAlertMsg').innerText = msg;
+        document.getElementById('customConfirmCancel').style.display = 'none'; document.getElementById('customAlertOverlay').classList.add('active');
+        document.getElementById('customAlertOk').onclick = () => { document.getElementById('customAlertOverlay').classList.remove('active'); };
+    }
+    function uiConfirm(msg, callback, title = "Xác nhận") {
+        document.getElementById('customAlertTitle').innerText = title; document.getElementById('customAlertMsg').innerText = msg;
+        document.getElementById('customConfirmCancel').style.display = 'block'; document.getElementById('customAlertOverlay').classList.add('active');
+        document.getElementById('customAlertOk').onclick = () => { document.getElementById('customAlertOverlay').classList.remove('active'); if(callback) callback(); };
+        document.getElementById('customConfirmCancel').onclick = () => { document.getElementById('customAlertOverlay').classList.remove('active'); };
+    }
+    window.alert = uiAlert;
 
-        // Jar grid
-        let gridHtml = '';
-        let checkboxHtml = '';
-        for (let k in appData.jars) {
-            const _jIcon = getJarIconSvg(appData.jarNames[k]);
-            const _jColor = (_jIcon.match(/color:([^;"]+)/) || [])[1] || 'var(--info)';
-            gridHtml += `
-                <div class="glass-card jar-card clickable" onclick="openEditModal('jarBalance','${k}')">
-                    <div class="jar-icon-pill" style="--pill-color:${_jColor}">${_jIcon}</div>
-                    <div class="jar-name" onclick="event.stopPropagation();openEditModal('jarName','${k}')">${appData.jarNames[k]||'Hũ'}</div>
-                    <div class="jar-amount">${formatVND(appData.jars[k])}</div>
-                </div>`;
-            checkboxHtml += `
-                <label class="saving-cb-wrapper">
-                    <input type="checkbox" value="${k}" class="saving-cb">
-                    <div class="custom-cb"></div>
-                    <span class="cb-text">${appData.jarNames[k]||'Hũ'}</span>
-                </label>`;
-        }
-        gridHtml += `
-            <div class="glass-card jar-card add-jar-card clickable" onclick="openEditModal('newJar','')">
-                <svg class="jar-icon" style="color:var(--text-muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                <div class="jar-name" style="color:var(--text-muted);background:transparent;">Thêm hũ</div>
-            </div>`;
+    function getIconForJar(n) { n=n.toLowerCase(); if(/ăn|uống|cafe|cà phê|trà sữa|thực phẩm|nhậu|đói/.test(n)) return 'fast-food-outline'; if(/nhà|thuê|điện|nước|internet|wifi/.test(n)) return 'home-outline'; if(/xe|đi lại|xăng|grab|taxi/.test(n)) return 'car-outline'; if(/học|sách|khoá học|chứng chỉ/.test(n)) return 'book-outline'; if(/giải|chơi|game|phim|nhạc|kỷ niệm/.test(n)) return 'game-controller-outline'; if(/bay|nhảy|du lịch|phượt|nghỉ|biển/.test(n)) return 'airplane-outline'; if(/khoẻ|thuốc|y tế|bệnh|gym|thể thao/.test(n)) return 'medkit-outline'; if(/áo|sắm|giày|quần|mỹ phẩm/.test(n)) return 'shirt-outline'; if(/tình|người yêu|bạn gái|hẹn hò/.test(n)) return 'heart-outline'; if(/mèo|chó|thú cưng/.test(n)) return 'paw-outline'; return 'cube-outline'; }
+    function renderBankLogoOrIcon(n) { if (!n) return `<ion-icon name="person-outline" class="jar-icon"></ion-icon>`; n=n.toLowerCase().replace(/\s/g, ''); const banks = { vcb: 'vcb', vietcombank: 'vcb', tcb: 'tcb', techcombank: 'tcb', mb: 'mb', mbbank: 'mb', vpb: 'vpbank', vpbank: 'vpbank', bidv: 'bidv', ctg: 'vietinbank', vietinbank: 'vietinbank', viettin: 'vietinbank', agri: 'agribank', agribank: 'agribank', acb: 'acb', tpb: 'tpbank', tpbank: 'tpbank', stb: 'sacombank', sacombank: 'sacombank', vib: 'vib', hdb: 'hdbank', hdbank: 'hdbank', momo: 'momo'}; for(let key in banks) { if(n.includes(key)) { let logoUrl = `https://api.vietqr.io/img/${banks[key]}.png`; if(banks[key] === 'momo') logoUrl = 'https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png'; return `<img src="${logoUrl}" class="bank-logo" onerror="this.outerHTML='<ion-icon name=\\'card-outline\\' class=\\'jar-icon\\'></ion-icon>'">`; } } return `<ion-icon name="person-outline" class="jar-icon"></ion-icon>`; }
 
-        // Debt grid
-        let debtHtml = '';
-        for (let k in appData.debts) {
-            debtHtml += `
-                <div class="glass-card jar-card clickable" onclick="openEditModal('debtBalance','${k}')" style="background:var(--expense-light);border-color:rgba(255,118,117,0.25);">
-                    ${renderDebtIcon(appData.debtNames[k])}
-                    <div class="jar-name" onclick="event.stopPropagation();openEditModal('debtName','${k}')" style="background:rgba(255,118,117,0.1);color:var(--expense);">${appData.debtNames[k]||'Nợ'}</div>
-                    <div class="jar-amount" style="color:var(--expense);">${formatVND(appData.debts[k])}</div>
-                </div>`;
-        }
-        debtHtml += `
-            <div class="glass-card jar-card add-jar-card clickable" onclick="openEditModal('newDebt','')" style="border-color:rgba(255,118,117,0.25);">
-                <svg class="jar-icon" style="color:var(--expense);opacity:0.65;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                <div class="jar-name" style="color:var(--expense);opacity:0.65;background:transparent;">Thêm nợ</div>
-            </div>`;
+    const keyInput = document.getElementById('geminiApiKey'); const personaInput = document.getElementById('aiPersona');
+    keyInput.value = localStorage.getItem('mmApiKey') || ''; personaInput.value = localStorage.getItem('mmAiPersona') || '';
+    if(!keyInput.value) document.getElementById('ai-settings-panel').classList.remove('hidden');
 
-        document.getElementById('jar-grid-container').innerHTML  = gridHtml;
-        document.getElementById('debt-grid-container').innerHTML = debtHtml;
-        document.getElementById('savings-checkboxes').innerHTML  = checkboxHtml;
-        isAllJarsSelected = false;
-        const btn = document.getElementById('btn-select-all');
-        if (btn) btn.innerText = 'Chọn tất cả';
+    function saveAiConfig() { localStorage.setItem('mmApiKey', keyInput.value.trim()); localStorage.setItem('mmAiPersona', personaInput.value.trim()); }
+    function setDefaultDate() { const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); document.getElementById('txDate').value = now.toISOString().slice(0, 16); }
 
-        // Transactions
-        const txList = document.getElementById('tx-list');
-        if (!appData.transactions || appData.transactions.length === 0) {
-            txList.innerHTML = '<div class="empty-state">📂<br><br>Chưa có giao dịch nào.</div>';
+    // === HỆ THỐNG GHI NHỚ TAB ===
+    function switchTab(tabId, element) {
+        currentActiveTab = tabId; 
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        
+        document.getElementById('tab-' + tabId).classList.add('active'); 
+        if(element) element.classList.add('active');
+        
+        if(tabId === 'tools') { const chatBox = document.getElementById('chat-box'); chatBox.scrollTop = chatBox.scrollHeight; }
+        const fab = document.getElementById('mainFab'); 
+        if(tabId === 'settings' || tabId === 'tools') fab.style.display = 'none'; else fab.style.display = 'flex';
+        
+        // Lưu vị trí
+        localStorage.setItem('mmSavedTab', tabId);
+    }
+
+    // Phục hồi vị trí khi mở App
+    document.addEventListener("DOMContentLoaded", () => {
+        let savedTab = localStorage.getItem('mmSavedTab') || 'spending';
+        let navEl = document.querySelector(`.nav-item[onclick*="${savedTab}"]`);
+        if(navEl) {
+            switchTab(savedTab, navEl);
         } else {
-            let html = '';
-            appData.transactions.forEach((tx, idx) => {
-                const isThu     = tx.type === 'thu';
-                const dateObj   = new Date(tx.date || new Date());
-                const dateStr   = dateObj.toLocaleDateString('vi-VN') + ' ' + dateObj.getHours() + ':' + String(dateObj.getMinutes()).padStart(2,'0');
-                const jarIdSafe = tx.jarId || '';
-                let jarNameDisplay;
-                if (jarIdSafe === 'savings')        jarNameDisplay = '💰 Quỹ Tiết Kiệm';
-                else if (jarIdSafe.includes('debt')) jarNameDisplay = appData.debtNames[jarIdSafe] || 'Khoản nợ đã xóa';
-                else                                 jarNameDisplay = appData.jarNames[jarIdSafe]  || 'Hũ đã xóa';
-                if (tx.isTransfer)    jarNameDisplay = `${appData.jarNames[tx.sourceJar]||'Hũ cũ'} ➔ Tiết Kiệm`;
-                else if (tx.isChotNgay) jarNameDisplay = '🌟 Chốt Ngày ➔ Tiết Kiệm';
-                const debtLink = tx.linkedDebt ? `<div class="tx-debt-link">🔗 ${appData.debtNames[tx.linkedDebt]||'Khoản nợ cũ'}</div>` : '';
-                html += `
-                    <div class="glass-card tx-item clickable" onclick="openEditTxModal(${idx})">
-                        <div style="flex:1;min-width:0;">
-                            <div class="tx-desc" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${tx.desc||'Giao dịch'}</div>
-                            <div class="tx-date">${dateStr}</div>
-                            <div>${'<div class="tx-jar">'+jarNameDisplay+'</div>'}${debtLink}</div>
-                        </div>
-                        <div class="tx-amount ${tx.type}" style="margin-left:10px;flex-shrink:0;">${isThu?'+':'-'}${formatVND(tx.amount)}</div>
-                    </div>`;
-            });
-            txList.innerHTML = html;
+            switchTab('spending', document.querySelector('.nav-item')); 
         }
-
-        forceSave();
-    } catch(e) { console.error('updateUI error:', e); }
-}
-
-// ============================================================
-// TRANSACTION EFFECTS
-// ============================================================
-function applyTxEffect(tx, multiplier) {
-    if (!tx) return;
-    const jarIdSafe = tx.jarId || '';
-
-    // Linked debt adjustment
-    if (tx.linkedDebt && appData.debts[tx.linkedDebt] !== undefined) {
-        if (tx.type === 'chi') {
-            appData.totalDebt -= tx.amount * multiplier;
-            appData.debts[tx.linkedDebt] -= tx.amount * multiplier;
-        } else {
-            appData.totalDebt += tx.amount * multiplier;
-            appData.debts[tx.linkedDebt] += tx.amount * multiplier;
-        }
-    }
-
-    if (tx.isChotNgay) {
-        appData.savings += tx.amount * multiplier;
-        appData.totalBalance -= tx.amount * multiplier;
-        for (let jar in tx.deducts) {
-            if (appData.jars[jar] !== undefined) appData.jars[jar] -= tx.deducts[jar] * multiplier;
-        }
-    } else if (tx.isTransfer) {
-        if (appData.jars[tx.sourceJar] !== undefined) appData.jars[tx.sourceJar] -= tx.amount * multiplier;
-        appData.totalBalance -= tx.amount * multiplier;
-        appData.savings      += tx.amount * multiplier;
-    } else if (jarIdSafe === 'savings') {
-        if (tx.type === 'thu') appData.savings += tx.amount * multiplier;
-        else                   appData.savings -= tx.amount * multiplier;
-    } else if (jarIdSafe.includes('debt')) {
-        if (tx.type === 'thu') {
-            appData.totalDebt += tx.amount * multiplier;
-            if (appData.debts[jarIdSafe] !== undefined) appData.debts[jarIdSafe] += tx.amount * multiplier;
-        } else {
-            appData.totalDebt -= tx.amount * multiplier;
-            if (appData.debts[jarIdSafe] !== undefined) appData.debts[jarIdSafe] -= tx.amount * multiplier;
-        }
-    } else {
-        if (tx.type === 'thu') {
-            appData.totalBalance += tx.amount * multiplier;
-            if (appData.jars[jarIdSafe] !== undefined) appData.jars[jarIdSafe] += tx.amount * multiplier;
-        } else {
-            appData.totalBalance -= tx.amount * multiplier;
-            if (appData.jars[jarIdSafe] !== undefined) appData.jars[jarIdSafe] -= tx.amount * multiplier;
-        }
-    }
-}
-
-// ============================================================
-// ADD / EDIT TRANSACTION MODAL
-// ============================================================
-function openAddTxModal() {
-    try {
-        editingTxIndex = -1;
-        document.getElementById('modal-tx-title').innerText     = 'Thêm Giao Dịch';
-        document.getElementById('btn-save-tx').innerText        = 'Lưu Giao Dịch';
-        document.getElementById('btn-delete-tx').style.display  = 'none';
-        document.getElementById('txAmount').value               = '';
-        document.getElementById('txDesc').value                 = '';
-        document.getElementById('txIsTransfer').value           = 'false';
-        setDefaultDate();
-        const cb = document.getElementById('txHasDebt');
-        if (cb) cb.checked = false;
-        toggleDebtSelect();
-        setTxType('chi');
-        toggleModal('addModal', true);
-    } catch(e) {}
-}
-
-function openEditTxModal(index) {
-    editingTxIndex = index;
-    const tx = appData.transactions[index];
-    if (tx.isChotNgay) return uiAlert('Đây là giao dịch Chốt ngày. Dùng nút Xóa để hoàn tác.');
-    document.getElementById('modal-tx-title').innerText    = 'Sửa Giao Dịch';
-    document.getElementById('btn-save-tx').innerText       = 'Cập nhật';
-    document.getElementById('btn-delete-tx').style.display = 'block';
-    setTxType(tx.type);
-    const d = new Date(tx.date);
-    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-    document.getElementById('txDate').value        = d.toISOString().slice(0,16);
-    document.getElementById('txAmount').value      = tx.amount;
-    document.getElementById('txDesc').value        = tx.desc;
-    document.getElementById('txIsTransfer').value  = tx.isTransfer ? 'true' : 'false';
-    if ((tx.jarId||'').includes('debt')) { currentActiveTab = 'debts'; updateTxJarDropdown(); }
-    document.getElementById('txJar').value = tx.isTransfer ? tx.sourceJar : tx.jarId;
-    if (tx.linkedDebt) {
-        document.getElementById('txHasDebt').checked = true;
-        toggleDebtSelect();
-        document.getElementById('txLinkedDebt').value = tx.linkedDebt;
-    } else {
-        document.getElementById('txHasDebt').checked = false;
-        syncDebtCb();
-        toggleDebtSelect();
-    }
-    toggleModal('addModal', true);
-}
-
-function closeTxModal() { editingTxIndex = -1; toggleModal('addModal', false); }
-
-function saveTransaction(customTx = null) {
-    let amount, jarId, desc, dateVal, txType, linkedDebtId;
-
-    if (customTx) {
-        amount = customTx.amount; jarId = customTx.jarId; desc = customTx.desc;
-        dateVal = new Date().toISOString(); txType = customTx.type; linkedDebtId = null;
-    } else {
-        amount       = parseFloat(document.getElementById('txAmount').value);
-        jarId        = document.getElementById('txJar').value;
-        desc         = document.getElementById('txDesc').value || 'Giao dịch mới';
-        dateVal      = document.getElementById('txDate').value;
-        txType       = currentTxType;
-        linkedDebtId = document.getElementById('txHasDebt').checked
-                       ? document.getElementById('txLinkedDebt').value
-                       : null;
-    }
-
-    if (isNaN(amount) || amount <= 0) return uiAlert('Vui lòng nhập số tiền hợp lệ!');
-    if (!customTx && document.getElementById('txHasDebt').checked && !linkedDebtId)
-        return uiAlert('Vui lòng chọn khoản nợ tương ứng!');
-
-    let isTransfer = false, sourceJar = null, finalJarId = jarId;
-    if (!customTx && editingTxIndex === -1 && currentActiveTab === 'savings' && txType === 'thu' && jarId !== 'savings') {
-        isTransfer = true; sourceJar = jarId; finalJarId = 'savings';
-    } else if (!customTx && editingTxIndex > -1 && document.getElementById('txIsTransfer').value === 'true' && txType === 'thu' && jarId !== 'savings') {
-        isTransfer = true; sourceJar = jarId; finalJarId = 'savings';
-    }
-
-    const newTx = {
-        date: dateVal ? new Date(dateVal).toISOString() : new Date().toISOString(),
-        type: txType, amount, jarId: finalJarId, desc, isTransfer, sourceJar, linkedDebt: linkedDebtId
-    };
-
-    if (!customTx && editingTxIndex > -1) {
-        applyTxEffect(appData.transactions[editingTxIndex], -1);
-        applyTxEffect(newTx, 1);
-        appData.transactions[editingTxIndex] = newTx;
-    } else {
-        applyTxEffect(newTx, 1);
-        appData.transactions.unshift(newTx);
-    }
-
-    appData.transactions.sort((a,b) => new Date(b.date) - new Date(a.date));
-    updateUI();
-    if (!customTx) closeTxModal();
-}
-
-function deleteTransaction() {
-    applyTxEffect(appData.transactions[editingTxIndex], -1);
-    appData.transactions.splice(editingTxIndex, 1);
-    updateUI();
-    closeTxModal();
-}
-
-// ============================================================
-// SAVINGS EXECUTION
-// ============================================================
-function executeSavings() {
-    const percent = parseFloat(document.getElementById('save-percent').value);
-    if (isNaN(percent) || percent <= 0 || percent > 100) return uiAlert('Tỷ lệ % không hợp lệ (1–100)!');
-
-    const checkedBoxes = document.querySelectorAll('.saving-cb:checked');
-    if (checkedBoxes.length === 0) return uiAlert('Vui lòng chọn ít nhất 1 hũ!');
-
-    let selectedJars = [], totalSelBal = 0;
-    checkedBoxes.forEach(cb => {
-        const bal = appData.jars[cb.value];
-        if (bal > 0) { selectedJars.push(cb.value); totalSelBal += bal; }
     });
-    if (totalSelBal <= 0) return uiAlert('Các hũ được chọn đang trống!');
 
-    const totalExtract = (totalSelBal * percent) / 100;
-    let descNames = [], deductsObj = {};
-    selectedJars.forEach(jid => {
-        const deduct = totalExtract * (appData.jars[jid] / totalSelBal);
-        appData.jars[jid] -= deduct;
-        deductsObj[jid] = deduct;
-        descNames.push(appData.jarNames[jid]);
-    });
-    appData.totalBalance -= totalExtract;
-    appData.savings      += totalExtract;
-    appData.transactions.unshift({
-        date: new Date().toISOString(), type: 'thu', amount: totalExtract,
-        jarId: 'savings', desc: `Chốt ngày: Trích ${percent}% từ ${descNames.join(', ')}`,
-        isChotNgay: true, deducts: deductsObj
-    });
-    updateUI();
-    uiAlert(`✅ Đã trích ${formatVND(totalExtract)} vào Quỹ Tiết Kiệm!`);
-}
+    function toggleSelectAllJars() { isAllJarsSelected = !isAllJarsSelected; document.querySelectorAll('.saving-cb').forEach(cb => cb.checked = isAllJarsSelected); document.getElementById('btn-select-all').innerText = isAllJarsSelected ? "Bỏ chọn" : "Chọn tất cả"; }
 
-// ============================================================
-// AI CHAT
-// ============================================================
-function formatAIResponse(text) {
-    return text
-        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
-        .replace(/\n/g, '<br>');
-}
-
-function appendChatMsg(sender, text, id = '') {
-    const chatBox = document.getElementById('chat-box');
-    const msgDiv  = document.createElement('div');
-    msgDiv.className = `msg msg-${sender}`;
-    if (id) msgDiv.id = id;
-    msgDiv.innerHTML = sender === 'user' ? text : formatAIResponse(text);
-    chatBox.appendChild(msgDiv);
-    setTimeout(() => { chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }); }, 80);
-}
-
-function clearChatHistory() {
-    chatHistory = [];
-    document.getElementById('chat-box').innerHTML = '<div class="msg msg-ai">Đã dọn dẹp! Bạn cần mình hỗ trợ gì nào? ✨</div>';
-}
-
-// Paste image
-document.addEventListener('paste', (e) => {
-    if (currentActiveTab !== 'tools') return;
-    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
-    for (let item of items) {
-        if (item.type.indexOf('image') === 0) {
-            const file   = item.getAsFile();
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                currentImageBase64    = ev.target.result.split(',')[1];
-                currentImageMimeType  = file.type;
-                document.getElementById('preview-img').src = ev.target.result;
-                document.getElementById('image-preview').classList.remove('hidden');
-                document.getElementById('upload-btn-label').classList.add('has-image');
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-});
-
-function handleImageUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        currentImageBase64   = e.target.result.split(',')[1];
-        currentImageMimeType = file.type;
-        document.getElementById('preview-img').src = e.target.result;
-        document.getElementById('image-preview').classList.remove('hidden');
-        document.getElementById('upload-btn-label').classList.add('has-image');
-    };
-    reader.readAsDataURL(file);
-}
-
-function clearImage() {
-    currentImageBase64 = null; currentImageMimeType = null;
-    document.getElementById('chat-image').value = '';
-    document.getElementById('image-preview').classList.add('hidden');
-    document.getElementById('upload-btn-label').classList.remove('has-image');
-}
-
-async function sendChatMessage() {
-    const apiKey  = document.getElementById('geminiApiKey').value.trim();
-    if (!apiKey) {
-        document.getElementById('ai-settings-panel').classList.add('open');
-        document.getElementById('ai-settings-toggle').classList.add('active');
-        return uiAlert('Vui lòng nhập Gemini API Key ⚙️');
-    }
-
-    const inputEl  = document.getElementById('chat-input');
-    const userText = inputEl.value.trim();
-    if (!userText && !currentImageBase64) return;
-
-    let displayHtml = userText;
-    if (currentImageBase64) displayHtml += `<br><img src="data:${currentImageMimeType};base64,${currentImageBase64}" style="width:90px;border-radius:8px;margin-top:5px;">`;
-    appendChatMsg('user', displayHtml || '[Đã gửi hình ảnh]');
-    inputEl.value = '';
-
-    const loadingId = 'loading-' + Date.now();
-    appendChatMsg('ai', '<div class="typing-indicator"><span></span><span></span><span></span></div>', loadingId);
-
-    const recentTx  = appData.transactions.slice(0,5).map(t => `${(t.date||'').slice(0,10)} ${t.type==='thu'?'+':'-'}${t.amount} (${t.desc})`).join(' | ');
-    const jarListStr= Object.keys(appData.jarNames).map(k => `"${k}"(${appData.jarNames[k]})`).join(', ');
-    const ctxStr    = `[TÀI CHÍNH: Tổng:${formatVND(appData.totalBalance)}, TK:${formatVND(appData.savings)}. 5 GD gần nhất: ${recentTx}]. Hũ: ${jarListStr}. `;
-    let promptForAI = userText || 'Hãy phân tích hóa đơn trong hình này.';
-
-    if (chatHistory.length === 0) {
-        const persona = document.getElementById('aiPersona').value.trim() || 'trợ lý tài chính thông minh.';
-        promptForAI = ctxStr + `\n[CHỈ THỊ]: Đóng vai ${persona} Nếu có hóa đơn, đọc số tiền & nội dung, THÊM khối lệnh sau vào CUỐI: $$JSON_START$$ {"amount": số_tiền, "type": "chi", "jarId": "jar_id_phù_hợp", "desc": "Nội dung"} $$JSON_END$$\nNgười dùng: ${promptForAI}`;
-    }
-
-    let parts = [{ text: promptForAI }];
-    if (currentImageBase64) {
-        parts.push({ inlineData: { mimeType: currentImageMimeType, data: currentImageBase64 } });
-        clearImage();
-    }
-    chatHistory.push({ role: 'user', parts });
-
-    try {
-        const res = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-            { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: chatHistory }) }
-        );
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        let aiText = data.candidates[0].content.parts[0].text;
-
-        // Auto-record transaction
-        const match = aiText.match(/\$\$JSON_START\$\$\s*(\{[\s\S]*?\})\s*\$\$JSON_END\$\$/);
-        if (match) {
-            try {
-                const txData = JSON.parse(match[1]);
-                saveTransaction(txData);
-                aiText = aiText.replace(match[0], '').trim();
-                setTimeout(() => {
-                    appendChatMsg('sys', `✅ Tự động ghi: ${txData.type==='chi'?'-':'+'}${formatVND(txData.amount)} → ${appData.jarNames[txData.jarId]||'Tiết Kiệm'}`);
-                }, 400);
-            } catch(e) {}
-        }
-
-        if (chatHistory[chatHistory.length-1].parts.length > 1)
-            chatHistory[chatHistory.length-1].parts = [{ text: 'Tôi vừa gửi một hình ảnh.' }];
-
-        chatHistory.push({ role: 'model', parts: [{ text: aiText }] });
-        document.getElementById(loadingId).innerHTML = formatAIResponse(aiText);
-    } catch(err) {
-        document.getElementById(loadingId).innerHTML = `❌ Lỗi: ${err.message}`;
-        chatHistory.pop();
-    }
-}
-
-// ============================================================
-// IMPORT / EXPORT / RESET
-// ============================================================
-function exportData() {
-    const str = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(appData, null, 2));
-    const a   = document.createElement('a');
-    a.setAttribute('href', str);
-    a.setAttribute('download', 'MoneyManager.json');
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
-
-function importData(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
+    function toggleDebtSelect() {
         try {
-            appData = JSON.parse(e.target.result);
-            updateUI();
-            uiAlert('✅ Nhập dữ liệu thành công!');
-        } catch(err) {
-            uiAlert('❌ Tệp không hợp lệ!');
+            const debtSelect = document.getElementById('txLinkedDebt'); const hasDebtCb = document.getElementById('txHasDebt');
+            if(hasDebtCb && hasDebtCb.checked) { debtSelect.style.display = 'block'; let html = ''; for (let key in appData.debts) html += `<option value="${key}">${appData.debtNames[key] || 'Nợ'}</option>`; if(html === '') html = '<option value="">Chưa có khoản nợ nào</option>'; debtSelect.innerHTML = html; } 
+            else if(debtSelect) debtSelect.style.display = 'none';
+        } catch(e) {}
+    }
+
+    function updateTxJarDropdown() {
+        try {
+            const select = document.getElementById('txJar'); const currentVal = select.value; let html = ''; const debtLinkSection = document.getElementById('debt-link-section');
+            if (currentActiveTab === 'savings' && editingTxIndex === -1) {
+                html = `<option value="savings">💰 Quỹ Tiết Kiệm</option>`; if(debtLinkSection) debtLinkSection.style.display = 'block'; 
+            } else if (currentActiveTab === 'debts' && editingTxIndex === -1) {
+                for (let key in appData.debts) html += `<option value="${key}">💸 ${appData.debtNames[key] || 'Nợ'}</option>`; if(debtLinkSection) debtLinkSection.style.display = 'none'; 
+            } else {
+                for (let key in appData.jars) html += `<option value="${key}">${appData.jarNames[key] || 'Hũ'}</option>`;
+                if (editingTxIndex > -1 && appData.transactions[editingTxIndex].jarId === 'savings') html += `<option value="savings">💰 Quỹ Tiết Kiệm</option>`;
+                if (editingTxIndex > -1 && (appData.transactions[editingTxIndex].jarId || '').includes('debt')) { for (let key in appData.debts) { if (!html.includes(`value="${key}"`)) html += `<option value="${key}">💸 ${appData.debtNames[key]}</option>`; } }
+                if(debtLinkSection) debtLinkSection.style.display = 'block'; 
+            }
+            select.innerHTML = html; 
+            let found = false; for(let i=0; i<select.options.length; i++) { if(select.options[i].value === currentVal) { select.selectedIndex = i; found = true; break; } }
+            if(!found && select.options.length > 0) select.selectedIndex = 0;
+        } catch(e) {}
+    }
+
+    function toggleModal(modalId, show) {
+        const modal = document.getElementById(modalId); if(!modal) return;
+        if (show) { modal.classList.add('active'); if(modalId === 'addModal' && editingTxIndex === -1) { setDefaultDate(); const cb = document.getElementById('txHasDebt'); if(cb) cb.checked = false; toggleDebtSelect(); updateTxJarDropdown(); } } 
+        else { modal.classList.remove('active'); }
+    }
+
+    function setTxType(type) {
+        try {
+            currentTxType = type; document.getElementById('btnTypeChi').className = type === 'chi' ? 'type-btn active-chi' : 'type-btn'; document.getElementById('btnTypeThu').className = type === 'thu' ? 'type-btn active-thu' : 'type-btn'; 
+            const debtText = document.getElementById('debt-checkbox-text'); const debtLinkSec = document.getElementById('debt-link-section');
+            if(debtText && debtLinkSec) { 
+                if(type === 'chi') { debtText.innerText = "Thanh toán khoản nợ?"; debtText.style.color = "var(--expense)"; debtLinkSec.style.background = "rgba(255, 159, 243, 0.05)"; debtLinkSec.style.borderColor = "rgba(255, 159, 243, 0.3)"; } 
+                else { debtText.innerText = "Vay mượn thêm?"; debtText.style.color = "var(--income)"; debtLinkSec.style.background = "rgba(29, 209, 161, 0.05)"; debtLinkSec.style.borderColor = "rgba(29, 209, 161, 0.3)"; } 
+            }
+            updateTxJarDropdown(); 
+        } catch(e) {}
+    }
+
+    function toggleDarkMode() {
+        const isChecked = document.getElementById('darkModeToggle').checked;
+        if(isChecked) document.body.classList.add('dark-mode'); else document.body.classList.remove('dark-mode');
+        localStorage.setItem('mmDarkMode', isChecked); document.getElementById('theme-color-meta').setAttribute('content', isChecked ? '#1e2227' : '#fcfcfc');
+    }
+    if(localStorage.getItem('mmDarkMode') === 'true') { document.getElementById('darkModeToggle').checked = true; toggleDarkMode(); }
+
+    function openEditModal(type, keyOrTitle) {
+        try {
+            const titleEl = document.getElementById('edit-title'); const inputEl = document.getElementById('editValue'); const deleteBtn = document.getElementById('btn-delete-item');
+            document.getElementById('editType').value = type; document.getElementById('editKey').value = keyOrTitle;
+            inputEl.type = "number"; document.getElementById('edit-label').innerText = "Giá trị mới"; deleteBtn.style.display = 'none';
+            if (type === 'newJar') { titleEl.innerText = "Tạo Hũ Mới"; inputEl.type = "text"; inputEl.value = ""; document.getElementById('edit-label').innerText = "Tên hũ (Tự sinh icon)"; } 
+            else if (type === 'newDebt') { titleEl.innerText = "Tạo Khoản Nợ Mới"; inputEl.type = "text"; inputEl.value = ""; document.getElementById('edit-label').innerText = "Tên (Tự tìm logo ngân hàng)"; } 
+            else if (type === 'totalBalance') { titleEl.innerText = "Sửa Tổng Số Dư"; inputEl.value = appData.totalBalance; } 
+            else if (type === 'savings') { titleEl.innerText = "Sửa Quỹ Tiết Kiệm"; inputEl.value = appData.savings; } 
+            else if (type === 'totalDebt') { titleEl.innerText = "Sửa Tổng Nợ"; inputEl.value = appData.totalDebt; } 
+            else if (type === 'jarBalance') { titleEl.innerText = `Sửa giá trị ${appData.jarNames[keyOrTitle] || ''}`; inputEl.value = appData.jars[keyOrTitle]; deleteBtn.style.display = 'block'; } 
+            else if (type === 'debtBalance') { titleEl.innerText = `Sửa giá trị ${appData.debtNames[keyOrTitle] || ''}`; inputEl.value = appData.debts[keyOrTitle]; deleteBtn.style.display = 'block'; } 
+            else if (type === 'jarName') { titleEl.innerText = `Đổi tên hũ ${appData.jarNames[keyOrTitle] || ''}`; inputEl.type = "text"; inputEl.value = appData.jarNames[keyOrTitle]; deleteBtn.style.display = 'block';}
+            else if (type === 'debtName') { titleEl.innerText = `Đổi tên nợ ${appData.debtNames[keyOrTitle] || ''}`; inputEl.type = "text"; inputEl.value = appData.debtNames[keyOrTitle]; deleteBtn.style.display = 'block';}
+            toggleModal('editModal', true);
+        } catch(e) {}
+    }
+
+    function saveEdit() {
+        const type = document.getElementById('editType').value; const key = document.getElementById('editKey').value; const rawVal = document.getElementById('editValue').value;
+        if (type === 'newJar' || type === 'newDebt') {
+            if(!rawVal.trim()) return uiAlert('Tên không được để trống!');
+            if(type === 'newJar') { const newId = 'jar_' + Date.now(); appData.jars[newId] = 0; appData.jarNames[newId] = rawVal.trim(); }
+            else { const newId = 'debt_' + Date.now(); appData.debts[newId] = 0; appData.debtNames[newId] = rawVal.trim(); }
+        } else if (type === 'jarName' || type === 'debtName') {
+            if(!rawVal.trim()) return uiAlert('Tên không được để trống!'); 
+            if(type === 'jarName') appData.jarNames[key] = rawVal.trim(); else appData.debtNames[key] = rawVal.trim();
+        } else {
+            let numVal = 0; if (rawVal.trim() !== '') { numVal = parseFloat(rawVal); if(isNaN(numVal)) return uiAlert('Vui lòng nhập số hợp lệ!'); }
+            if (type === 'totalBalance') appData.totalBalance = numVal; else if (type === 'savings') appData.savings = numVal; else if (type === 'totalDebt') appData.totalDebt = numVal; else if (type === 'jarBalance') appData.jars[key] = numVal; else if (type === 'debtBalance') appData.debts[key] = numVal;
         }
-    };
-    reader.readAsText(file);
-}
+        updateUI(); toggleModal('editModal', false);
+    }
 
-function resetData() {
-    appData = {
-        totalBalance: 0, savings: 0, totalDebt: 0,
-        jars:      { jar_1:0, jar_2:0, jar_3:0, jar_4:0 },
-        jarNames:  { jar_1:'Thiết Yếu', jar_2:'Giải Trí', jar_3:'Học Tập', jar_4:'Khác' },
-        debts:     { debt_1:0, debt_2:0 },
-        debtNames: { debt_1:'Người thân', debt_2:'Ngân hàng' },
-        transactions: []
-    };
+    function deleteItem() {
+        const type = document.getElementById('editType').value; const key = document.getElementById('editKey').value;
+        let name = type.includes('jar') ? appData.jarNames[key] : appData.debtNames[key];
+        uiConfirm(`Xóa "${name || 'mục này'}"? Lịch sử giao dịch cũ sẽ được giữ.`, () => {
+            if(type.includes('jar')) { if(appData.jars[key] !== 0) { uiConfirm(`Hũ đang có ${formatVND(appData.jars[key])}. Xóa sẽ trừ đi Tổng số dư. Tiếp tục?`, () => { appData.totalBalance -= appData.jars[key]; delete appData.jars[key]; delete appData.jarNames[key]; updateUI(); toggleModal('editModal', false); }); return; } delete appData.jars[key]; delete appData.jarNames[key]; } 
+            else if(type.includes('debt')) { if(appData.debts[key] !== 0) { uiConfirm(`Nợ đang có ${formatVND(appData.debts[key])}. Xóa sẽ trừ đi Tổng Nợ. Tiếp tục?`, () => { appData.totalDebt -= appData.debts[key]; delete appData.debts[key]; delete appData.debtNames[key]; updateUI(); toggleModal('editModal', false); }); return; } delete appData.debts[key]; delete appData.debtNames[key]; }
+            updateUI(); toggleModal('editModal', false);
+        });
+    }
+
+    function updateUI() {
+        try {
+            document.getElementById('home-total').innerText = formatVND(appData.totalBalance);
+            document.getElementById('savings-display').innerText = formatVND(appData.savings);
+            document.getElementById('debt-total').innerText = formatVND(appData.totalDebt);
+            let gridHtml = ''; let checkboxHtml = ''; let debtHtml = '';
+            for (let key in appData.jars) {
+                gridHtml += `<div class="glass-card jar-card clickable" onclick="openEditModal('jarBalance', '${key}')"><ion-icon name="${getIconForJar(appData.jarNames[key])}" class="jar-icon"></ion-icon><div class="jar-name" onclick="event.stopPropagation(); openEditModal('jarName', '${key}')">${appData.jarNames[key] || 'Hũ'}</div><div class="jar-amount">${formatVND(appData.jars[key])}</div></div>`;
+                checkboxHtml += `<label class="saving-cb-wrapper"><input type="checkbox" value="${key}" class="saving-cb"><div class="custom-cb"></div><span class="cb-text">${appData.jarNames[key] || 'Hũ'}</span></label>`;
+            }
+            gridHtml += `<div class="glass-card jar-card add-jar-card clickable" onclick="openEditModal('newJar', '')"><ion-icon name="add-circle-outline" class="jar-icon" style="color: var(--text-muted);"></ion-icon><div class="jar-name" style="color: var(--text-muted); background: transparent;">Thêm hũ mới</div></div>`;
+            for (let key in appData.debts) {
+                debtHtml += `<div class="glass-card jar-card clickable" onclick="openEditModal('debtBalance', '${key}')" style="background: var(--expense-light); border-color: rgba(255,159,243,0.3);">${renderBankLogoOrIcon(appData.debtNames[key])}<div class="jar-name" onclick="event.stopPropagation(); openEditModal('debtName', '${key}')" style="background: rgba(255,159,243,0.15); color: var(--expense);">${appData.debtNames[key] || 'Nợ'}</div><div class="jar-amount" style="color: var(--expense);">${formatVND(appData.debts[key])}</div></div>`;
+            }
+            debtHtml += `<div class="glass-card jar-card add-jar-card clickable" onclick="openEditModal('newDebt', '')"><ion-icon name="add-circle-outline" class="jar-icon" style="color: var(--expense); opacity: 0.7;"></ion-icon><div class="jar-name" style="color: var(--expense); opacity: 0.7; background: transparent;">Thêm khoản nợ</div></div>`;
+            document.getElementById('jar-grid-container').innerHTML = gridHtml; document.getElementById('debt-grid-container').innerHTML = debtHtml;
+            document.getElementById('savings-checkboxes').innerHTML = checkboxHtml; isAllJarsSelected = false; document.getElementById('btn-select-all').innerText = "Chọn tất cả";
+
+            const txList = document.getElementById('tx-list');
+            if (!appData.transactions || appData.transactions.length === 0) { txList.innerHTML = `<div class="empty-state">📂<br><br>Chưa có giao dịch nào được ghi nhận.</div>`; } 
+            else {
+                let html = '';
+                appData.transactions.forEach((tx, index) => {
+                    const isThu = tx.type === 'thu'; const dateObj = new Date(tx.date || new Date()); const dateStr = dateObj.toLocaleDateString('vi-VN') + ' ' + dateObj.getHours() + ':' + (dateObj.getMinutes()<10?'0':'') + dateObj.getMinutes();
+                    let jarIdSafe = tx.jarId || ""; let jarNameDisplay = "Hũ không xác định";
+                    if (jarIdSafe === 'savings') jarNameDisplay = `💰 Quỹ Tiết Kiệm`; else if (jarIdSafe.includes('debt')) jarNameDisplay = appData.debtNames[jarIdSafe] || "Khoản nợ đã xóa"; else jarNameDisplay = appData.jarNames[jarIdSafe] || "Hũ đã xóa";
+                    if (tx.isTransfer) jarNameDisplay = `Từ: ${appData.jarNames[tx.sourceJar] || 'Hũ cũ'} ➔ Tiết Kiệm`; else if (tx.isChotNgay) jarNameDisplay = `🌟 Chốt Ngày ➔ Tiết Kiệm`;
+                    let debtLinkHtml = tx.linkedDebt ? `<div class="tx-debt-link">🔗 ${appData.debtNames[tx.linkedDebt] || 'Khoản nợ cũ'}</div>` : '';
+                    html += `<div class="glass-card tx-item clickable" onclick="openEditTxModal(${index})"><div><div class="tx-desc">${tx.desc || 'Giao dịch'}</div><div class="tx-date">${dateStr}</div><div><div class="tx-jar">${jarNameDisplay}</div>${debtLinkHtml}</div></div><div class="tx-amount ${tx.type}">${isThu ? '+' : '-'}${formatVND(tx.amount)}</div></div>`;
+                });
+                txList.innerHTML = html;
+            }
+            forceSave();
+        } catch(e) {}
+    }
+
+    function applyTxEffect(tx, multiplier) {
+        if (!tx) return; let jarIdSafe = tx.jarId || "";
+        if (tx.linkedDebt && appData.debts[tx.linkedDebt] !== undefined) { if(tx.type === 'chi') { appData.totalDebt -= tx.amount * multiplier; appData.debts[tx.linkedDebt] -= tx.amount * multiplier; } else { appData.totalDebt += tx.amount * multiplier; appData.debts[tx.linkedDebt] += tx.amount * multiplier; } }
+        if (tx.isChotNgay) { appData.savings += tx.amount * multiplier; appData.totalBalance -= tx.amount * multiplier; for (let jar in tx.deducts) { if(appData.jars[jar] !== undefined) appData.jars[jar] -= tx.deducts[jar] * multiplier; } } 
+        else if (tx.isTransfer) { if(appData.jars[tx.sourceJar] !== undefined) appData.jars[tx.sourceJar] -= tx.amount * multiplier; appData.totalBalance -= tx.amount * multiplier; appData.savings += tx.amount * multiplier; } 
+        else if (jarIdSafe === 'savings') { if (tx.type === 'thu') appData.savings += tx.amount * multiplier; else appData.savings -= tx.amount * multiplier; } 
+        else if (jarIdSafe.includes('debt')) { if (tx.type === 'thu') { appData.totalDebt += tx.amount * multiplier; if(appData.debts[jarIdSafe] !== undefined) appData.debts[jarIdSafe] += tx.amount * multiplier; } else { appData.totalDebt -= tx.amount * multiplier; if(appData.debts[jarIdSafe] !== undefined) appData.debts[jarIdSafe] -= tx.amount * multiplier; } }
+        else { if (tx.type === 'thu') { appData.totalBalance += tx.amount * multiplier; if(appData.jars[jarIdSafe] !== undefined) appData.jars[jarIdSafe] += tx.amount * multiplier; } else { appData.totalBalance -= tx.amount * multiplier; if(appData.jars[jarIdSafe] !== undefined) appData.jars[jarIdSafe] -= tx.amount * multiplier; } }
+    }
+
+    function openAddTxModal() {
+        try {
+            editingTxIndex = -1; document.getElementById('modal-tx-title').innerText = "Thêm Giao Dịch"; document.getElementById('btn-save-tx').innerText = "Lưu Giao Dịch"; document.getElementById('btn-delete-tx').style.display = "none"; document.getElementById('txAmount').value = ''; document.getElementById('txDesc').value = ''; document.getElementById('txIsTransfer').value = 'false'; 
+            setDefaultDate(); const cb = document.getElementById('txHasDebt'); if(cb) cb.checked = false; toggleDebtSelect(); setTxType('chi'); toggleModal('addModal', true);
+        } catch(e) {}
+    }
+
+    function openEditTxModal(index) {
+        editingTxIndex = index; const tx = appData.transactions[index];
+        if(tx.isChotNgay) return uiAlert('Đây là giao dịch Chốt ngày. Dùng nút Xóa để hoàn tác.');
+        document.getElementById('modal-tx-title').innerText = "Sửa Giao Dịch"; document.getElementById('btn-save-tx').innerText = "Cập nhật"; document.getElementById('btn-delete-tx').style.display = "block"; setTxType(tx.type); 
+        const dateObj = new Date(tx.date); dateObj.setMinutes(dateObj.getMinutes() - dateObj.getTimezoneOffset()); document.getElementById('txDate').value = dateObj.toISOString().slice(0, 16);
+        document.getElementById('txAmount').value = tx.amount; document.getElementById('txDesc').value = tx.desc; document.getElementById('txIsTransfer').value = tx.isTransfer ? 'true' : 'false';
+        if(tx.jarId.includes('debt')) { currentActiveTab = 'debts'; updateTxJarDropdown(); }
+        if (tx.isTransfer) document.getElementById('txJar').value = tx.sourceJar; else document.getElementById('txJar').value = tx.jarId;
+        if(tx.linkedDebt) { document.getElementById('txHasDebt').checked = true; toggleDebtSelect(); document.getElementById('txLinkedDebt').value = tx.linkedDebt; } else { document.getElementById('txHasDebt').checked = false; toggleDebtSelect(); }
+        toggleModal('addModal', true);
+    }
+
+    function closeTxModal() { editingTxIndex = -1; toggleModal('addModal', false); }
+
+    function saveTransaction(customTx = null) {
+        let amount, jarId, desc, dateVal, txType, linkedDebtId;
+        if(customTx) { amount = customTx.amount; jarId = customTx.jarId; desc = customTx.desc; dateVal = new Date().toISOString(); txType = customTx.type; linkedDebtId = null; } 
+        else { amount = parseFloat(document.getElementById('txAmount').value); jarId = document.getElementById('txJar').value; desc = document.getElementById('txDesc').value || 'Giao dịch mới'; dateVal = document.getElementById('txDate').value; txType = currentTxType; linkedDebtId = document.getElementById('txHasDebt').checked ? document.getElementById('txLinkedDebt').value : null; }
+        if (isNaN(amount) || amount <= 0) return uiAlert('Vui lòng nhập số tiền hợp lệ!');
+        if (document.getElementById('txHasDebt') && document.getElementById('txHasDebt').checked && !linkedDebtId) return uiAlert('Vui lòng chọn khoản nợ tương ứng!');
+
+        let isTransfer = false; let sourceJar = null; let finalJarId = jarId;
+        if (!customTx && editingTxIndex === -1 && currentActiveTab === 'savings' && txType === 'thu' && jarId !== 'savings') { isTransfer = true; sourceJar = jarId; finalJarId = 'savings'; } 
+        else if (!customTx && editingTxIndex > -1 && document.getElementById('txIsTransfer').value === 'true' && txType === 'thu' && jarId !== 'savings') { isTransfer = true; sourceJar = jarId; finalJarId = 'savings'; }
+
+        const newTx = { date: dateVal ? new Date(dateVal).toISOString() : new Date().toISOString(), type: txType, amount, jarId: finalJarId, desc, isTransfer, sourceJar, linkedDebt: linkedDebtId };
+        if (!customTx && editingTxIndex > -1) { applyTxEffect(appData.transactions[editingTxIndex], -1); applyTxEffect(newTx, 1); appData.transactions[editingTxIndex] = newTx; } else { applyTxEffect(newTx, 1); appData.transactions.unshift(newTx); }
+        appData.transactions.sort((a, b) => new Date(b.date) - new Date(a.date)); updateUI(); if(!customTx) closeTxModal();
+    }
+
+    function deleteTransaction() { applyTxEffect(appData.transactions[editingTxIndex], -1); appData.transactions.splice(editingTxIndex, 1); updateUI(); closeTxModal(); }
+
+    function executeSavings() {
+        const percent = parseFloat(document.getElementById('save-percent').value); if (isNaN(percent) || percent <= 0 || percent > 100) return uiAlert('Tỷ lệ % không hợp lệ!');
+        const checkedBoxes = document.querySelectorAll('.saving-cb:checked'); if (checkedBoxes.length === 0) return uiAlert('Vui lòng chọn ít nhất 1 hũ!');
+        let selectedJars = []; let totalSelectedBalance = 0;
+        checkedBoxes.forEach(cb => { const bal = appData.jars[cb.value]; if (bal > 0) { selectedJars.push(cb.value); totalSelectedBalance += bal; } });
+        if (totalSelectedBalance <= 0) return uiAlert('Các hũ bạn chọn đều đang trống không!');
+        const totalExtractAmount = (totalSelectedBalance * percent) / 100; let descNames = []; let deductsObj = {};
+        selectedJars.forEach(jarId => { const deduct = totalExtractAmount * (appData.jars[jarId] / totalSelectedBalance); appData.jars[jarId] -= deduct; deductsObj[jarId] = deduct; descNames.push(appData.jarNames[jarId]); });
+        appData.totalBalance -= totalExtractAmount; appData.savings += totalExtractAmount;
+        appData.transactions.unshift({ date: new Date().toISOString(), type: 'thu', amount: totalExtractAmount, jarId: 'savings', desc: `Chốt ngày: Trích ${percent}% từ ` + descNames.join(', '), isChotNgay: true, deducts: deductsObj });
+        updateUI(); uiAlert(`Đã trích thành công ${formatVND(totalExtractAmount)} vào Tiết Kiệm.`);
+    }
+
+    // --- 5. AI VISION & CHAT BOT ---
+    function formatAIResponse(text) { return text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>'); }
+    function appendChatMsg(sender, text, id = '') { const chatBox = document.getElementById('chat-box'); const msgDiv = document.createElement('div'); msgDiv.className = `msg msg-${sender}`; if(id) msgDiv.id = id; msgDiv.innerHTML = sender === 'user' ? text : formatAIResponse(text); chatBox.appendChild(msgDiv); setTimeout(() => { chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }); }, 100); }
+    function clearChatHistory() { chatHistory = []; document.getElementById('chat-box').innerHTML = '<div class="msg msg-ai">Đã dọn dẹp bộ nhớ! Bạn cần mình hỗ trợ gì tiếp theo nào? ✨</div>'; }
+
+    document.addEventListener('paste', (e) => {
+        if(currentActiveTab !== 'tools') return; const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (let item of items) { if (item.type.indexOf('image') === 0) { const file = item.getAsFile(); const reader = new FileReader(); reader.onload = (event) => { currentImageBase64 = event.target.result.split(',')[1]; currentImageMimeType = file.type; document.getElementById('preview-img').src = event.target.result; document.getElementById('image-preview').classList.remove('hidden'); document.getElementById('upload-btn-label').classList.add('has-image'); }; reader.readAsDataURL(file); } }
+    });
+
+    function handleImageUpload(event) { const file = event.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = (e) => { currentImageBase64 = e.target.result.split(',')[1]; currentImageMimeType = file.type; document.getElementById('preview-img').src = e.target.result; document.getElementById('image-preview').classList.remove('hidden'); document.getElementById('upload-btn-label').classList.add('has-image'); }; reader.readAsDataURL(file); }
+    function clearImage() { currentImageBase64 = null; currentImageMimeType = null; document.getElementById('chat-image').value = ''; document.getElementById('image-preview').classList.add('hidden'); document.getElementById('upload-btn-label').classList.remove('has-image'); }
+
+    async function sendChatMessage() {
+        const apiKey = document.getElementById('geminiApiKey').value.trim();
+        if(!apiKey) { document.getElementById('ai-settings-panel').classList.remove('hidden'); return uiAlert("Vui lòng dán API Key vào bảng cài đặt để trò chuyện!"); }
+
+        const inputEl = document.getElementById('chat-input'); const userText = inputEl.value.trim();
+        if(!userText && !currentImageBase64) return;
+        let displayHtml = userText; if(currentImageBase64) displayHtml += `<br><img src="data:${currentImageMimeType};base64,${currentImageBase64}" style="width:100px; border-radius:8px; margin-top:5px;">`;
+        appendChatMsg('user', displayHtml || '[Đã gửi một hình ảnh]'); inputEl.value = '';
+
+        const loadingId = 'loading-' + Date.now(); appendChatMsg('ai', '<div class="typing-indicator"><span></span><span></span><span></span></div>', loadingId);
+
+        const recentTx = appData.transactions.slice(0, 5).map(t => `${t.date.slice(0,10)} ${t.type==='thu'?'+':'-'}${t.amount} (${t.desc})`).join(' | ');
+        let jarListStr = Object.keys(appData.jarNames).map(k => `"${k}" (${appData.jarNames[k]})`).join(', ');
+        const contextStr = `[TÀI CHÍNH: Tổng: ${formatVND(appData.totalBalance)}, Tiết kiệm: ${formatVND(appData.savings)}. Lịch sử 5 GD: ${recentTx}]. Hũ hiện có: ${jarListStr}. `;
+        let promptForAI = userText || "Hãy phân tích hình ảnh hóa đơn tôi vừa gửi.";
+        
+        if (chatHistory.length === 0) {
+            const customPersona = document.getElementById('aiPersona').value.trim() || "trợ lý tài chính thông minh.";
+            promptForAI = contextStr + "\n[CHỈ THỊ]: Đóng vai " + customPersona + " Nếu gửi hóa đơn, hãy tìm số tiền và nội dung, THÊM khối lệnh này vào CUỐI câu trả lời để tự ghi sổ: $$JSON_START$$ {\"amount\": số_tiền, \"type\": \"chi\" (hoặc \"thu\"), \"jarId\": ID_của_hũ_phù_hợp_nhất, \"desc\": \"Nội dung\"} $$JSON_END$$. \nNgười dùng: " + promptForAI;
+        }
+
+        let messageParts = [{ text: promptForAI }]; if (currentImageBase64) { messageParts.push({ inlineData: { mimeType: currentImageMimeType, data: currentImageBase64 } }); clearImage(); }
+        chatHistory.push({ role: "user", parts: messageParts });
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: chatHistory }) });
+            if(!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            const result = await response.json(); let aiReplyText = result.candidates[0].content.parts[0].text;
+            
+            const regex = /\$\$JSON_START\$\$\s*(\{[\s\S]*?\})\s*\$\$JSON_END\$\$/; const match = aiReplyText.match(regex);
+            if (match) { try { const txData = JSON.parse(match[1]); saveTransaction(txData); aiReplyText = aiReplyText.replace(match[0], '').trim(); setTimeout(() => { appendChatMsg('sys', `Hệ thống tự động ghi sổ: ${txData.type==='chi'?'-':'+'}${formatVND(txData.amount)} vào ${appData.jarNames[txData.jarId] || "Tiết Kiệm"}!`); }, 500); } catch(e) {} }
+            if(chatHistory[chatHistory.length - 1].parts.length > 1) chatHistory[chatHistory.length - 1].parts = [{ text: "Tôi đã gửi một hình ảnh." }];
+
+            chatHistory.push({ role: "model", parts: [{ text: aiReplyText }] }); document.getElementById(loadingId).innerHTML = formatAIResponse(aiReplyText);
+        } catch (error) { document.getElementById(loadingId).innerHTML = `❌ Lỗi kết nối: ${error.message}`; chatHistory.pop(); }
+    }
+
+    function exportData() { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData)); const dlAnchorElem = document.createElement('a'); dlAnchorElem.setAttribute("href", dataStr); dlAnchorElem.setAttribute("download", "MoneyManager.json"); dlAnchorElem.click(); }
+    function importData(event) { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = e => { try { appData = JSON.parse(e.target.result); updateUI(); uiAlert('Nhập dữ liệu thành công!'); } catch (err) { uiAlert('Tệp dữ liệu không hợp lệ!'); } }; reader.readAsText(file); }
+    function resetData() { appData = { totalBalance: 0, savings: 0, jars: { jar_1: 0, jar_2: 0, jar_3: 0, jar_4: 0 }, jarNames: { jar_1: "Thiết Yếu", jar_2: "Giải Trí", jar_3: "Học Tập", jar_4: "Khác" }, debts: { debt_1: 0, debt_2: 0 }, debtNames: { debt_1: "Người thân", debt_2: "Ngân hàng" }, totalDebt: 0, transactions: [] }; updateUI(); uiAlert('Đã khôi phục cài đặt gốc.'); }
+
     updateUI();
-    uiAlert('✅ Đã khôi phục cài đặt gốc.');
-}
-
-// ============================================================
-// SERVICE WORKER (PWA)
-// ============================================================
-if ('serviceWorker' in navigator) {
-    const swCode = `
-const CACHE = 'mm-v2';
-const OFFLINE_URLS = ['./', './MoneyManager.html'];
-self.addEventListener('install', e => {
-    e.waitUntil(caches.open(CACHE).then(c => c.addAll(OFFLINE_URLS).catch(()=>{})));
-    self.skipWaiting();
-});
-self.addEventListener('activate', e => {
-    e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
-    return self.clients.claim();
-});
-self.addEventListener('fetch', e => {
-    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-});`;
-    const swBlob = new Blob([swCode], { type: 'application/javascript' });
-    const swURL  = URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swURL).catch(() => {});
-}
-
-// ============================================================
-// BOOT
-// ============================================================
-updateUI();
 </script>
+
 </body>
 </html>
