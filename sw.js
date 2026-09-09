@@ -1,6 +1,8 @@
-const CACHE_NAME = "capmoney-pwa-v1";
+const CACHE_NAME =
+    "capmoney-pwa-v1";
 
-const APP_FILES = [
+
+const FILES_TO_CACHE = [
 
     "./",
 
@@ -10,18 +12,10 @@ const APP_FILES = [
 
     "./app.js",
 
-    "./manifest.json",
-
-    "./icon-192.svg",
-
-    "./icon-512.svg"
+    "./manifest.json"
 
 ];
 
-
-/* =========================================
-   INSTALL
-========================================= */
 
 self.addEventListener(
     "install",
@@ -29,14 +23,15 @@ self.addEventListener(
 
         event.waitUntil(
 
-            caches
-                .open(CACHE_NAME)
-                .then(
-                    cache =>
-                        cache.addAll(
-                            APP_FILES
-                        )
-                )
+            caches.open(
+                CACHE_NAME
+            )
+            .then(
+                cache =>
+                    cache.addAll(
+                        FILES_TO_CACHE
+                    )
+            )
 
         );
 
@@ -45,10 +40,6 @@ self.addEventListener(
     }
 );
 
-
-/* =========================================
-   ACTIVATE
-========================================= */
 
 self.addEventListener(
     "activate",
@@ -83,69 +74,63 @@ self.addEventListener(
 );
 
 
-/* =========================================
-   FETCH
-========================================= */
-
 self.addEventListener(
     "fetch",
     event => {
 
-        if (
-            event.request.method !== "GET"
-        )
-            return;
-
         event.respondWith(
 
-            caches
-                .match(event.request)
-                .then(
-                    cached => {
+            caches.match(
+                event.request
+            )
+            .then(
+                cached => {
 
-                        if (cached)
-                            return cached;
+                    if (cached) {
+                        return cached;
+                    }
 
-                        return fetch(
-                            event.request
-                        )
-                            .then(response => {
 
-                                if (
-                                    !response ||
-                                    response.status !== 200 ||
-                                    response.type === "opaque"
-                                ) {
+                    return fetch(
+                        event.request
+                    )
+                    .then(
+                        response => {
 
-                                    return response;
-
-                                }
-
-                                const clone =
-                                    response.clone();
-
-                                caches
-                                    .open(CACHE_NAME)
-                                    .then(
-                                        cache =>
-                                            cache.put(
-                                                event.request,
-                                                clone
-                                            )
-                                    );
+                            if (
+                                !response ||
+                                response.status !== 200 ||
+                                response.type !== "basic"
+                            ) {
 
                                 return response;
 
-                            })
-                            .catch(
-                                () =>
-                                    caches.match(
-                                        "./index.html"
+                            }
+
+
+                            const copy =
+                                response.clone();
+
+
+                            caches.open(
+                                CACHE_NAME
+                            )
+                            .then(
+                                cache =>
+                                    cache.put(
+                                        event.request,
+                                        copy
                                     )
                             );
 
-                    }
-                )
+
+                            return response;
+
+                        }
+                    );
+
+                }
+            )
 
         );
 
