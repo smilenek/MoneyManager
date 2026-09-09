@@ -1,10 +1,8 @@
-# CapMoney PWA
 
-PWA quản lý tài chính cá nhân lấy cảm hứng từ giao diện CapMoney.
 
 ## Cấu trúc
 
-capmoney-pwa/
+moneymanager-pwa/
 
 ├── index.html
 ├── style.css
