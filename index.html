@@ -1,3669 +1,1189 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#111113">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="CapMoney">
+    <meta charset="UTF-8">
 
-<link rel="manifest" href="manifest.json">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover"
+    >
 
-<title>CapMoney</title>
+    <meta name="theme-color" content="#121214">
 
-<style>
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+    <meta
+        name="apple-mobile-web-app-capable"
+        content="yes"
+    >
 
-:root {
-    --bg: #111113;
-    --surface: #1e1e23;
-    --surface2: #29292e;
-    --surface3: #303036;
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="black-translucent"
+    >
 
-    --text: #f3f1ef;
-    --muted: #aaa7a5;
-    --muted2: #777579;
+    <meta
+        name="apple-mobile-web-app-title"
+        content="CapMoney"
+    >
 
-    --blue: #70a9e4;
-    --blue2: #5d96d4;
+    <title>CapMoney</title>
 
-    --green: #82d184;
-    --green2: #3fa64b;
+    <link rel="manifest" href="manifest.json">
 
-    --red: #ef7779;
-    --yellow: #ffc53d;
-    --purple: #936df5;
-    --cyan: #50d2d2;
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="icon-192.svg"
+    >
 
-    --radius: 28px;
-    --nav-height: 92px;
-}
-
-html,
-body {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "SF Pro Display",
-        "SF Pro Text",
-        "Segoe UI",
-        sans-serif;
-}
-
-body {
-    min-height: 100vh;
-    padding-bottom: calc(var(--nav-height) + 30px);
-}
-
-button,
-input,
-select,
-textarea {
-    font: inherit;
-}
-
-button {
-    border: 0;
-    color: inherit;
-    cursor: pointer;
-}
-
-input,
-select,
-textarea {
-    width: 100%;
-    border: 0;
-    outline: none;
-    color: var(--text);
-    background: var(--surface2);
-    border-radius: 16px;
-    padding: 15px 16px;
-}
-
-textarea {
-    resize: vertical;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.app {
-    width: 100%;
-    max-width: 850px;
-    margin: auto;
-    padding:
-        env(safe-area-inset-top)
-        20px
-        20px;
-}
-
-/* ---------------- HEADER ---------------- */
-
-.top-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 25px 5px 15px;
-}
-
-.greeting {
-    color: var(--muted);
-    font-size: 22px;
-    margin-bottom: 6px;
-}
-
-.user-name {
-    font-size: 42px;
-    font-weight: 750;
-    letter-spacing: -1.5px;
-}
-
-.avatar {
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-    background: #aaa6a2;
-    display: grid;
-    place-items: center;
-    color: #171719;
-    font-size: 34px;
-}
-
-/* ---------------- COMMON ---------------- */
-
-.section {
-    margin-top: 20px;
-}
-
-.card {
-    background: var(--surface);
-    border-radius: var(--radius);
-}
-
-.pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: var(--surface2);
-    border-radius: 999px;
-    padding: 8px 14px;
-    color: var(--muted);
-    font-size: 15px;
-    font-weight: 600;
-}
-
-.blue {
-    color: var(--blue);
-}
-
-.green {
-    color: var(--green);
-}
-
-.red {
-    color: var(--red);
-}
-
-.yellow {
-    color: var(--yellow);
-}
-
-.muted {
-    color: var(--muted);
-}
-
-/* ---------------- HOME ---------------- */
-
-.home-summary {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-}
-
-.summary-box {
-    padding: 20px;
-    min-height: 110px;
-    border-radius: 24px;
-    background: var(--surface2);
-}
-
-.summary-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-size: 25px;
-    margin-bottom: 8px;
-}
-
-.summary-title {
-    color: var(--muted);
-    font-size: 15px;
-}
-
-.summary-value {
-    font-size: 22px;
-    font-weight: 750;
-    margin-top: 3px;
-}
-
-.expense .summary-icon {
-    background: var(--red);
-}
-
-.income .summary-icon {
-    background: var(--green);
-}
-
-.home-tabs {
-    display: flex;
-    gap: 12px;
-    margin: 22px 0;
-}
-
-.home-tab {
-    padding: 13px 20px;
-    border-radius: 999px;
-    background: var(--surface2);
-    color: var(--muted);
-    font-weight: 650;
-}
-
-.home-tab.active {
-    background: var(--blue);
-    color: white;
-}
-
-.month-selector {
-    height: 76px;
-    background: var(--surface);
-    border-radius: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    margin-bottom: 22px;
-}
-
-.month-selector button {
-    background: transparent;
-    color: var(--blue);
-    font-size: 38px;
-}
-
-.month-name {
-    font-size: 26px;
-    font-weight: 750;
-}
-
-.calendar {
-    background: var(--surface);
-    border-radius: 28px;
-    padding: 25px 12px 30px;
-}
-
-.weekdays,
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-}
-
-.weekdays {
-    color: var(--muted);
-    margin-bottom: 22px;
-}
-
-.day {
-    min-height: 82px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 7px;
-    padding-top: 8px;
-}
-
-.day-circle {
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    background: var(--surface3);
-    display: grid;
-    place-items: center;
-    color: var(--muted);
-}
-
-.day.has-add .day-circle {
-    background: transparent;
-    border: 2px solid #44444b;
-    color: #66666d;
-    font-size: 30px;
-}
-
-.day.today .day-circle {
-    background: var(--blue);
-    color: white;
-}
-
-.day.today .day-number {
-    color: var(--blue);
-    font-weight: 800;
-}
-
-.day-dot {
-    width: 7px;
-    height: 7px;
-    background: var(--blue);
-    border-radius: 50%;
-}
-
-.fab {
-    position: fixed;
-    right: 28px;
-    bottom: calc(var(--nav-height) + 28px);
-    width: 76px;
-    height: 76px;
-    border-radius: 50%;
-    background: var(--blue);
-    box-shadow: 0 10px 35px rgba(112,169,228,.35);
-    font-size: 42px;
-    z-index: 30;
-}
-
-/* ---------------- ANALYTICS ---------------- */
-
-.segment {
-    display: flex;
-    background: var(--surface);
-    border-radius: 30px;
-    padding: 5px;
-}
-
-.segment button {
-    flex: 1;
-    padding: 15px 10px;
-    background: transparent;
-    border-radius: 25px;
-    color: var(--muted);
-    font-weight: 700;
-}
-
-.segment button.active {
-    background: var(--blue);
-    color: white;
-}
-
-.analytics-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 22px 0;
-}
-
-.analytics-title button {
-    background: var(--surface2);
-    border-radius: 50%;
-    width: 52px;
-    height: 52px;
-    font-size: 25px;
-}
-
-.period-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 25px 0;
-}
-
-.period-nav button {
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    background: var(--surface2);
-    color: var(--muted);
-    font-size: 30px;
-}
-
-.period-title {
-    font-size: 26px;
-    font-weight: 750;
-}
-
-.filter-tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.filter-tab {
-    padding: 12px 20px;
-    border-radius: 999px;
-    background: var(--surface2);
-    color: var(--muted);
-}
-
-.filter-tab.active {
-    background: var(--blue);
-    color: white;
-}
-
-.income-expense {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-}
-
-.money-card {
-    padding: 24px;
-    border-radius: 24px;
-    background: var(--surface);
-}
-
-.money-card.active-green {
-    border: 2px solid rgba(130,209,132,.5);
-}
-
-.money-card.active-red {
-    border: 2px solid rgba(239,119,121,.5);
-}
-
-.money-card-title {
-    color: var(--muted);
-}
-
-.money-card-value {
-    font-size: 25px;
-    font-weight: 800;
-    margin-top: 8px;
-}
-
-.balance-card {
-    padding: 24px;
-    margin-top: 18px;
-}
-
-.balance-card h3 {
-    color: var(--muted);
-    margin: 0;
-}
-
-.balance {
-    color: var(--green);
-    font-size: 30px;
-    font-weight: 800;
-    margin-top: 8px;
-}
-
-.chart-card {
-    min-height: 430px;
-    padding: 20px;
-    margin-top: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.empty-state {
-    text-align: center;
-    color: var(--muted);
-}
-
-.empty-icon {
-    font-size: 70px;
-    opacity: .65;
-    margin-bottom: 20px;
-}
-
-.empty-title {
-    font-size: 28px;
-    margin-bottom: 12px;
-}
-
-.empty-description {
-    font-size: 18px;
-}
-
-/* ---------------- ACCOUNTS ---------------- */
-
-.top-sections {
-    display: flex;
-    background: var(--surface);
-    border-radius: 30px;
-    padding: 5px;
-}
-
-.top-sections button {
-    flex: 1;
-    background: transparent;
-    padding: 16px 5px;
-    border-radius: 25px;
-    color: var(--muted);
-    font-weight: 700;
-}
-
-.top-sections button.active {
-    background: var(--blue);
-    color: white;
-}
-
-.total-card {
-    margin-top: 28px;
-    padding: 32px 25px;
-    text-align: center;
-}
-
-.total-label {
-    color: var(--muted);
-    font-size: 20px;
-}
-
-.total-number {
-    color: var(--green);
-    font-size: 64px;
-    font-weight: 800;
-    margin: 20px 0;
-}
-
-.total-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    border-top: 1px solid #3a3a3e;
-    padding-top: 22px;
-}
-
-.total-detail strong {
-    display: block;
-    font-size: 24px;
-    margin-top: 8px;
-}
-
-.action-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-    margin: 28px 0;
-}
-
-.action-button {
-    min-height: 110px;
-    border-radius: 25px;
-    background: var(--blue);
-    font-size: 24px;
-    font-weight: 700;
-}
-
-.action-button.green-button {
-    background: var(--green);
-}
-
-.list-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 28px 0 15px;
-}
-
-.account-item {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 24px;
-    background: var(--surface);
-    border-radius: 25px;
-    margin-bottom: 16px;
-}
-
-.account-icon {
-    width: 65px;
-    height: 65px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: var(--green2);
-    font-size: 30px;
-}
-
-.account-info {
-    flex: 1;
-}
-
-.account-name {
-    font-size: 22px;
-    font-weight: 750;
-}
-
-.account-balance {
-    color: var(--green);
-    font-size: 20px;
-    margin-top: 7px;
-}
-
-.arrow {
-    font-size: 30px;
-    color: var(--muted);
-}
-
-/* ---------------- EMPTY MODULE ---------------- */
-
-.module-empty {
-    min-height: 450px;
-    background: var(--surface);
-    border-radius: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 30px;
-}
-
-.module-empty .icon {
-    font-size: 90px;
-    margin-bottom: 25px;
-    opacity: .7;
-}
-
-.module-empty h2 {
-    margin: 0 0 18px;
-    font-size: 30px;
-}
-
-.module-empty p {
-    color: var(--muted);
-    font-size: 20px;
-    margin: 0;
-}
-
-/* ---------------- BUDGET ---------------- */
-
-.page-title {
-    font-size: 32px;
-    margin: 22px 0 4px;
-}
-
-.page-subtitle {
-    color: var(--muted);
-    font-size: 19px;
-}
-
-.budget-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-.circle-add {
-    width: 58px;
-    height: 58px;
-    background: var(--blue);
-    border-radius: 50%;
-    font-size: 32px;
-}
-
-/* ---------------- PROFILE ---------------- */
-
-.profile-card {
-    background: var(--surface);
-    border-radius: 28px;
-    padding: 38px 25px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.profile-avatar {
-    width: 140px;
-    height: 140px;
-    margin: auto;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    font-size: 70px;
-    background:
-        linear-gradient(135deg,#49334e,#2f2942);
-    border: 5px solid #d77adf;
-    box-shadow: 0 0 30px rgba(215,122,223,.25);
-}
-
-.profile-name {
-    font-size: 30px;
-    font-weight: 800;
-    margin-top: 20px;
-}
-
-.profile-date {
-    display: inline-block;
-    background: var(--surface2);
-    color: var(--muted);
-    border-radius: 999px;
-    padding: 8px 14px;
-    margin-top: 10px;
-}
-
-.overview-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-    margin-top: 20px;
-}
-
-.overview-card {
-    background: var(--surface);
-    border-radius: 22px;
-    padding: 24px;
-}
-
-.overview-card .icon {
-    font-size: 25px;
-}
-
-.overview-card label {
-    display: block;
-    color: var(--muted);
-    margin: 20px 0 8px;
-}
-
-.overview-card strong {
-    font-size: 23px;
-}
-
-.settings-list {
-    background: var(--surface);
-    border-radius: 25px;
-    overflow: hidden;
-    margin-top: 25px;
-}
-
-.setting-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    min-height: 72px;
-    padding: 0 20px;
-    border-bottom: 1px solid #36363b;
-}
-
-.setting-row:last-child {
-    border-bottom: 0;
-}
-
-.setting-icon {
-    width: 30px;
-    text-align: center;
-    color: var(--blue);
-    font-size: 22px;
-}
-
-.setting-label {
-    flex: 1;
-    font-size: 18px;
-}
-
-.setting-value {
-    color: var(--muted);
-}
-
-.setting-arrow {
-    color: var(--muted);
-    font-size: 24px;
-}
-
-/* ---------------- PRO ---------------- */
-
-.pro-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    background: rgba(0,0,0,.75);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-}
-
-.pro-sheet {
-    width: 100%;
-    max-width: 850px;
-    max-height: 94vh;
-    overflow-y: auto;
-    background: #151518;
-    border-radius: 35px 35px 0 0;
-    padding: 35px 28px 50px;
-}
-
-.pro-close {
-    width: 52px;
-    height: 52px;
-    background: var(--surface2);
-    border-radius: 50%;
-    float: right;
-    font-size: 30px;
-}
-
-.pro-hero {
-    clear: both;
-    text-align: center;
-    padding: 15px 10px 30px;
-}
-
-.pro-icon {
-    width: 90px;
-    height: 90px;
-    margin: auto;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: #4b3822;
-    color: var(--yellow);
-    font-size: 48px;
-    box-shadow: 0 0 35px rgba(255,197,61,.25);
-}
-
-.pro-title {
-    font-size: 34px;
-    font-weight: 800;
-    margin: 30px 0 15px;
-}
-
-.pro-subtitle {
-    color: var(--muted);
-    font-size: 19px;
-    line-height: 1.45;
-}
-
-.pro-list {
-    background: var(--surface);
-    border-radius: 28px;
-    padding: 25px 18px;
-}
-
-.pro-list-title {
-    color: var(--muted);
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 18px;
-}
-
-.pro-feature {
-    display: grid;
-    grid-template-columns: 72px 1fr 30px;
-    gap: 15px;
-    align-items: start;
-    padding: 15px 0;
-}
-
-.pro-feature-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 17px;
-    display: grid;
-    place-items: center;
-    font-size: 28px;
-    background: var(--surface2);
-}
-
-.pro-feature-title {
-    font-size: 20px;
-    font-weight: 750;
-    margin-bottom: 6px;
-}
-
-.pro-feature-description {
-    color: var(--muted);
-    font-size: 17px;
-    line-height: 1.35;
-}
-
-.pro-check {
-    color: var(--green);
-    font-size: 28px;
-    padding-top: 10px;
-}
-
-.pro-upgrade {
-    width: 100%;
-    margin-top: 25px;
-    padding: 18px;
-    border-radius: 18px;
-    background: linear-gradient(135deg,#ffd42f,#ff9828);
-    color: #151515;
-    font-size: 21px;
-    font-weight: 800;
-}
-
-/* ---------------- MODAL ---------------- */
-
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.7);
-    z-index: 80;
-    display: flex;
-    align-items: flex-end;
-}
-
-.sheet {
-    width: 100%;
-    max-width: 850px;
-    max-height: 90vh;
-    overflow-y: auto;
-    background: #19191d;
-    border-radius: 32px 32px 0 0;
-    padding: 25px;
-    margin: auto auto 0;
-}
-
-.sheet-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.sheet-header h2 {
-    margin: 0;
-    font-size: 27px;
-}
-
-.close {
-    width: 45px;
-    height: 45px;
-    background: var(--surface2);
-    border-radius: 50%;
-    font-size: 25px;
-}
-
-.form-group {
-    margin-bottom: 18px;
-}
-
-.form-group label {
-    display: block;
-    color: var(--muted);
-    margin-bottom: 8px;
-}
-
-.form-submit {
-    width: 100%;
-    padding: 17px;
-    background: var(--blue);
-    border-radius: 17px;
-    font-size: 19px;
-    font-weight: 750;
-}
-
-/* ---------------- NAV ---------------- */
-
-.bottom-nav {
-    position: fixed;
-    z-index: 50;
-    bottom: max(12px, env(safe-area-inset-bottom));
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 40px);
-    max-width: 810px;
-    height: var(--nav-height);
-    border-radius: 45px;
-    background: rgba(55,55,59,.94);
-    border: 1px solid rgba(255,255,255,.18);
-    box-shadow: 0 10px 35px rgba(0,0,0,.35);
-    display: grid;
-    grid-template-columns: repeat(5,1fr);
-    align-items: center;
-    padding: 5px;
-    backdrop-filter: blur(20px);
-}
-
-.nav-button {
-    height: 80px;
-    border-radius: 40px;
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 2px;
-    color: white;
-    font-size: 30px;
-}
-
-.nav-button span {
-    font-size: 12px;
-    display: none;
-}
-
-.nav-button.active {
-    background: #18181b;
-    color: var(--blue);
-}
-
-/* ---------------- TOAST ---------------- */
-
-.toast {
-    position: fixed;
-    z-index: 200;
-    left: 50%;
-    bottom: 120px;
-    transform: translateX(-50%);
-    background: #29292e;
-    border: 1px solid #45454a;
-    border-radius: 999px;
-    padding: 13px 20px;
-    opacity: 0;
-    pointer-events: none;
-    transition: .25s;
-}
-
-.toast.show {
-    opacity: 1;
-}
-
-/* ---------------- RESPONSIVE ---------------- */
-
-@media (min-width: 700px) {
-    .app {
-        padding-left: 30px;
-        padding-right: 30px;
-    }
-
-    .bottom-nav {
-        width: 760px;
-    }
-
-    .pro-sheet,
-    .sheet {
-        border-radius: 32px;
-        margin-bottom: 20px;
-    }
-
-    .modal,
-    .pro-modal {
-        align-items: center;
-    }
-}
-
-@media (max-width: 430px) {
-    .user-name {
-        font-size: 36px;
-    }
-
-    .month-name {
-        font-size: 22px;
-    }
-
-    .day-circle {
-        width: 52px;
-        height: 52px;
-    }
-
-    .day {
-        min-height: 75px;
-    }
-
-    .bottom-nav {
-        width: calc(100% - 24px);
-    }
-
-    .nav-button {
-        font-size: 27px;
-    }
-}
-</style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div id="app"></div>
+<div id="app">
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
+    <!-- ============================= -->
+    <!-- TOP SAFE AREA -->
+    <!-- ============================= -->
 
-    <button class="nav-button active" data-page="home">
-        🏠
-    </button>
+    <div class="safe-top"></div>
 
-    <button class="nav-button" data-page="analytics">
-        ◔
-    </button>
 
-    <button class="nav-button" data-page="accounts">
-        ▣
-    </button>
+    <!-- ============================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================= -->
 
-    <button class="nav-button" data-page="budget">
-        ▤
-    </button>
+    <main id="main-content">
 
-    <button class="nav-button" data-page="profile">
-        ●
-    </button>
 
-</nav>
+        <!-- ===================================== -->
+        <!-- HOME -->
+        <!-- ===================================== -->
 
-<button class="fab hidden" id="fab">+</button>
+        <section
+            id="page-home"
+            class="page active"
+        >
 
-<div id="modalRoot"></div>
-<div id="toast" class="toast"></div>
+            <div class="home-header">
 
-<script>
-/* =========================================================
-   CAPMONEY PWA
-   ========================================================= */
+                <div>
+                    <div
+                        id="greeting"
+                        class="greeting"
+                    >
+                        Chào buổi tối 🌇
+                    </div>
 
-const STORAGE_KEY = "capmoney_data_v1";
+                    <h1 id="user-name">
+                        Nos
+                    </h1>
 
-const defaultData = {
-    profile: {
-        name: "Nos",
-        currency: "VND",
-        language: "Tiếng Việt",
-        theme: "Tối"
-    },
+                    <div class="header-badges">
 
-    accounts: [
-        {
-            id: crypto.randomUUID(),
-            name: "Wallet",
-            type: "wallet",
-            balance: 0,
-            favorite: true
-        },
-        {
-            id: crypto.randomUUID(),
-            name: "Bank",
-            type: "bank",
-            balance: 0,
-            favorite: false
-        }
-    ],
+                        <span class="badge green">
+                            🍃 Hôm nay chưa chi tiêu
+                        </span>
 
-    transactions: [],
+                        <span class="badge blue">
+                            ✎ 3/3
+                        </span>
 
-    loans: [],
-
-    investments: [],
-
-    budgets: [],
-
-    friends: [],
-
-    groups: [],
-
-    recurring: [],
-
-    sharedTransactions: []
-};
-
-let data = loadData();
-
-let state = {
-    page: "home",
-    homeMonth: new Date(),
-    analyticsPeriod: "month",
-    analyticsMonth: new Date(),
-    analyticsFilter: "all",
-    accountSection: "accounts"
-};
-
-/* =========================================================
-   STORAGE
-   ========================================================= */
-
-function loadData() {
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-
-        if (!raw) {
-            return structuredClone(defaultData);
-        }
-
-        return {
-            ...structuredClone(defaultData),
-            ...JSON.parse(raw)
-        };
-
-    } catch (e) {
-        console.error(e);
-        return structuredClone(defaultData);
-    }
-}
-
-function saveData() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-/* =========================================================
-   HELPERS
-   ========================================================= */
-
-function money(value) {
-    value = Number(value || 0);
-
-    return new Intl.NumberFormat("vi-VN", {
-        maximumFractionDigits: 0
-    }).format(value) + "đ";
-}
-
-function dateKey(date) {
-    const d = new Date(date);
-
-    return [
-        d.getFullYear(),
-        String(d.getMonth() + 1).padStart(2, "0"),
-        String(d.getDate()).padStart(2, "0")
-    ].join("-");
-}
-
-function monthName(date) {
-    return `tháng ${date.getMonth() + 1} ${date.getFullYear()}`;
-}
-
-function currentMonthTransactions(date) {
-    return data.transactions.filter(t => {
-        const d = new Date(t.date);
-
-        return d.getMonth() === date.getMonth()
-            && d.getFullYear() === date.getFullYear();
-    });
-}
-
-function totalIncome(transactions = data.transactions) {
-    return transactions
-        .filter(t => t.type === "income")
-        .reduce((s,t) => s + Number(t.amount), 0);
-}
-
-function totalExpense(transactions = data.transactions) {
-    return transactions
-        .filter(t => t.type === "expense")
-        .reduce((s,t) => s + Number(t.amount), 0);
-}
-
-function totalBalance() {
-    return data.accounts.reduce(
-        (sum, account) => sum + Number(account.balance || 0),
-        0
-    );
-}
-
-function showToast(text) {
-    const el = document.getElementById("toast");
-
-    el.textContent = text;
-    el.classList.add("show");
-
-    setTimeout(() => {
-        el.classList.remove("show");
-    }, 2200);
-}
-
-function escapeHTML(str) {
-    return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
-
-/* =========================================================
-   RENDER
-   ========================================================= */
-
-function render() {
-
-    const app = document.getElementById("app");
-
-    switch(state.page) {
-
-        case "home":
-            app.innerHTML = renderHome();
-            break;
-
-        case "analytics":
-            app.innerHTML = renderAnalytics();
-            break;
-
-        case "accounts":
-            app.innerHTML = renderAccounts();
-            break;
-
-        case "budget":
-            app.innerHTML = renderBudget();
-            break;
-
-        case "profile":
-            app.innerHTML = renderProfile();
-            break;
-    }
-
-    updateNavigation();
-    attachEvents();
-}
-
-function updateNavigation() {
-
-    document.querySelectorAll(".nav-button").forEach(btn => {
-
-        btn.classList.toggle(
-            "active",
-            btn.dataset.page === state.page
-        );
-
-    });
-
-    const fab = document.getElementById("fab");
-
-    if (
-        state.page === "home" ||
-        state.page === "budget" ||
-        state.page === "accounts"
-    ) {
-        fab.classList.remove("hidden");
-    } else {
-        fab.classList.add("hidden");
-    }
-}
-
-/* =========================================================
-   HOME
-   ========================================================= */
-
-function renderHome() {
-
-    const monthTx = currentMonthTransactions(state.homeMonth);
-
-    const income = totalIncome(monthTx);
-    const expense = totalExpense(monthTx);
-
-    return `
-    <main class="app">
-
-        <header class="top-header">
-
-            <div>
-                <div class="greeting">
-                    Chào buổi tối 🌅
+                    </div>
                 </div>
 
-                <div class="user-name">
-                    ${escapeHTML(data.profile.name)}
-                </div>
+                <button
+                    class="avatar-button"
+                    onclick="App.navigate('profile')"
+                >
+                    <span>●</span>
+                </button>
 
-                <div style="margin-top:12px;display:flex;gap:8px;">
-                    <span class="pill green">
-                        🌿 Hôm nay chưa chi tiêu
-                    </span>
-
-                    <span class="pill blue">
-                        ▣ ${Math.min(data.transactions.length,3)}/3
-                    </span>
-                </div>
             </div>
 
-            <button class="avatar" onclick="openProfileEdit()">
-                ●
-            </button>
 
-        </header>
+            <!-- DAY / MONTH -->
 
-        <section class="home-summary">
+            <div class="period-switch">
 
-            <div class="summary-box expense">
+                <button
+                    class="period-btn"
+                    id="period-day"
+                    onclick="App.setHomePeriod('day')"
+                >
+                    Ngày
+                </button>
 
-                <div class="summary-icon">
-                    ↗
+                <button
+                    class="period-btn selected"
+                    id="period-month"
+                    onclick="App.setHomePeriod('month')"
+                >
+                    Tháng
+                    <small>▦</small>
+                </button>
+
+            </div>
+
+
+            <!-- ACTION BUTTONS -->
+
+            <div class="quick-actions">
+
+                <button
+                    class="circle-action"
+                    onclick="App.searchTransactions()"
+                >
+                    🔍
+                </button>
+
+                <button
+                    class="circle-action"
+                    onclick="App.toggleBalanceVisibility()"
+                >
+                    👁
+                </button>
+
+                <button
+                    class="circle-action"
+                    onclick="App.openAddTransaction()"
+                >
+                    ✎
+                </button>
+
+            </div>
+
+
+            <!-- INCOME / EXPENSE -->
+
+            <div class="income-expense-grid">
+
+                <div class="summary-card expense-card">
+
+                    <div class="summary-icon red">
+                        ↗
+                    </div>
+
+                    <div>
+                        <strong id="home-expense">
+                            0đ
+                        </strong>
+
+                        <span>
+                            Chi
+                        </span>
+                    </div>
+
+                    <button onclick="App.navigate('statistics')">
+                        👁
+                    </button>
+
                 </div>
 
-                <div class="summary-title">
-                    Chi
-                </div>
 
-                <div class="summary-value">
-                    ${money(expense)}
+                <div class="summary-card income-card">
+
+                    <div class="summary-icon green">
+                        ↙
+                    </div>
+
+                    <div>
+                        <strong id="home-income">
+                            0đ
+                        </strong>
+
+                        <span>
+                            Thu
+                        </span>
+                    </div>
+
+                    <button onclick="App.navigate('statistics')">
+                        👁
+                    </button>
+
                 </div>
 
             </div>
 
-            <div class="summary-box income">
 
-                <div class="summary-icon">
-                    ↙
+            <!-- WALLET / BANK -->
+
+            <div class="filter-tabs">
+
+                <button
+                    class="filter-tab active"
+                    data-filter="all"
+                    onclick="App.setAccountFilter('all')"
+                >
+                    ▣ &nbsp; Tất cả
+                </button>
+
+                <button
+                    class="filter-tab"
+                    data-filter="wallet"
+                    onclick="App.setAccountFilter('wallet')"
+                >
+                    ▣ &nbsp; Wallet
+                </button>
+
+                <button
+                    class="filter-tab"
+                    data-filter="bank"
+                    onclick="App.setAccountFilter('bank')"
+                >
+                    🏛 &nbsp; Bank
+                </button>
+
+            </div>
+
+
+            <!-- MONTH SELECTOR -->
+
+            <div class="month-selector">
+
+                <button onclick="App.changeMonth(-1)">
+                    ‹
+                </button>
+
+                <strong id="current-month">
+                    tháng 9 2026
+                </strong>
+
+                <button onclick="App.changeMonth(1)">
+                    ›
+                </button>
+
+            </div>
+
+
+            <!-- CALENDAR -->
+
+            <div class="calendar-card">
+
+                <div class="weekdays">
+
+                    <span>T2</span>
+                    <span>T3</span>
+                    <span>T4</span>
+                    <span>T5</span>
+                    <span>T6</span>
+                    <span>T7</span>
+                    <span>CN</span>
+
                 </div>
 
-                <div class="summary-title">
-                    Thu
+                <div
+                    id="calendar"
+                    class="calendar"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- STATISTICS -->
+        <!-- ===================================== -->
+
+        <section
+            id="page-statistics"
+            class="page"
+        >
+
+            <div class="statistics-top-tabs">
+
+                <button
+                    class="active"
+                    onclick="App.setStatisticsPeriod('week')"
+                >
+                    Tuần
+                </button>
+
+                <button
+                    class="active-period"
+                    onclick="App.setStatisticsPeriod('month')"
+                >
+                    Tháng
+                </button>
+
+                <button
+                    onclick="App.setStatisticsPeriod('year')"
+                >
+                    Năm
+                </button>
+
+            </div>
+
+
+            <div class="statistics-header">
+
+                <button onclick="App.changeStatisticsMonth(-1)">
+                    ‹
+                </button>
+
+                <h2 id="statistics-month">
+                    tháng 9 2026
+                </h2>
+
+                <button onclick="App.changeStatisticsMonth(1)">
+                    ›
+                </button>
+
+            </div>
+
+
+            <div class="filter-tabs statistics-filters">
+
+                <button class="filter-tab active">
+                    ▣ &nbsp; Tất cả
+                </button>
+
+                <button class="filter-tab">
+                    ▣ &nbsp; Wallet
+                </button>
+
+                <button class="filter-tab">
+                    🏛 &nbsp; Bank
+                </button>
+
+            </div>
+
+
+            <!-- STAT SUMMARY -->
+
+            <div class="statistics-summary">
+
+                <div class="stat-total">
+
+                    <span>
+                        Tổng số dư
+                    </span>
+
+                    <button onclick="App.toggleBalanceVisibility()">
+                        ▼
+                    </button>
+
+                    <strong id="statistics-balance">
+                        0đ
+                    </strong>
+
                 </div>
 
-                <div class="summary-value">
-                    ${money(income)}
+
+                <div class="stat-income-expense">
+
+                    <div>
+
+                        <span class="stat-icon income">
+                            ↓
+                        </span>
+
+                        <label>
+                            Thu nhập
+                        </label>
+
+                        <strong id="statistics-income">
+                            0đ
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="stat-icon expense">
+                            ↑
+                        </span>
+
+                        <label>
+                            Chi tiêu
+                        </label>
+
+                        <strong id="statistics-expense">
+                            0đ
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="chart-switch">
+
+                <button class="active">
+                    Danh mục
+                </button>
+
+                <button>
+                    Bản đồ
+                </button>
+
+            </div>
+
+
+            <div
+                id="statistics-content"
+                class="empty-statistics"
+            >
+
+                <div class="empty-icon">
+                    ▥
+                </div>
+
+                <strong>
+                    Chưa có dữ liệu
+                </strong>
+
+                <span>
+                    Thêm giao dịch để xem thống kê
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- ACCOUNTS -->
+        <!-- ===================================== -->
+
+        <section
+            id="page-accounts"
+            class="page"
+        >
+
+            <div class="account-tabs">
+
+                <button
+                    class="active"
+                    onclick="App.setAccountPage('accounts')"
+                >
+                    ▣ &nbsp; Tài khoản
+                </button>
+
+                <button
+                    onclick="App.setAccountPage('loans')"
+                >
+                    💵 &nbsp; Khoản vay
+                </button>
+
+                <button
+                    onclick="App.setAccountPage('investments')"
+                >
+                    📈 &nbsp; Đầu tư
+                </button>
+
+            </div>
+
+
+            <!-- ACCOUNT VIEW -->
+
+            <div id="accounts-view">
+
+                <div class="account-period-tabs">
+
+                    <button class="active">
+                        Tháng này
+                    </button>
+
+                    <button>
+                        Năm nay
+                    </button>
+
+                    <button>
+                        Tất cả
+                    </button>
+
+                </div>
+
+
+                <div class="account-month">
+
+                    <button onclick="App.changeAccountMonth(-1)">
+                        ‹
+                    </button>
+
+                    <strong>
+                        tháng 9 2026
+                    </strong>
+
+                    <button onclick="App.changeAccountMonth(1)">
+                        ›
+                    </button>
+
+                </div>
+
+
+                <div class="account-total">
+
+                    <span>
+                        Tổng số dư
+                    </span>
+
+                    <strong id="accounts-balance">
+                        0đ
+                    </strong>
+
+                    <div>
+
+                        <div>
+                            <span>↓ Thu nhập</span>
+                            <strong id="accounts-income">0đ</strong>
+                        </div>
+
+                        <div>
+                            <span>↑ Chi tiêu</span>
+                            <strong id="accounts-expense">0đ</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="account-buttons">
+
+                    <button
+                        class="large-blue"
+                        onclick="App.openTransfer()"
+                    >
+                        ⇄ &nbsp; Chuyển tiền
+                    </button>
+
+                    <button
+                        class="large-green"
+                        onclick="App.openAddAccount()"
+                    >
+                        ＋ &nbsp; Tài khoản
+                    </button>
+
+                </div>
+
+
+                <div class="section-title-row">
+
+                    <h2>
+                        Tài khoản
+                    </h2>
+
+                    <div>
+
+                        <button onclick="App.sortAccounts()">
+                            ⇅ Sắp xếp
+                        </button>
+
+                        <button onclick="App.showTransferHistory()">
+                            ⇄ Lịch sử chuyển tiền
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="account-list"
+                    class="account-list"
+                ></div>
+
+
+                <div class="section-title-row">
+
+                    <h2>
+                        Sổ tiết kiệm
+                    </h2>
+
+                    <button
+                        onclick="App.openAddSavings()"
+                    >
+                        ＋ Thêm sổ
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="savings-list"
+                    class="savings-list"
+                >
+
+                    <div class="empty-card small">
+
+                        <div>
+                            🏛
+                        </div>
+
+                        <strong>
+                            Chưa có sổ tiết kiệm
+                        </strong>
+
+                        <span>
+                            Theo dõi tiền gửi có kỳ hạn để xem lãi tích lũy đến ngày đáo hạn.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOANS -->
+
+            <div
+                id="loans-view"
+                class="sub-page hidden"
+            >
+
+                <button
+                    class="large-blue full"
+                    onclick="App.openAddLoan()"
+                >
+                    ＋ &nbsp; Thêm khoản vay
+                </button>
+
+
+                <div
+                    id="loan-list"
+                    class="empty-card"
+                >
+
+                    <div class="empty-icon">
+                        💵
+                    </div>
+
+                    <strong>
+                        Chưa có khoản vay
+                    </strong>
+
+                    <span>
+                        Nhấn + để thêm khoản vay hoặc trả góp
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- INVESTMENTS -->
+
+            <div
+                id="investments-view"
+                class="sub-page hidden"
+            >
+
+                <div class="market-title">
+
+                    <strong>
+                        Thị trường
+                    </strong>
+
+                    <button onclick="App.refreshMarket()">
+                        ⚙
+                    </button>
+
+                </div>
+
+
+                <div class="market-cards">
+
+                    <div class="market-card">
+
+                        <strong>🟡 SJC</strong>
+
+                        <b>
+                            146.6M VND
+                        </b>
+
+                        <span>
+                            ↘ -0.34%
+                        </span>
+
+                    </div>
+
+
+                    <div class="market-card">
+
+                        <strong>₿ BTC</strong>
+
+                        <b>
+                            2.0B VND
+                        </b>
+
+                        <span>
+                            ↘ -1.43%
+                        </span>
+
+                    </div>
+
+
+                    <div class="market-card">
+
+                        <strong>Ⓔ ETH</strong>
+
+                        <b>
+                            64.2M VND
+                        </b>
+
+                        <span>
+                            ↘ -0.87%
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="account-buttons">
+
+                    <button
+                        class="large-blue"
+                        onclick="App.openAddInvestment()"
+                    >
+                        ＋ &nbsp; Thêm khoản đầu tư
+                    </button>
+
+                    <button
+                        class="large-green"
+                        onclick="App.refreshMarket()"
+                    >
+                        ↻ &nbsp; Cập nhật giá
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="investment-list"
+                    class="empty-card"
+                >
+
+                    <div class="empty-icon">
+                        📈
+                    </div>
+
+                    <strong>
+                        Chưa có khoản đầu tư
+                    </strong>
+
+                    <span>
+                        Nhấn + để thêm vàng, bạc, crypto hoặc các khoản đầu tư khác
+                    </span>
+
                 </div>
 
             </div>
 
         </section>
 
-        <div class="home-tabs">
 
-            <button class="home-tab active">
-                ▣ Tất cả
-            </button>
+        <!-- ===================================== -->
+        <!-- BUDGET -->
+        <!-- ===================================== -->
 
-            <button class="home-tab">
-                ▣ Wallet
-            </button>
+        <section
+            id="page-budget"
+            class="page"
+        >
 
-            <button class="home-tab">
-                ♜ Bank
-            </button>
+            <div class="page-heading">
 
-        </div>
+                <div>
 
-        <div class="month-selector">
+                    <h1>
+                        Quản lý ngân sách
+                    </h1>
 
-            <button onclick="changeHomeMonth(-1)">
-                ‹
-            </button>
+                    <p>
+                        Tạo và theo dõi nhiều ngân sách
+                    </p>
 
-            <div class="month-name">
-                ${monthName(state.homeMonth)}
+                </div>
+
+                <div>
+
+                    <button
+                        class="circle-action"
+                        onclick="App.addBudgetMember()"
+                    >
+                        ♙+
+                    </button>
+
+                    <button
+                        class="circle-action blue"
+                        onclick="App.openAddBudget()"
+                    >
+                        +
+                    </button>
+
+                </div>
+
             </div>
 
-            <button onclick="changeHomeMonth(1)">
-                ›
-            </button>
 
-        </div>
-
-        ${renderCalendar(state.homeMonth)}
-
-    </main>
-    `;
-}
-
-function renderCalendar(date) {
-
-    const year = date.getFullYear();
-    const month = date.getMonth();
-
-    const first = new Date(year, month, 1);
-    const last = new Date(year, month + 1, 0);
-
-    let start = first.getDay();
-
-    // Việt Nam: T2 -> CN
-    start = start === 0 ? 6 : start - 1;
-
-    const days = [];
-
-    for(let i=0; i<start; i++) {
-        days.push(`<div class="day"></div>`);
-    }
-
-    const today = new Date();
-
-    for(let d=1; d<=last.getDate(); d++) {
-
-        const current = new Date(year, month, d);
-
-        const hasTransaction =
-            data.transactions.some(
-                t => dateKey(t.date) === dateKey(current)
-            );
-
-        const isToday =
-            dateKey(today) === dateKey(current);
-
-        days.push(`
-            <button
-                class="day ${isToday ? "today" : ""}"
-                onclick="openTransactionModal('${dateKey(current)}')"
+            <div
+                id="budget-list"
+                class="empty-card budget-empty"
             >
 
-                <div class="day-circle ${
-                    hasTransaction ? "" : "has-add"
-                }">
-
-                    ${hasTransaction ? "•" : "+"}
-
-                </div>
-
-                <div class="day-number">
-                    ${d}
-                </div>
-
-                ${
-                    hasTransaction
-                    ? `<div class="day-dot"></div>`
-                    : ""
-                }
-
-            </button>
-        `);
-    }
-
-    return `
-    <div class="calendar">
-
-        <div class="weekdays">
-            <div>T2</div>
-            <div>T3</div>
-            <div>T4</div>
-            <div>T5</div>
-            <div>T6</div>
-            <div>T7</div>
-            <div>CN</div>
-        </div>
-
-        <div class="calendar-grid">
-            ${days.join("")}
-        </div>
-
-    </div>
-    `;
-}
-
-/* =========================================================
-   ANALYTICS
-   ========================================================= */
-
-function renderAnalytics() {
-
-    const tx = currentMonthTransactions(state.analyticsMonth);
-
-    const income = totalIncome(tx);
-    const expense = totalExpense(tx);
-    const balance = income - expense;
-
-    return `
-    <main class="app">
-
-        <div class="segment">
-
-            <button onclick="setAnalyticsPeriod('week')"
-                class="${state.analyticsPeriod === "week" ? "active" : ""}">
-                Tuần
-            </button>
-
-            <button onclick="setAnalyticsPeriod('month')"
-                class="${state.analyticsPeriod === "month" ? "active" : ""}">
-                Tháng
-            </button>
-
-            <button onclick="setAnalyticsPeriod('year')"
-                class="${state.analyticsPeriod === "year" ? "active" : ""}">
-                Năm
-            </button>
-
-        </div>
-
-        <div class="period-nav">
-
-            <button onclick="changeAnalyticsMonth(-1)">
-                ‹
-            </button>
-
-            <div class="period-title">
-                ${monthName(state.analyticsMonth)}
-            </div>
-
-            <button onclick="changeAnalyticsMonth(1)">
-                ›
-            </button>
-
-        </div>
-
-        <div class="filter-tabs">
-
-            <button
-                class="filter-tab ${
-                    state.analyticsFilter === "all" ? "active" : ""
-                }"
-                onclick="setAnalyticsFilter('all')">
-                ▣ Tất cả
-            </button>
-
-            <button
-                class="filter-tab ${
-                    state.analyticsFilter === "wallet" ? "active" : ""
-                }"
-                onclick="setAnalyticsFilter('wallet')">
-                ▣ Wallet
-            </button>
-
-            <button
-                class="filter-tab ${
-                    state.analyticsFilter === "bank" ? "active" : ""
-                }"
-                onclick="setAnalyticsFilter('bank')">
-                ♜ Bank
-            </button>
-
-        </div>
-
-        <div class="income-expense">
-
-            <div class="money-card active-green">
-
-                <div class="money-card-title">
-                    🟢 Thu nhập
-                </div>
-
-                <div class="money-card-value green">
-                    ${money(income)}
-                </div>
-
-            </div>
-
-            <div class="money-card">
-
-                <div class="money-card-title">
-                    🔴 Chi tiêu
-                </div>
-
-                <div class="money-card-value red">
-                    ${money(expense)}
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="balance-card card">
-
-            <h3>Số dư</h3>
-
-            <div class="balance">
-                ${balance >= 0 ? "+" : ""}${money(balance)}
-            </div>
-
-        </div>
-
-        <div class="segment" style="margin-top:28px">
-
-            <button class="active">
-                Danh mục
-            </button>
-
-            <button>
-                Bản đồ
-            </button>
-
-        </div>
-
-        ${renderCategoryChart(tx)}
-
-    </main>
-    `;
-}
-
-function renderCategoryChart(tx) {
-
-    if(!tx.length) {
-
-        return `
-        <div class="chart-card card">
-
-            <div class="empty-state">
-
                 <div class="empty-icon">
-                    ▥
-                </div>
-
-                <div class="empty-title">
-                    Chưa có dữ liệu
-                </div>
-
-            </div>
-
-        </div>
-        `;
-    }
-
-    const categories = {};
-
-    tx.forEach(t => {
-
-        if(t.type !== "expense") return;
-
-        categories[t.category] =
-            (categories[t.category] || 0)
-            + Number(t.amount);
-
-    });
-
-    const rows = Object.entries(categories);
-
-    return `
-    <div class="chart-card card"
-         style="display:block;min-height:auto">
-
-        <h3>Chi tiêu theo danh mục</h3>
-
-        ${rows.map(([category,value]) => {
-
-            const max =
-                Math.max(...rows.map(x => x[1]));
-
-            const width =
-                max ? value / max * 100 : 0;
-
-            return `
-            <div style="margin:20px 0">
-
-                <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    margin-bottom:8px">
-
-                    <span>${escapeHTML(category)}</span>
-
-                    <strong>${money(value)}</strong>
-
-                </div>
-
-                <div style="
-                    height:12px;
-                    background:#303036;
-                    border-radius:99px;
-                    overflow:hidden">
-
-                    <div style="
-                        width:${width}%;
-                        height:100%;
-                        background:var(--blue);
-                        border-radius:99px">
-                    </div>
-
-                </div>
-
-            </div>
-            `;
-
-        }).join("")}
-
-    </div>
-    `;
-}
-
-/* =========================================================
-   ACCOUNTS / LOANS / INVESTMENTS
-   ========================================================= */
-
-function renderAccounts() {
-
-    if(state.accountSection === "loans") {
-        return renderLoans();
-    }
-
-    if(state.accountSection === "investments") {
-        return renderInvestments();
-    }
-
-    const balance = totalBalance();
-
-    return `
-    <main class="app">
-
-        <div class="top-sections">
-
-            <button class="active"
-                onclick="setAccountSection('accounts')">
-                ▣ Tài khoản
-            </button>
-
-            <button
-                onclick="setAccountSection('loans')">
-                ▤ Khoản vay
-            </button>
-
-            <button
-                onclick="setAccountSection('investments')">
-                ↗ Đầu tư
-            </button>
-
-        </div>
-
-        <div class="total-card card">
-
-            <div class="total-label">
-                Tổng số dư ⌄
-            </div>
-
-            <div class="total-number">
-                ${money(balance)}
-            </div>
-
-            <div class="total-details">
-
-                <div class="total-detail">
-                    <span class="green">↓</span>
-                    <span class="muted">Thu nhập</span>
-
-                    <strong class="green">
-                        ${money(totalIncome())}
-                    </strong>
-                </div>
-
-                <div class="total-detail">
-                    <span class="red">↑</span>
-                    <span class="muted">Chi tiêu</span>
-
-                    <strong class="red">
-                        ${money(totalExpense())}
-                    </strong>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="action-grid">
-
-            <button
-                class="action-button"
-                onclick="openTransferModal()">
-                ⇄ Chuyển tiền
-            </button>
-
-            <button
-                class="action-button green-button"
-                onclick="openAccountModal()">
-                ＋ Tài khoản
-            </button>
-
-        </div>
-
-        <div class="list-header">
-
-            <h2>Tài khoản</h2>
-
-            <button
-                class="pill blue"
-                onclick="showToast('Chức năng sắp xếp đã sẵn sàng')">
-                ↕ Sắp xếp
-            </button>
-
-        </div>
-
-        ${
-            data.accounts.map(account => `
-                <div class="account-item">
-
-                    <div class="account-icon">
-                        ${account.type === "bank" ? "♜" : "▣"}
-                    </div>
-
-                    <div class="account-info">
-
-                        <div class="account-name">
-
-                            ${escapeHTML(account.name)}
-
-                            ${
-                                account.favorite
-                                ? " ⭐"
-                                : ""
-                            }
-
-                        </div>
-
-                        <div class="account-balance">
-                            ${money(account.balance)}
-                        </div>
-
-                    </div>
-
-                    <div class="arrow">
-                        ›
-                    </div>
-
-                </div>
-            `).join("")
-        }
-
-        <div class="list-header">
-            <h2>Sổ tiết kiệm</h2>
-
-            <button
-                class="pill blue"
-                onclick="showToast('Thêm sổ tiết kiệm')">
-                ＋ Thêm sổ
-            </button>
-        </div>
-
-        <div class="account-item">
-
-            <div class="account-icon"
-                 style="background:#283342">
-                ♜
-            </div>
-
-            <div class="account-info">
-
-                <div class="account-name">
-                    Chưa có sổ tiết kiệm
-                </div>
-
-                <div class="muted">
-                    Theo dõi tiền gửi có kỳ hạn
-                </div>
-
-            </div>
-
-            <div class="arrow">›</div>
-
-        </div>
-
-    </main>
-    `;
-}
-
-function renderLoans() {
-
-    return `
-    <main class="app">
-
-        <div class="top-sections">
-
-            <button onclick="setAccountSection('accounts')">
-                ▣ Tài khoản
-            </button>
-
-            <button class="active">
-                ▤ Khoản vay
-            </button>
-
-            <button onclick="setAccountSection('investments')">
-                ↗ Đầu tư
-            </button>
-
-        </div>
-
-        <button
-            class="action-button"
-            style="width:100%;margin-top:30px"
-            onclick="openLoanModal()">
-            ＋ Thêm khoản vay
-        </button>
-
-        ${
-            data.loans.length
-            ? data.loans.map(loan => `
-                <div class="account-item" style="margin-top:18px">
-
-                    <div class="account-icon"
-                         style="background:#293340">
-                        💵
-                    </div>
-
-                    <div class="account-info">
-
-                        <div class="account-name">
-                            ${escapeHTML(loan.name)}
-                        </div>
-
-                        <div class="account-balance red">
-                            ${money(loan.amount)}
-                        </div>
-
-                    </div>
-
-                </div>
-            `).join("")
-            :
-            `
-            <div class="module-empty" style="margin-top:30px">
-
-                <div class="icon">▣</div>
-
-                <h2>Chưa có khoản vay</h2>
-
-                <p>
-                    Nhấn + để thêm khoản vay hoặc trả góp
-                </p>
-
-            </div>
-            `
-        }
-
-    </main>
-    `;
-}
-
-function renderInvestments() {
-
-    return `
-    <main class="app">
-
-        <div class="top-sections">
-
-            <button onclick="setAccountSection('accounts')">
-                ▣ Tài khoản
-            </button>
-
-            <button onclick="setAccountSection('loans')">
-                ▤ Khoản vay
-            </button>
-
-            <button class="active">
-                ↗ Đầu tư
-            </button>
-
-        </div>
-
-        <div style="margin-top:30px">
-
-            <h3>Thị trường</h3>
-
-            <div style="
-                display:grid;
-                grid-template-columns:repeat(3,1fr);
-                gap:16px">
-
-                <div class="card" style="padding:18px">
-                    🟡 <strong>SJC</strong>
-                    <br><br>
-                    146.6M VND
-                    <br>
-                    <span class="red">↘ -0.34%</span>
-                </div>
-
-                <div class="card" style="padding:18px">
-                    🟠 <strong>BTC</strong>
-                    <br><br>
-                    2.0B VND
-                    <br>
-                    <span class="red">↘ -1.43%</span>
-                </div>
-
-                <div class="card" style="padding:18px">
-                    🔵 <strong>ETH</strong>
-                    <br><br>
-                    64.2M VND
-                    <br>
-                    <span class="red">↘ -0.87%</span>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="action-grid">
-
-            <button
-                class="action-button"
-                onclick="openInvestmentModal()">
-                ＋ Thêm khoản đầu tư
-            </button>
-
-            <button
-                class="action-button green-button"
-                onclick="showToast('Đã cập nhật giá')">
-                ↻ Cập nhật giá
-            </button>
-
-        </div>
-
-        ${
-            data.investments.length
-            ? data.investments.map(i => `
-                <div class="account-item">
-
-                    <div class="account-icon"
-                         style="background:#293340">
-                        📈
-                    </div>
-
-                    <div class="account-info">
-
-                        <div class="account-name">
-                            ${escapeHTML(i.name)}
-                        </div>
-
-                        <div class="account-balance">
-                            ${money(i.amount)}
-                        </div>
-
-                    </div>
-
-                </div>
-            `).join("")
-            :
-            `
-            <div class="module-empty">
-
-                <div class="icon">↗</div>
-
-                <h2>Chưa có khoản đầu tư</h2>
-
-                <p>
-                    Nhấn + để thêm vàng, bạc, crypto
-                    hoặc các khoản đầu tư khác
-                </p>
-
-            </div>
-            `
-        }
-
-    </main>
-    `;
-}
-
-/* =========================================================
-   BUDGET
-   ========================================================= */
-
-function renderBudget() {
-
-    return `
-    <main class="app">
-
-        <div class="budget-header">
-
-            <div>
-
-                <h1 class="page-title">
-                    Quản lý ngân sách
-                </h1>
-
-                <div class="page-subtitle">
-                    Tạo và theo dõi nhiều ngân sách
-                </div>
-
-            </div>
-
-            <button
-                class="circle-add"
-                onclick="openBudgetModal()">
-                +
-            </button>
-
-        </div>
-
-        ${
-            data.budgets.length
-            ? data.budgets.map(b => {
-
-                const spent =
-                    data.transactions
-                    .filter(t =>
-                        t.type === "expense" &&
-                        t.category === b.category
-                    )
-                    .reduce(
-                        (s,t) => s + Number(t.amount),
-                        0
-                    );
-
-                const percent =
-                    Math.min(
-                        100,
-                        b.amount
-                        ? spent / b.amount * 100
-                        : 0
-                    );
-
-                return `
-                <div class="card"
-                     style="padding:25px;margin-top:20px">
-
-                    <div style="
-                        display:flex;
-                        justify-content:space-between">
-
-                        <strong>
-                            ${escapeHTML(b.name)}
-                        </strong>
-
-                        <span>
-                            ${money(spent)}
-                            /
-                            ${money(b.amount)}
-                        </span>
-
-                    </div>
-
-                    <div style="
-                        height:12px;
-                        background:#303036;
-                        border-radius:99px;
-                        margin-top:18px">
-
-                        <div style="
-                            width:${percent}%;
-                            height:100%;
-                            background:${
-                                percent >= 90
-                                ? "var(--red)"
-                                : "var(--blue)"
-                            };
-                            border-radius:99px">
-                        </div>
-
-                    </div>
-
-                </div>
-                `;
-
-            }).join("")
-            :
-            `
-            <div class="module-empty"
-                 style="margin-top:30px">
-
-                <div class="icon">
                     ▣123
                 </div>
 
-                <h2>
+                <strong>
                     Chưa có ngân sách
-                </h2>
+                </strong>
 
-                <p>
+                <span>
                     Tạo ngân sách để theo dõi chi tiêu
-                </p>
+                </span>
 
             </div>
-            `
-        }
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- PROFILE -->
+        <!-- ===================================== -->
+
+        <section
+            id="page-profile"
+            class="page"
+        >
+
+            <div class="profile-cover">
+
+                <button
+                    class="profile-avatar"
+                    onclick="App.changeAvatar()"
+                >
+                    N
+                </button>
+
+                <button
+                    class="edit-avatar"
+                    onclick="App.changeAvatar()"
+                >
+                    ✎
+                </button>
+
+                <h1 id="profile-name">
+                    Nos
+                </h1>
+
+                <span>
+                    ▦ Sep 2026
+                </span>
+
+            </div>
+
+
+            <h2 class="profile-section-title">
+                Tổng quan
+            </h2>
+
+
+            <div class="profile-stats">
+
+                <div>
+                    <span>⇄</span>
+                    <label>Giao dịch</label>
+                    <strong id="profile-transactions">0</strong>
+                </div>
+
+                <div>
+                    <span class="green-text">↓</span>
+                    <label>Tổng thu nhập</label>
+                    <strong class="green-text" id="profile-income">0đ</strong>
+                </div>
+
+                <div>
+                    <span class="red-text">↑</span>
+                    <label>Tổng chi tiêu</label>
+                    <strong class="red-text" id="profile-expense">0đ</strong>
+                </div>
+
+                <div>
+                    <span class="green-text">◔</span>
+                    <label>Số dư</label>
+                    <strong class="green-text" id="profile-balance">0đ</strong>
+                </div>
+
+            </div>
+
+
+            <div class="upgrade-card">
+
+                <div class="upgrade-icon">
+                    ♛
+                </div>
+
+                <div>
+                    <strong>
+                        Nâng cấp
+                    </strong>
+
+                    <span>
+                        Mở khóa tất cả tính năng cao cấp
+                    </span>
+                </div>
+
+                <button onclick="App.openPro()">
+                    Nâng cấp
+                </button>
+
+            </div>
+
+
+            <button
+                class="settings-row apple"
+                onclick="App.appleLogin()"
+            >
+
+                <span class="row-icon">
+                    
+                </span>
+
+                <div>
+                    <strong>
+                        Đăng nhập với Apple
+                    </strong>
+
+                    <small>
+                        Liên kết tài khoản để sao lưu
+                    </small>
+                </div>
+
+                <b>
+                    ›
+                </b>
+
+            </button>
+
+
+            <div class="shortcut-card">
+
+                <span>
+                    ☝
+                </span>
+
+                <div>
+                    <strong>
+                        ✨ Shortcut Double Tap
+                    </strong>
+
+                    <p>
+                        Quét giao dịch ngân hàng tức thì — chỉ cần nhấn đúp vào mặt sau iPhone.
+                    </p>
+                </div>
+
+                <b>
+                    ›
+                </b>
+
+            </div>
+
+
+            <div class="settings-list">
+
+                <button onclick="App.showFriends()">
+                    👥
+                    <span>Bạn bè</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.showGroups()">
+                    👥
+                    <span>Nhóm</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.showSharedTransactions()">
+                    ▰
+                    <span>Giao dịch được chia sẻ</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.showSplitMoney()">
+                    👥
+                    <span>Chia tiền</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.showRecurring()">
+                    ⟳
+                    <span>Giao dịch Định kỳ</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.openSettings()">
+                    ⚙
+                    <span>Cài đặt</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.openCategories()">
+                    🗂
+                    <span>Danh mục</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.changeLanguage()">
+                    🌐
+                    <span>Ngôn ngữ</span>
+                    <em>🇻🇳 Tiếng Việt</em>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.changeTheme()">
+                    ☾
+                    <span>Giao diện</span>
+                    <em>Tối</em>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.changeCurrency()">
+                    $
+                    <span>Tiền tệ</span>
+                    <em>🇻🇳 VND</em>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.rateApp()">
+                    ★
+                    <span>Đánh giá ứng dụng</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.feedback()">
+                    ✉
+                    <span>Góp ý</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.shareApp()">
+                    ?
+                    <span>Chia sẻ ứng dụng</span>
+                    <b>›</b>
+                </button>
+
+            </div>
+
+
+            <div class="version">
+                CapMoney PWA<br>
+                Phiên bản 1.0.0
+            </div>
+
+        </section>
 
     </main>
-    `;
-}
 
-/* =========================================================
-   PROFILE
-   ========================================================= */
 
-function renderProfile() {
+    <!-- ===================================== -->
+    <!-- BOTTOM NAVIGATION -->
+    <!-- ===================================== -->
 
-    const tx = data.transactions;
-
-    return `
-    <main class="app">
-
-        <div class="profile-card">
-
-            <div class="profile-avatar">
-                N
-            </div>
-
-            <div class="profile-name">
-                ${escapeHTML(data.profile.name)}
-            </div>
-
-            <div class="profile-date">
-                ▦ ${monthName(new Date())}
-            </div>
-
-        </div>
-
-        <h2 style="margin-top:30px">
-            Tổng quan
-        </h2>
-
-        <div class="overview-grid">
-
-            <div class="overview-card">
-
-                <div class="icon">⇄</div>
-
-                <label>Giao dịch</label>
-
-                <strong>
-                    ${tx.length}
-                </strong>
-
-            </div>
-
-            <div class="overview-card">
-
-                <div class="icon green">↓</div>
-
-                <label>Tổng thu nhập</label>
-
-                <strong class="green">
-                    ${money(totalIncome())}
-                </strong>
-
-            </div>
-
-            <div class="overview-card">
-
-                <div class="icon red">↑</div>
-
-                <label>Tổng chi tiêu</label>
-
-                <strong class="red">
-                    ${money(totalExpense())}
-                </strong>
-
-            </div>
-
-            <div class="overview-card">
-
-                <div class="icon green">◔</div>
-
-                <label>Số dư</label>
-
-                <strong class="green">
-                    ${money(totalBalance())}
-                </strong>
-
-            </div>
-
-        </div>
+    <nav class="bottom-nav">
 
         <button
-            onclick="openProModal()"
-            style="
-                width:100%;
-                margin-top:25px;
-                padding:25px;
-                border-radius:25px;
-                text-align:left;
-                background:var(--surface);
-            ">
-
-            <div style="font-size:23px;font-weight:800">
-                👑 Nâng cấp
-            </div>
-
-            <div class="muted" style="margin-top:7px">
-                Mở khóa tất cả tính năng cao cấp
-            </div>
-
+            data-page="home"
+            class="nav-item active"
+            onclick="App.navigate('home')"
+        >
+            <span>⌂</span>
         </button>
 
-        <div class="settings-list">
-
-            <div class="setting-row"
-                 onclick="showToast('Đăng nhập với Apple')">
-
-                <div class="setting-icon">
-                    ●
-                </div>
-
-                <div class="setting-label">
-                    Đăng nhập với Apple
-                </div>
-
-                <div class="setting-arrow">
-                    ›
-                </div>
-
-            </div>
-
-            <div class="setting-row"
-                 onclick="openProModal()">
-
-                <div class="setting-icon">
-                    ✨
-                </div>
-
-                <div class="setting-label">
-                    Shortcut Double Tap
-                </div>
-
-                <div class="setting-arrow">
-                    ›
-                </div>
-
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">👥</div>
-                <div class="setting-label">Bạn bè</div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">👥</div>
-                <div class="setting-label">Nhóm</div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">▣</div>
-                <div class="setting-label">
-                    Giao dịch được chia sẻ
-                </div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">◉</div>
-                <div class="setting-label">
-                    Chia tiền
-                </div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">⟳</div>
-                <div class="setting-label">
-                    Giao dịch Định kỳ
-                </div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-            <div class="setting-row"
-                 onclick="openSettingsModal()">
-
-                <div class="setting-icon">⚙</div>
-                <div class="setting-label">Cài đặt</div>
-                <div class="setting-arrow">›</div>
-
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">▱</div>
-                <div class="setting-label">Danh mục</div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">🌐</div>
-                <div class="setting-label">Ngôn ngữ</div>
-                <div class="setting-value">
-                    🇻🇳 Tiếng Việt
-                </div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">☾</div>
-                <div class="setting-label">Giao diện</div>
-                <div class="setting-value">Tối</div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">$</div>
-                <div class="setting-label">Tiền tệ</div>
-                <div class="setting-value">🇻🇳 VND</div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">★</div>
-                <div class="setting-label">Đánh giá ứng dụng</div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">✉</div>
-                <div class="setting-label">Góp ý</div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-            <div class="setting-row">
-                <div class="setting-icon">?</div>
-                <div class="setting-label">Chia sẻ ứng dụng</div>
-                <div class="setting-arrow">›</div>
-            </div>
-
-        </div>
-
-        <div style="
-            text-align:center;
-            color:#777;
-            margin:25px 0 10px">
-            CapMoney PWA
-            <br>
-            Phiên bản 1.0.0
-        </div>
-
-    </main>
-    `;
-}
-
-/* =========================================================
-   PRO MODAL
-   ========================================================= */
-
-function openProModal() {
-
-    document.getElementById("modalRoot").innerHTML = `
-
-    <div class="pro-modal"
-         onclick="if(event.target===this)closeModal()">
-
-        <div class="pro-sheet">
-
-            <button
-                class="pro-close"
-                onclick="closeModal()">
-                ×
-            </button>
-
-            <div class="pro-hero">
-
-                <div class="pro-icon">
-                    ▣
-                </div>
-
-                <div class="pro-title">
-                    Mở khóa toàn bộ CapMoney
-                </div>
-
-                <div class="pro-subtitle">
-                    Không giới hạn mỗi ngày,
-                    ghi chép thoải mái —
-                    quản lý tiền nhẹ nhàng và vui hơn
-                </div>
-
-            </div>
-
-            <div class="pro-list">
-
-                <div class="pro-list-title">
-                    Tất cả những gì bạn nhận được với Pro
-                </div>
-
-                ${proFeature(
-                    "∞",
-                    "Giao dịch không giới hạn",
-                    "Thêm bao nhiêu giao dịch tùy thích"
-                )}
-
-                ${proFeature(
-                    "▣",
-                    "Mọi loại tài khoản",
-                    "Tạo thẻ tín dụng có hoàn tiền, sổ tiết kiệm, ví điện tử, khoản vay... thoải mái không giới hạn"
-                )}
-
-                ${proFeature(
-                    "👥",
-                    "Chia sẻ với người thân",
-                    "Dùng chung tài khoản ngân hàng, ngân sách với bạn bè, người thân — cùng xem, cùng ghi chép"
-                )}
-
-                ${proFeature(
-                    "ϟ",
-                    "Lưu chuyển khoản siêu tốc",
-                    "Chụp màn hình biên lai chuyển khoản, Shortcut tự đọc số tiền và lưu — không cần nhập liệu"
-                )}
-
-                ${proFeature(
-                    "▣",
-                    "Video 3 giây",
-                    "Quay khoảnh khắc ngắn cùng giao dịch của bạn"
-                )}
-
-                ${proFeature(
-                    "▥",
-                    "Thống kê nâng cao",
-                    "Biểu đồ và phân tích chi tiết"
-                )}
-
-                ${proFeature(
-                    "▱",
-                    "Danh mục tùy chỉnh",
-                    "Tạo danh mục riêng của bạn"
-                )}
-
-                ${proFeature(
-                    "▦",
-                    "Widget màn hình chính",
-                    "Xem chi tiêu ngay trên màn hình chính"
-                )}
-
-                ${proFeature(
-                    "⇧",
-                    "Xuất dữ liệu",
-                    "Xuất báo cáo PDF, Excel"
-                )}
-
-            </div>
-
-            <button
-                class="pro-upgrade"
-                onclick="activatePro()">
-                Nâng cấp Pro
-            </button>
-
-        </div>
-
-    </div>
-    `;
-}
-
-function proFeature(icon,title,description) {
-
-    return `
-    <div class="pro-feature">
-
-        <div class="pro-feature-icon">
-            ${icon}
-        </div>
-
-        <div>
-
-            <div class="pro-feature-title">
-                ${title}
-            </div>
-
-            <div class="pro-feature-description">
-                ${description}
-            </div>
-
-        </div>
-
-        <div class="pro-check">
-            ✓
-        </div>
-
-    </div>
-    `;
-}
-
-function activatePro() {
-
-    localStorage.setItem(
-        "capmoney_pro",
-        "true"
-    );
-
-    closeModal();
-
-    showToast("CapMoney Pro đã được kích hoạt");
-}
-
-/* =========================================================
-   TRANSACTION MODAL
-   ========================================================= */
-
-function openTransactionModal(selectedDate = dateKey(new Date())) {
-
-    document.getElementById("modalRoot").innerHTML = `
-
-    <div class="modal"
-         onclick="if(event.target===this)closeModal()">
-
-        <div class="sheet">
-
-            <div class="sheet-header">
-
-                <h2>Thêm giao dịch</h2>
-
-                <button
-                    class="close"
-                    onclick="closeModal()">
+        <button
+            data-page="statistics"
+            class="nav-item"
+            onclick="App.navigate('statistics')"
+        >
+            <span>◔</span>
+        </button>
+
+        <button
+            data-page="accounts"
+            class="nav-item"
+            onclick="App.navigate('accounts')"
+        >
+            <span>▣</span>
+        </button>
+
+        <button
+            data-page="budget"
+            class="nav-item"
+            onclick="App.navigate('budget')"
+        >
+            <span>▰</span>
+        </button>
+
+        <button
+            data-page="profile"
+            class="nav-item"
+            onclick="App.navigate('profile')"
+        >
+            <span>●</span>
+        </button>
+
+    </nav>
+
+
+    <!-- ===================================== -->
+    <!-- FAB -->
+    <!-- ===================================== -->
+
+    <button
+        id="main-fab"
+        class="main-fab"
+        onclick="App.openAddTransaction()"
+    >
+        +
+    </button>
+
+
+    <!-- ===================================== -->
+    <!-- MODAL -->
+    <!-- ===================================== -->
+
+    <div
+        id="modal"
+        class="modal-overlay"
+        onclick="App.closeModal(event)"
+    >
+
+        <div
+            id="modal-box"
+            class="modal-box"
+            onclick="event.stopPropagation()"
+        >
+
+            <div class="modal-header">
+
+                <h2 id="modal-title">
+                    Thêm giao dịch
+                </h2>
+
+                <button onclick="App.closeModal()">
                     ×
                 </button>
 
             </div>
 
-            <form onsubmit="saveTransaction(event)">
-
-                <div class="form-group">
-
-                    <label>Loại giao dịch</label>
-
-                    <select id="transactionType">
-                        <option value="expense">
-                            Chi tiêu
-                        </option>
-                        <option value="income">
-                            Thu nhập
-                        </option>
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Số tiền</label>
-
-                    <input
-                        id="transactionAmount"
-                        type="number"
-                        min="0"
-                        placeholder="0"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Nội dung</label>
-
-                    <input
-                        id="transactionTitle"
-                        placeholder="Ví dụ: Ăn sáng"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Danh mục</label>
-
-                    <input
-                        id="transactionCategory"
-                        value="Ăn uống">
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Tài khoản</label>
-
-                    <select id="transactionAccount">
-
-                        ${
-                            data.accounts.map(a => `
-                                <option value="${a.id}">
-                                    ${escapeHTML(a.name)}
-                                </option>
-                            `).join("")
-                        }
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Ngày</label>
-
-                    <input
-                        id="transactionDate"
-                        type="date"
-                        value="${selectedDate}">
-
-                </div>
-
-                <button
-                    class="form-submit">
-                    Lưu giao dịch
-                </button>
-
-            </form>
+            <div id="modal-content"></div>
 
         </div>
 
     </div>
-    `;
-}
 
-function saveTransaction(event) {
+</div>
 
-    event.preventDefault();
 
-    const type =
-        document.getElementById("transactionType").value;
-
-    const amount =
-        Number(
-            document.getElementById("transactionAmount").value
-        );
-
-    const title =
-        document.getElementById("transactionTitle").value;
-
-    const category =
-        document.getElementById("transactionCategory").value;
-
-    const accountId =
-        document.getElementById("transactionAccount").value;
-
-    const date =
-        document.getElementById("transactionDate").value;
-
-    const transaction = {
-        id: crypto.randomUUID(),
-        type,
-        amount,
-        title,
-        category,
-        accountId,
-        date
-    };
-
-    data.transactions.push(transaction);
-
-    const account =
-        data.accounts.find(a => a.id === accountId);
-
-    if(account) {
-
-        if(type === "income") {
-            account.balance += amount;
-        } else {
-            account.balance -= amount;
-        }
-
-    }
-
-    saveData();
-    closeModal();
-    render();
-
-    showToast("Đã lưu giao dịch");
-}
-
-/* =========================================================
-   ACCOUNT MODAL
-   ========================================================= */
-
-function openAccountModal() {
-
-    document.getElementById("modalRoot").innerHTML = `
-
-    <div class="modal"
-         onclick="if(event.target===this)closeModal()">
-
-        <div class="sheet">
-
-            <div class="sheet-header">
-
-                <h2>Thêm tài khoản</h2>
-
-                <button class="close"
-                        onclick="closeModal()">
-                    ×
-                </button>
-
-            </div>
-
-            <form onsubmit="saveAccount(event)">
-
-                <div class="form-group">
-
-                    <label>Tên tài khoản</label>
-
-                    <input
-                        id="accountName"
-                        placeholder="Ví dụ: Momo"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Loại</label>
-
-                    <select id="accountType">
-
-                        <option value="wallet">
-                            Ví điện tử
-                        </option>
-
-                        <option value="bank">
-                            Ngân hàng
-                        </option>
-
-                        <option value="cash">
-                            Tiền mặt
-                        </option>
-
-                        <option value="credit">
-                            Thẻ tín dụng
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Số dư ban đầu</label>
-
-                    <input
-                        id="accountBalance"
-                        type="number"
-                        value="0">
-
-                </div>
-
-                <button class="form-submit">
-                    Thêm tài khoản
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-    `;
-}
-
-function saveAccount(event) {
-
-    event.preventDefault();
-
-    data.accounts.push({
-
-        id: crypto.randomUUID(),
-
-        name:
-            document.getElementById("accountName").value,
-
-        type:
-            document.getElementById("accountType").value,
-
-        balance:
-            Number(
-                document.getElementById("accountBalance").value
-            ),
-
-        favorite: false
-
-    });
-
-    saveData();
-    closeModal();
-    render();
-
-    showToast("Đã thêm tài khoản");
-}
-
-/* =========================================================
-   TRANSFER
-   ========================================================= */
-
-function openTransferModal() {
-
-    if(data.accounts.length < 2) {
-        showToast("Cần ít nhất 2 tài khoản");
-        return;
-    }
-
-    document.getElementById("modalRoot").innerHTML = `
-
-    <div class="modal">
-
-        <div class="sheet">
-
-            <div class="sheet-header">
-
-                <h2>Chuyển tiền</h2>
-
-                <button class="close"
-                        onclick="closeModal()">
-                    ×
-                </button>
-
-            </div>
-
-            <form onsubmit="saveTransfer(event)">
-
-                <div class="form-group">
-
-                    <label>Từ tài khoản</label>
-
-                    <select id="fromAccount">
-
-                        ${
-                            data.accounts.map(a => `
-                                <option value="${a.id}">
-                                    ${escapeHTML(a.name)}
-                                </option>
-                            `).join("")
-                        }
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Đến tài khoản</label>
-
-                    <select id="toAccount">
-
-                        ${
-                            data.accounts.map(a => `
-                                <option value="${a.id}">
-                                    ${escapeHTML(a.name)}
-                                </option>
-                            `).join("")
-                        }
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Số tiền</label>
-
-                    <input
-                        id="transferAmount"
-                        type="number"
-                        min="1"
-                        required>
-
-                </div>
-
-                <button class="form-submit">
-                    Chuyển tiền
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-    `;
-}
-
-function saveTransfer(event) {
-
-    event.preventDefault();
-
-    const from =
-        document.getElementById("fromAccount").value;
-
-    const to =
-        document.getElementById("toAccount").value;
-
-    const amount =
-        Number(
-            document.getElementById("transferAmount").value
-        );
-
-    if(from === to) {
-        showToast("Không thể chuyển cùng tài khoản");
-        return;
-    }
-
-    const fromAccount =
-        data.accounts.find(a => a.id === from);
-
-    const toAccount =
-        data.accounts.find(a => a.id === to);
-
-    if(!fromAccount || !toAccount) return;
-
-    fromAccount.balance -= amount;
-    toAccount.balance += amount;
-
-    data.transactions.push({
-
-        id: crypto.randomUUID(),
-
-        type: "transfer",
-
-        amount,
-
-        title: `Chuyển từ ${fromAccount.name} sang ${toAccount.name}`,
-
-        category: "Chuyển tiền",
-
-        accountId: from,
-
-        date: dateKey(new Date())
-
-    });
-
-    saveData();
-    closeModal();
-    render();
-
-    showToast("Chuyển tiền thành công");
-}
-
-/* =========================================================
-   LOAN
-   ========================================================= */
-
-function openLoanModal() {
-
-    document.getElementById("modalRoot").innerHTML = `
-
-    <div class="modal">
-
-        <div class="sheet">
-
-            <div class="sheet-header">
-
-                <h2>Thêm khoản vay</h2>
-
-                <button class="close"
-                        onclick="closeModal()">
-                    ×
-                </button>
-
-            </div>
-
-            <form onsubmit="saveLoan(event)">
-
-                <div class="form-group">
-
-                    <label>Tên khoản vay</label>
-
-                    <input
-                        id="loanName"
-                        placeholder="Ví dụ: Trả góp iPhone"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Số tiền</label>
-
-                    <input
-                        id="loanAmount"
-                        type="number"
-                        min="0"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Ngày đến hạn</label>
-
-                    <input
-                        id="loanDue"
-                        type="date">
-
-                </div>
-
-                <button class="form-submit">
-                    Lưu khoản vay
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-    `;
-}
-
-function saveLoan(event) {
-
-    event.preventDefault();
-
-    data.loans.push({
-
-        id: crypto.randomUUID(),
-
-        name:
-            document.getElementById("loanName").value,
-
-        amount:
-            Number(
-                document.getElementById("loanAmount").value
-            ),
-
-        due:
-            document.getElementById("loanDue").value
-
-    });
-
-    saveData();
-    closeModal();
-    render();
-
-    showToast("Đã thêm khoản vay");
-}
-
-/* =========================================================
-   INVESTMENT
-   ========================================================= */
-
-function openInvestmentModal() {
-
-    document.getElementById("modalRoot").innerHTML = `
-
-    <div class="modal">
-
-        <div class="sheet">
-
-            <div class="sheet-header">
-
-                <h2>Thêm khoản đầu tư</h2>
-
-                <button class="close"
-                        onclick="closeModal()">
-                    ×
-                </button>
-
-            </div>
-
-            <form onsubmit="saveInvestment(event)">
-
-                <div class="form-group">
-
-                    <label>Tên khoản đầu tư</label>
-
-                    <input
-                        id="investmentName"
-                        placeholder="Ví dụ: Vàng SJC"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Số vốn</label>
-
-                    <input
-                        id="investmentAmount"
-                        type="number"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Loại</label>
-
-                    <select id="investmentType">
-
-                        <option>Vàng</option>
-                        <option>Bạc</option>
-                        <option>Crypto</option>
-                        <option>Cổ phiếu</option>
-                        <option>Khác</option>
-
-                    </select>
-
-                </div>
-
-                <button class="form-submit">
-                    Thêm khoản đầu tư
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-    `;
-}
-
-function saveInvestment(event) {
-
-    event.preventDefault();
-
-    data.investments.push({
-
-        id: crypto.randomUUID(),
-
-        name:
-            document.getElementById("investmentName").value,
-
-        amount:
-            Number(
-                document.getElementById("investmentAmount").value
-            ),
-
-        type:
-            document.getElementById("investmentType").value
-
-    });
-
-    saveData();
-    closeModal();
-    render();
-
-    showToast("Đã thêm khoản đầu tư");
-}
-
-/* =========================================================
-   BUDGET MODAL
-   ========================================================= */
-
-function openBudgetModal() {
-
-    document.getElementById("modalRoot").innerHTML = `
-
-    <div class="modal">
-
-        <div class="sheet">
-
-            <div class="sheet-header">
-
-                <h2>Tạo ngân sách</h2>
-
-                <button class="close"
-                        onclick="closeModal()">
-                    ×
-                </button>
-
-            </div>
-
-            <form onsubmit="saveBudget(event)">
-
-                <div class="form-group">
-
-                    <label>Tên ngân sách</label>
-
-                    <input
-                        id="budgetName"
-                        placeholder="Ví dụ: Ăn uống tháng này"
-                        required>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Danh mục</label>
-
-                    <input
-                        id="budgetCategory"
-                        value="Ăn uống">
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>Hạn mức</label>
-
-                    <input
-                        id="budgetAmount"
-                        type="number"
-                        min="0"
-                        required>
-
-                </div>
-
-                <button class="form-submit">
-                    Tạo ngân sách
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-    `;
-}
-
-function saveBudget(event) {
-
-    event.preventDefault();
-
-    data.budgets.push({
-
-        id: crypto.randomUUID(),
-
-        name:
-            document.getElementById("budgetName").value,
-
-        category:
-            document.getElementById("budgetCategory").value,
-
-        amount:
-            Number(
-                document.getElementById("budgetAmount").value
-            )
-
-    });
-
-    saveData();
-    closeModal();
-    render();
-
-    showToast("Đã tạo ngân sách");
-}
-
-/* =========================================================
-   PROFILE EDIT
-   ========================================================= */
-
-function openProfileEdit() {
-
-    document.getElementById("modalRoot").innerHTML = `
-
-    <div class="modal">
-
-        <div class="sheet">
-
-            <div class="sheet-header">
-
-                <h2>Thông tin cá nhân</h2>
-
-                <button class="close"
-                        onclick="closeModal()">
-                    ×
-                </button>
-
-            </div>
-
-            <form onsubmit="saveProfile(event)">
-
-                <div class="form-group">
-
-                    <label>Tên hiển thị</label>
-
-                    <input
-                        id="profileName"
-                        value="${escapeHTML(data.profile.name)}"
-                        required>
-
-                </div>
-
-                <button class="form-submit">
-                    Lưu
-                </button>
-
-            </form>
-
-        </div>
-
-    </div>
-    `;
-}
-
-function saveProfile(event) {
-
-    event.preventDefault();
-
-    data.profile.name =
-        document.getElementById("profileName").value;
-
-    saveData();
-    closeModal();
-    render();
-
-    showToast("Đã cập nhật thông tin");
-}
-
-/* =========================================================
-   SETTINGS
-   ========================================================= */
-
-function openSettingsModal() {
-
-    document.getElementById("modalRoot").innerHTML = `
-
-    <div class="modal">
-
-        <div class="sheet">
-
-            <div class="sheet-header">
-
-                <h2>Cài đặt</h2>
-
-                <button class="close"
-                        onclick="closeModal()">
-                    ×
-                </button>
-
-            </div>
-
-            <div class="setting-row"
-                 style="background:var(--surface2);border-radius:15px">
-
-                <div class="setting-icon">☾</div>
-
-                <div class="setting-label">
-                    Giao diện tối
-                </div>
-
-                <input
-                    type="checkbox"
-                    checked
-                    style="width:25px">
-
-            </div>
-
-            <br>
-
-            <button
-                class="form-submit"
-                onclick="exportJSON()">
-                Xuất dữ liệu JSON
-            </button>
-
-            <br><br>
-
-            <button
-                class="form-submit"
-                style="background:var(--red)"
-                onclick="resetData()">
-                Xóa toàn bộ dữ liệu
-            </button>
-
-        </div>
-
-    </div>
-    `;
-}
-
-function exportJSON() {
-
-    const blob =
-        new Blob(
-            [JSON.stringify(data,null,2)],
-            {type:"application/json"}
-        );
-
-    const url =
-        URL.createObjectURL(blob);
-
-    const a =
-        document.createElement("a");
-
-    a.href = url;
-    a.download = "capmoney-backup.json";
-    a.click();
-
-    URL.revokeObjectURL(url);
-
-    showToast("Đã xuất dữ liệu");
-}
-
-function resetData() {
-
-    if(!confirm("Xóa toàn bộ dữ liệu CapMoney?")) {
-        return;
-    }
-
-    localStorage.removeItem(STORAGE_KEY);
-
-    data = structuredClone(defaultData);
-
-    closeModal();
-    render();
-
-    showToast("Đã xóa dữ liệu");
-}
-
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
-
-function attachEvents() {
-
-    document.querySelectorAll(".nav-button")
-        .forEach(button => {
-
-            button.onclick = () => {
-
-                state.page =
-                    button.dataset.page;
-
-                render();
-
-            };
-
-        });
-
-    const fab =
-        document.getElementById("fab");
-
-    if(fab) {
-
-        fab.onclick = () => {
-
-            if(state.page === "home") {
-                openTransactionModal();
-            }
-
-            if(state.page === "accounts") {
-                openAccountModal();
-            }
-
-            if(state.page === "budget") {
-                openBudgetModal();
-            }
-
-        };
-
-    }
-}
-
-function setAccountSection(section) {
-
-    state.accountSection = section;
-
-    render();
-}
-
-function setAnalyticsPeriod(period) {
-
-    state.analyticsPeriod = period;
-
-    render();
-}
-
-function setAnalyticsFilter(filter) {
-
-    state.analyticsFilter = filter;
-
-    render();
-}
-
-function changeHomeMonth(delta) {
-
-    state.homeMonth =
-        new Date(
-            state.homeMonth.getFullYear(),
-            state.homeMonth.getMonth() + delta,
-            1
-        );
-
-    render();
-}
-
-function changeAnalyticsMonth(delta) {
-
-    state.analyticsMonth =
-        new Date(
-            state.analyticsMonth.getFullYear(),
-            state.analyticsMonth.getMonth() + delta,
-            1
-        );
-
-    render();
-}
-
-function closeModal() {
-
-    document.getElementById("modalRoot").innerHTML = "";
-}
-
-/* =========================================================
-   PWA SERVICE WORKER
-   ========================================================= */
-
-if("serviceWorker" in navigator) {
-
-    window.addEventListener("load", () => {
-
-        navigator.serviceWorker
-            .register("./sw.js")
-            .catch(err => {
-                console.log(
-                    "Service Worker:",
-                    err
-                );
-            });
-
-    });
-
-}
-
-/* =========================================================
-   START
-   ========================================================= */
-
-render();
-
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
