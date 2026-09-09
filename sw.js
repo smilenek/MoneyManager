@@ -1,75 +1,153 @@
 const CACHE_NAME = "capmoney-pwa-v1";
 
-const FILES = [
+const APP_FILES = [
+
     "./",
+
     "./index.html",
-    "./manifest.json"
+
+    "./style.css",
+
+    "./app.js",
+
+    "./manifest.json",
+
+    "./icon-192.svg",
+
+    "./icon-512.svg"
+
 ];
 
-self.addEventListener("install", event => {
 
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => cache.addAll(FILES))
-    );
+/* =========================================
+   INSTALL
+========================================= */
 
-    self.skipWaiting();
-});
+self.addEventListener(
+    "install",
+    event => {
 
-self.addEventListener("activate", event => {
+        event.waitUntil(
 
-    event.waitUntil(
+            caches
+                .open(CACHE_NAME)
+                .then(
+                    cache =>
+                        cache.addAll(
+                            APP_FILES
+                        )
+                )
 
-        caches.keys().then(keys => {
+        );
 
-            return Promise.all(
+        self.skipWaiting();
 
-                keys
-                    .filter(key => key !== CACHE_NAME)
-                    .map(key => caches.delete(key))
+    }
+);
 
-            );
 
-        })
+/* =========================================
+   ACTIVATE
+========================================= */
 
-    );
+self.addEventListener(
+    "activate",
+    event => {
 
-    self.clients.claim();
-});
+        event.waitUntil(
 
-self.addEventListener("fetch", event => {
+            caches.keys()
+                .then(
+                    keys =>
+                        Promise.all(
+                            keys
+                                .filter(
+                                    key =>
+                                        key !==
+                                        CACHE_NAME
+                                )
+                                .map(
+                                    key =>
+                                        caches.delete(
+                                            key
+                                        )
+                                )
+                        )
+                )
 
-    event.respondWith(
+        );
 
-        caches.match(event.request)
-            .then(cached => {
+        self.clients.claim();
 
-                if(cached) {
-                    return cached;
-                }
+    }
+);
 
-                return fetch(event.request)
-                    .then(response => {
 
-                        const copy =
-                            response.clone();
+/* =========================================
+   FETCH
+========================================= */
 
-                        caches.open(CACHE_NAME)
-                            .then(cache => {
-                                cache.put(
-                                    event.request,
-                                    copy
-                                );
-                            });
+self.addEventListener(
+    "fetch",
+    event => {
 
-                        return response;
+        if (
+            event.request.method !== "GET"
+        )
+            return;
 
-                    })
-                    .catch(() =>
-                        caches.match("./index.html")
-                    );
+        event.respondWith(
 
-            })
+            caches
+                .match(event.request)
+                .then(
+                    cached => {
 
-    );
-});
+                        if (cached)
+                            return cached;
+
+                        return fetch(
+                            event.request
+                        )
+                            .then(response => {
+
+                                if (
+                                    !response ||
+                                    response.status !== 200 ||
+                                    response.type === "opaque"
+                                ) {
+
+                                    return response;
+
+                                }
+
+                                const clone =
+                                    response.clone();
+
+                                caches
+                                    .open(CACHE_NAME)
+                                    .then(
+                                        cache =>
+                                            cache.put(
+                                                event.request,
+                                                clone
+                                            )
+                                    );
+
+                                return response;
+
+                            })
+                            .catch(
+                                () =>
+                                    caches.match(
+                                        "./index.html"
+                                    )
+                            );
+
+                    }
+                )
+
+        );
+
+    }
+);
