@@ -1,23 +1,30 @@
 {
-  "name": "CapMoney",
-  "short_name": "CapMoney",
-  "description": "Quản lý tài chính cá nhân",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#111113",
-  "theme_color": "#111113",
-  "orientation": "portrait",
-  "lang": "vi",
-  "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+    "name": "CapMoney",
+    "short_name": "CapMoney",
+    "description": "Quản lý tài chính cá nhân",
+    "lang": "vi-VN",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#121214",
+    "theme_color": "#121214",
+    "categories": [
+        "finance",
+        "productivity"
+    ],
+    "icons": [
+        {
+            "src": "icon-192.svg",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon-512.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
 }
