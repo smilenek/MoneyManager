@@ -1,1884 +1,3281 @@
-const $ = s => document.querySelector(s);
+/* =========================================================
+   CAPMONEY PWA
+   Main Application
+========================================================= */
 
-const $$ = s => document.querySelectorAll(s);
+const App = {
 
+    state: {
 
-const KEY = "moneytrack-v1";
+        currentPage: "home",
 
+        homePeriod: "month",
 
-const seed = {
+        accountFilter: "all",
 
-  user: "Bạn",
+        currentMonth: new Date(),
 
-  budget: 10000000,
+        statisticsMonth: new Date(),
 
-  accounts: [
+        accountMonth: new Date(),
 
-    {
-      id: "wallet",
-      name: "Ví tiền",
-      balance: 200000
+        balanceVisible: true,
+
+        accountPage: "accounts",
+
+        transactions: [],
+
+        accounts: [],
+
+        loans: [],
+
+        investments: [],
+
+        budgets: [],
+
+        savings: [],
+
+        recurring: [],
+
+        categories: [],
+
+        transfers: [],
+
+        settings: {
+
+            name: "Nos",
+
+            currency: "VND",
+
+            language: "vi",
+
+            theme: "dark"
+
+        }
+
     },
 
-    {
-      id: "bank",
-      name: "Ngân hàng",
-      balance: 10768000
+
+    /* =====================================================
+       INIT
+    ===================================================== */
+
+    init() {
+
+        this.load();
+
+        this.seedData();
+
+        this.bindEvents();
+
+        this.updateGreeting();
+
+        this.renderAll();
+
+        this.registerServiceWorker();
+
+    },
+
+
+    /* =====================================================
+       STORAGE
+    ===================================================== */
+
+    save() {
+
+        localStorage.setItem(
+            "capmoney-data",
+            JSON.stringify(this.state)
+        );
+
+    },
+
+
+    load() {
+
+        const raw =
+            localStorage.getItem("capmoney-data");
+
+        if (!raw) return;
+
+        try {
+
+            const data = JSON.parse(raw);
+
+            this.state = {
+                ...this.state,
+                ...data,
+
+                settings: {
+                    ...this.state.settings,
+                    ...(data.settings || {})
+                }
+
+            };
+
+        } catch (error) {
+
+            console.error(
+                "Không thể đọc dữ liệu",
+                error
+            );
+
+        }
+
+    },
+
+
+    seedData() {
+
+        if (!this.state.accounts.length) {
+
+            this.state.accounts = [
+
+                {
+                    id: crypto.randomUUID(),
+                    name: "Wallet",
+                    type: "wallet",
+                    balance: 0,
+                    currency: "VND",
+                    favorite: true
+                },
+
+                {
+                    id: crypto.randomUUID(),
+                    name: "Bank",
+                    type: "bank",
+                    balance: 0,
+                    currency: "VND",
+                    favorite: false
+                }
+
+            ];
+
+            this.save();
+
+        }
+
+    },
+
+
+    /* =====================================================
+       SERVICE WORKER
+    ===================================================== */
+
+    async registerServiceWorker() {
+
+        if (!("serviceWorker" in navigator))
+            return;
+
+        try {
+
+            await navigator.serviceWorker.register(
+                "sw.js"
+            );
+
+        } catch (error) {
+
+            console.log(
+                "Service Worker chưa được đăng ký",
+                error
+            );
+
+        }
+
+    },
+
+
+    /* =====================================================
+       EVENTS
+    ===================================================== */
+
+    bindEvents() {
+
+        window.addEventListener(
+            "storage",
+            () => this.renderAll()
+        );
+
+    },
+
+
+    /* =====================================================
+       NAVIGATION
+    ===================================================== */
+
+    navigate(page) {
+
+        const pages =
+            document.querySelectorAll(".page");
+
+        pages.forEach(
+            p => p.classList.remove("active")
+        );
+
+        const target =
+            document.getElementById(
+                `page-${page}`
+            );
+
+        if (target)
+            target.classList.add("active");
+
+        document
+            .querySelectorAll(".nav-item")
+            .forEach(btn => {
+
+                btn.classList.toggle(
+                    "active",
+                    btn.dataset.page === page
+                );
+
+            });
+
+        this.state.currentPage = page;
+
+        this.updateFab();
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    },
+
+
+    updateFab() {
+
+        const fab =
+            document.getElementById("main-fab");
+
+        if (!fab) return;
+
+        fab.style.display =
+            ["home", "accounts", "budget"]
+                .includes(this.state.currentPage)
+                ? "flex"
+                : "none";
+
+        if (
+            this.state.currentPage === "budget"
+        ) {
+
+            fab.onclick =
+                () => this.openAddBudget();
+
+        } else {
+
+            fab.onclick =
+                () => this.openAddTransaction();
+
+        }
+
+    },
+
+
+    /* =====================================================
+       GREETING
+    ===================================================== */
+
+    updateGreeting() {
+
+        const hour =
+            new Date().getHours();
+
+        let greeting = "Chào buổi tối 🌇";
+
+        if (hour < 5)
+            greeting = "Chào buổi đêm 🌙";
+
+        else if (hour < 12)
+            greeting = "Chào buổi sáng ☀️";
+
+        else if (hour < 18)
+            greeting = "Chào buổi chiều 🌤️";
+
+        document.getElementById(
+            "greeting"
+        ).textContent = greeting;
+
+        document.getElementById(
+            "user-name"
+        ).textContent =
+            this.state.settings.name;
+
+        document.getElementById(
+            "profile-name"
+        ).textContent =
+            this.state.settings.name;
+
+    },
+
+
+    /* =====================================================
+       FORMAT MONEY
+    ===================================================== */
+
+    money(value) {
+
+        if (!this.state.balanceVisible)
+            return "••••";
+
+        value = Number(value) || 0;
+
+        return new Intl.NumberFormat(
+            "vi-VN"
+        ).format(value) + "đ";
+
+    },
+
+
+    /* =====================================================
+       TRANSACTION TOTALS
+    ===================================================== */
+
+    getTotals(transactions = this.state.transactions) {
+
+        let income = 0;
+        let expense = 0;
+
+        transactions.forEach(t => {
+
+            if (t.type === "income")
+                income += Number(t.amount);
+
+            if (t.type === "expense")
+                expense += Number(t.amount);
+
+        });
+
+        return {
+
+            income,
+
+            expense,
+
+            balance:
+                income - expense
+
+        };
+
+    },
+
+
+    getAccountBalance() {
+
+        return this.state.accounts.reduce(
+            (sum, account) =>
+                sum + Number(account.balance || 0),
+            0
+        );
+
+    },
+
+
+    /* =====================================================
+       RENDER ALL
+    ===================================================== */
+
+    renderAll() {
+
+        this.renderCalendar();
+
+        this.renderHome();
+
+        this.renderStatistics();
+
+        this.renderAccounts();
+
+        this.renderLoans();
+
+        this.renderInvestments();
+
+        this.renderBudgets();
+
+        this.renderProfile();
+
+        this.updateGreeting();
+
+        this.updateFab();
+
+    },
+
+
+    /* =====================================================
+       HOME
+    ===================================================== */
+
+    renderHome() {
+
+        const totals =
+            this.getTotals();
+
+        document.getElementById(
+            "home-income"
+        ).textContent =
+            this.money(totals.income);
+
+        document.getElementById(
+            "home-expense"
+        ).textContent =
+            this.money(totals.expense);
+
+    },
+
+
+    setHomePeriod(period) {
+
+        this.state.homePeriod = period;
+
+        document
+            .getElementById("period-day")
+            .classList.toggle(
+                "selected",
+                period === "day"
+            );
+
+        document
+            .getElementById("period-month")
+            .classList.toggle(
+                "selected",
+                period === "month"
+            );
+
+    },
+
+
+    toggleBalanceVisibility() {
+
+        this.state.balanceVisible =
+            !this.state.balanceVisible;
+
+        this.renderAll();
+
+    },
+
+
+    /* =====================================================
+       CALENDAR
+    ===================================================== */
+
+    renderCalendar() {
+
+        const container =
+            document.getElementById(
+                "calendar"
+            );
+
+        if (!container) return;
+
+        const date =
+            this.state.currentMonth;
+
+        const year =
+            date.getFullYear();
+
+        const month =
+            date.getMonth();
+
+        document.getElementById(
+            "current-month"
+        ).textContent =
+            `tháng ${month + 1} ${year}`;
+
+        const firstDay =
+            new Date(
+                year,
+                month,
+                1
+            );
+
+        let start =
+            firstDay.getDay();
+
+        start =
+            start === 0
+                ? 6
+                : start - 1;
+
+        const days =
+            new Date(
+                year,
+                month + 1,
+                0
+            ).getDate();
+
+        container.innerHTML = "";
+
+        for (
+            let i = 0;
+            i < start;
+            i++
+        ) {
+
+            const blank =
+                document.createElement(
+                    "div"
+                );
+
+            blank.className =
+                "calendar-day empty";
+
+            container.appendChild(blank);
+
+        }
+
+
+        for (
+            let day = 1;
+            day <= days;
+            day++
+        ) {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+            item.className =
+                "calendar-day";
+
+            const circle =
+                document.createElement(
+                    "div"
+                );
+
+            circle.className =
+                "day-circle";
+
+            const number =
+                document.createElement(
+                    "span"
+                );
+
+            number.className =
+                "day-number";
+
+            number.textContent =
+                day;
+
+            circle.appendChild(number);
+
+            item.appendChild(circle);
+
+            const tx =
+                this.transactionsForDate(
+                    year,
+                    month,
+                    day
+                );
+
+            if (tx.length) {
+
+                item.classList.add(
+                    "has-transaction"
+                );
+
+                const dot =
+                    document.createElement(
+                        "span"
+                    );
+
+                dot.className = "dot";
+
+                item.appendChild(dot);
+
+            }
+
+            const today =
+                new Date();
+
+            if (
+                today.getFullYear() === year &&
+                today.getMonth() === month &&
+                today.getDate() === day
+            ) {
+
+                item.classList.add(
+                    "today"
+                );
+
+            }
+
+            item.onclick =
+                () => this.showDateTransactions(
+                    year,
+                    month,
+                    day
+                );
+
+            container.appendChild(item);
+
+        }
+
+    },
+
+
+    transactionsForDate(
+        year,
+        month,
+        day
+    ) {
+
+        return this.state.transactions.filter(
+            t => {
+
+                const d =
+                    new Date(t.date);
+
+                return (
+                    d.getFullYear() === year &&
+                    d.getMonth() === month &&
+                    d.getDate() === day
+                );
+
+            }
+        );
+
+    },
+
+
+    changeMonth(delta) {
+
+        this.state.currentMonth =
+            new Date(
+                this.state.currentMonth.getFullYear(),
+                this.state.currentMonth.getMonth() + delta,
+                1
+            );
+
+        this.renderCalendar();
+
+    },
+
+
+    /* =====================================================
+       FILTER
+    ===================================================== */
+
+    setAccountFilter(filter) {
+
+        this.state.accountFilter =
+            filter;
+
+        document
+            .querySelectorAll(
+                ".filter-tab"
+            )
+            .forEach(btn => {
+
+                if (
+                    btn.dataset.filter
+                ) {
+
+                    btn.classList.toggle(
+                        "active",
+                        btn.dataset.filter === filter
+                    );
+
+                }
+
+            });
+
+    },
+
+
+    /* =====================================================
+       ADD TRANSACTION
+    ===================================================== */
+
+    openAddTransaction() {
+
+        this.openModal(
+            "Thêm giao dịch",
+            this.transactionForm()
+        );
+
+    },
+
+
+    transactionForm() {
+
+        return `
+
+            <div class="type-selector">
+
+                <button
+                    id="income-type"
+                    class="active income"
+                    onclick="App.selectTransactionType('income')"
+                >
+                    ↓ Thu nhập
+                </button>
+
+                <button
+                    id="expense-type"
+                    class="expense"
+                    onclick="App.selectTransactionType('expense')"
+                >
+                    ↑ Chi tiêu
+                </button>
+
+            </div>
+
+
+            <input
+                type="hidden"
+                id="transaction-type"
+                value="income"
+            >
+
+
+            <div class="form-group">
+
+                <label>
+                    Số tiền
+                </label>
+
+                <input
+                    id="transaction-amount"
+                    type="number"
+                    inputmode="decimal"
+                    placeholder="0"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Danh mục
+                </label>
+
+                <select id="transaction-category">
+
+                    <option value="Ăn uống">
+                        🍜 Ăn uống
+                    </option>
+
+                    <option value="Mua sắm">
+                        🛍 Mua sắm
+                    </option>
+
+                    <option value="Di chuyển">
+                        🚗 Di chuyển
+                    </option>
+
+                    <option value="Hóa đơn">
+                        🧾 Hóa đơn
+                    </option>
+
+                    <option value="Giải trí">
+                        🎮 Giải trí
+                    </option>
+
+                    <option value="Lương">
+                        💰 Lương
+                    </option>
+
+                    <option value="Khác">
+                        📦 Khác
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Tài khoản
+                </label>
+
+                <select id="transaction-account">
+
+                    ${this.state.accounts.map(
+                        a => `
+                        <option value="${a.id}">
+                            ${a.name}
+                        </option>
+                        `
+                    ).join("")}
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Ngày
+                </label>
+
+                <input
+                    id="transaction-date"
+                    type="date"
+                    value="${this.todayInput()}"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Ghi chú
+                </label>
+
+                <textarea
+                    id="transaction-note"
+                    rows="3"
+                    placeholder="Ghi chú..."
+                ></textarea>
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="App.saveTransaction()"
+            >
+                Lưu giao dịch
+            </button>
+
+        `;
+
+    },
+
+
+    selectTransactionType(type) {
+
+        document.getElementById(
+            "transaction-type"
+        ).value = type;
+
+        document
+            .getElementById("income-type")
+            .classList.toggle(
+                "active",
+                type === "income"
+            );
+
+        document
+            .getElementById("expense-type")
+            .classList.toggle(
+                "active",
+                type === "expense"
+            );
+
+    },
+
+
+    saveTransaction() {
+
+        const amount =
+            Number(
+                document.getElementById(
+                    "transaction-amount"
+                ).value
+            );
+
+        if (!amount || amount <= 0) {
+
+            alert(
+                "Vui lòng nhập số tiền hợp lệ."
+            );
+
+            return;
+
+        }
+
+        const type =
+            document.getElementById(
+                "transaction-type"
+            ).value;
+
+        const accountId =
+            document.getElementById(
+                "transaction-account"
+            ).value;
+
+        const transaction = {
+
+            id: crypto.randomUUID(),
+
+            amount,
+
+            type,
+
+            category:
+                document.getElementById(
+                    "transaction-category"
+                ).value,
+
+            accountId,
+
+            date:
+                document.getElementById(
+                    "transaction-date"
+                ).value,
+
+            note:
+                document.getElementById(
+                    "transaction-note"
+                ).value,
+
+            createdAt:
+                new Date().toISOString()
+
+        };
+
+        this.state.transactions.push(
+            transaction
+        );
+
+        const account =
+            this.state.accounts.find(
+                a => a.id === accountId
+            );
+
+        if (account) {
+
+            if (type === "income")
+                account.balance += amount;
+
+            else
+                account.balance -= amount;
+
+        }
+
+        this.save();
+
+        this.closeModal();
+
+        this.renderAll();
+
+        alert(
+            "Đã lưu giao dịch."
+        );
+
+    },
+
+
+    /* =====================================================
+       DATE
+    ===================================================== */
+
+    todayInput() {
+
+        const d = new Date();
+
+        return [
+            d.getFullYear(),
+            String(d.getMonth() + 1)
+                .padStart(2,"0"),
+            String(d.getDate())
+                .padStart(2,"0")
+        ].join("-");
+
+    },
+
+
+    showDateTransactions(
+        year,
+        month,
+        day
+    ) {
+
+        const tx =
+            this.transactionsForDate(
+                year,
+                month,
+                day
+            );
+
+        if (!tx.length) {
+
+            this.openModal(
+                `Ngày ${day}/${month + 1}/${year}`,
+                `
+                <div class="empty-card small">
+                    <strong>
+                        Chưa có giao dịch
+                    </strong>
+                </div>
+
+                <button
+                    class="submit-btn"
+                    onclick="App.closeModal();App.openAddTransaction()"
+                >
+                    ＋ Thêm giao dịch
+                </button>
+                `
+            );
+
+            return;
+
+        }
+
+        this.openModal(
+            `Giao dịch ${day}/${month + 1}`,
+            tx.map(t => `
+
+                <div class="account-item">
+
+                    <div class="account-icon ${
+                        t.type === "income"
+                            ? ""
+                            : "bank"
+                    }">
+                        ${t.type === "income" ? "↓" : "↑"}
+                    </div>
+
+                    <div class="account-info">
+
+                        <strong>
+                            ${this.escape(t.category)}
+                        </strong>
+
+                        <span>
+                            ${t.type === "income" ? "+" : "-"}
+                            ${this.money(t.amount)}
+                        </span>
+
+                        <small>
+                            ${this.escape(t.note || "")}
+                        </small>
+
+                    </div>
+
+                </div>
+
+            `).join("")
+        );
+
+    },
+
+
+    /* =====================================================
+       STATISTICS
+    ===================================================== */
+
+    renderStatistics() {
+
+        const totals =
+            this.getTotals();
+
+        document.getElementById(
+            "statistics-income"
+        ).textContent =
+            this.money(totals.income);
+
+        document.getElementById(
+            "statistics-expense"
+        ).textContent =
+            this.money(totals.expense);
+
+        document.getElementById(
+            "statistics-balance"
+        ).textContent =
+            this.money(
+                totals.income -
+                totals.expense
+            );
+
+        document.getElementById(
+            "statistics-month"
+        ).textContent =
+            this.monthLabel(
+                this.state.statisticsMonth
+            );
+
+    },
+
+
+    setStatisticsPeriod(period) {
+
+        document
+            .querySelectorAll(
+                ".statistics-top-tabs button"
+            )
+            .forEach(btn =>
+                btn.classList.remove(
+                    "active-period"
+                )
+            );
+
+        const index =
+            period === "week"
+                ? 0
+                : period === "month"
+                    ? 1
+                    : 2;
+
+        document
+            .querySelectorAll(
+                ".statistics-top-tabs button"
+            )[index]
+            .classList.add(
+                "active-period"
+            );
+
+    },
+
+
+    changeStatisticsMonth(delta) {
+
+        this.state.statisticsMonth =
+            new Date(
+                this.state.statisticsMonth.getFullYear(),
+                this.state.statisticsMonth.getMonth() + delta,
+                1
+            );
+
+        this.renderStatistics();
+
+    },
+
+
+    /* =====================================================
+       ACCOUNTS
+    ===================================================== */
+
+    renderAccounts() {
+
+        const container =
+            document.getElementById(
+                "account-list"
+            );
+
+        if (!container) return;
+
+        let accounts =
+            [...this.state.accounts];
+
+        if (
+            this.state.accountFilter !== "all"
+        ) {
+
+            accounts =
+                accounts.filter(
+                    a =>
+                        a.type ===
+                        this.state.accountFilter
+                );
+
+        }
+
+        container.innerHTML =
+            accounts.map(
+                account => `
+
+                <div class="account-item">
+
+                    <div
+                        class="account-icon ${
+                            account.type === "bank"
+                                ? "bank"
+                                : ""
+                        }"
+                    >
+                        ${
+                            account.type === "bank"
+                                ? "🏛"
+                                : "▣"
+                        }
+                    </div>
+
+                    <div class="account-info">
+
+                        <strong>
+                            ${this.escape(account.name)}
+
+                            ${
+                                account.favorite
+                                    ? " ⭐"
+                                    : ""
+                            }
+
+                        </strong>
+
+                        <span>
+                            ${this.money(account.balance)}
+                        </span>
+
+                    </div>
+
+                    <button
+                        onclick="App.openAccount('${account.id}')"
+                    >
+                        ›
+                    </button>
+
+                </div>
+
+                `
+            ).join("");
+
+        const totals =
+            this.getTotals();
+
+        document.getElementById(
+            "accounts-balance"
+        ).textContent =
+            this.money(
+                this.getAccountBalance()
+            );
+
+        document.getElementById(
+            "accounts-income"
+        ).textContent =
+            this.money(totals.income);
+
+        document.getElementById(
+            "accounts-expense"
+        ).textContent =
+            this.money(totals.expense);
+
+    },
+
+
+    setAccountPage(page) {
+
+        document
+            .querySelectorAll(
+                ".account-tabs button"
+            )
+            .forEach(
+                btn =>
+                    btn.classList.remove(
+                        "active"
+                    )
+            );
+
+        const buttons =
+            document.querySelectorAll(
+                ".account-tabs button"
+            );
+
+        const index =
+            page === "accounts"
+                ? 0
+                : page === "loans"
+                    ? 1
+                    : 2;
+
+        buttons[index]
+            .classList.add("active");
+
+        document
+            .getElementById(
+                "accounts-view"
+            )
+            .classList.toggle(
+                "hidden",
+                page !== "accounts"
+            );
+
+        document
+            .getElementById(
+                "loans-view"
+            )
+            .classList.toggle(
+                "hidden",
+                page !== "loans"
+            );
+
+        document
+            .getElementById(
+                "investments-view"
+            )
+            .classList.toggle(
+                "hidden",
+                page !== "investments"
+            );
+
+        this.state.accountPage =
+            page;
+
+    },
+
+
+    changeAccountMonth(delta) {
+
+        this.state.accountMonth =
+            new Date(
+                this.state.accountMonth.getFullYear(),
+                this.state.accountMonth.getMonth() + delta,
+                1
+            );
+
+        this.renderAccounts();
+
+    },
+
+
+    sortAccounts() {
+
+        this.state.accounts.sort(
+            (a,b) =>
+                Number(b.balance) -
+                Number(a.balance)
+        );
+
+        this.save();
+
+        this.renderAccounts();
+
+    },
+
+
+    openAccount(id) {
+
+        const account =
+            this.state.accounts.find(
+                a => a.id === id
+            );
+
+        if (!account) return;
+
+        this.openModal(
+            account.name,
+            `
+
+            <div class="account-total">
+
+                <span>
+                    Số dư
+                </span>
+
+                <strong>
+                    ${this.money(account.balance)}
+                </strong>
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="App.editAccount('${id}')"
+            >
+                Chỉnh sửa tài khoản
+            </button>
+
+
+            <button
+                class="submit-btn"
+                style="background:#333;color:#ee777b"
+                onclick="App.deleteAccount('${id}')"
+            >
+                Xóa tài khoản
+            </button>
+
+            `
+        );
+
+    },
+
+
+    openAddAccount() {
+
+        this.openModal(
+            "Thêm tài khoản",
+            `
+
+            <div class="form-group">
+
+                <label>
+                    Tên tài khoản
+                </label>
+
+                <input
+                    id="account-name"
+                    placeholder="Ví dụ: Ví tiền"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Loại tài khoản
+                </label>
+
+                <select id="account-type">
+
+                    <option value="wallet">
+                        Wallet
+                    </option>
+
+                    <option value="bank">
+                        Bank
+                    </option>
+
+                    <option value="cash">
+                        Tiền mặt
+                    </option>
+
+                    <option value="credit">
+                        Thẻ tín dụng
+                    </option>
+
+                    <option value="ewallet">
+                        Ví điện tử
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Số dư ban đầu
+                </label>
+
+                <input
+                    id="account-balance"
+                    type="number"
+                    value="0"
+                >
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="App.saveAccount()"
+            >
+                Thêm tài khoản
+            </button>
+
+            `
+        );
+
+    },
+
+
+    saveAccount() {
+
+        const name =
+            document.getElementById(
+                "account-name"
+            ).value.trim();
+
+        if (!name) {
+
+            alert(
+                "Vui lòng nhập tên tài khoản."
+            );
+
+            return;
+
+        }
+
+        const account = {
+
+            id: crypto.randomUUID(),
+
+            name,
+
+            type:
+                document.getElementById(
+                    "account-type"
+                ).value,
+
+            balance:
+                Number(
+                    document.getElementById(
+                        "account-balance"
+                    ).value
+                ) || 0,
+
+            currency: "VND",
+
+            favorite: false
+
+        };
+
+        this.state.accounts.push(
+            account
+        );
+
+        this.save();
+
+        this.closeModal();
+
+        this.renderAll();
+
+    },
+
+
+    editAccount(id) {
+
+        const account =
+            this.state.accounts.find(
+                a => a.id === id
+            );
+
+        if (!account) return;
+
+        this.openModal(
+            "Chỉnh sửa tài khoản",
+            `
+
+            <div class="form-group">
+
+                <label>
+                    Tên
+                </label>
+
+                <input
+                    id="edit-account-name"
+                    value="${this.escape(account.name)}"
+                >
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="App.updateAccount('${id}')"
+            >
+                Lưu
+            </button>
+
+            `
+        );
+
+    },
+
+
+    updateAccount(id) {
+
+        const account =
+            this.state.accounts.find(
+                a => a.id === id
+            );
+
+        if (!account) return;
+
+        account.name =
+            document
+                .getElementById(
+                    "edit-account-name"
+                )
+                .value.trim();
+
+        this.save();
+
+        this.closeModal();
+
+        this.renderAll();
+
+    },
+
+
+    deleteAccount(id) {
+
+        if (
+            !confirm(
+                "Bạn có chắc muốn xóa tài khoản này?"
+            )
+        )
+            return;
+
+        this.state.accounts =
+            this.state.accounts.filter(
+                a => a.id !== id
+            );
+
+        this.save();
+
+        this.closeModal();
+
+        this.renderAll();
+
+    },
+
+
+    /* =====================================================
+       TRANSFER
+    ===================================================== */
+
+    openTransfer() {
+
+        if (this.state.accounts.length < 2) {
+
+            alert(
+                "Cần ít nhất 2 tài khoản."
+            );
+
+            return;
+
+        }
+
+        this.openModal(
+            "Chuyển tiền",
+            `
+
+            <div class="form-group">
+
+                <label>
+                    Từ tài khoản
+                </label>
+
+                <select id="transfer-from">
+
+                    ${this.state.accounts.map(
+                        a => `
+                        <option value="${a.id}">
+                            ${this.escape(a.name)}
+                        </option>
+                        `
+                    ).join("")}
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Đến tài khoản
+                </label>
+
+                <select id="transfer-to">
+
+                    ${this.state.accounts.map(
+                        a => `
+                        <option value="${a.id}">
+                            ${this.escape(a.name)}
+                        </option>
+                        `
+                    ).join("")}
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Số tiền
+                </label>
+
+                <input
+                    id="transfer-amount"
+                    type="number"
+                >
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="App.saveTransfer()"
+            >
+                Chuyển tiền
+            </button>
+
+            `
+        );
+
+    },
+
+
+    saveTransfer() {
+
+        const from =
+            document.getElementById(
+                "transfer-from"
+            ).value;
+
+        const to =
+            document.getElementById(
+                "transfer-to"
+            ).value;
+
+        const amount =
+            Number(
+                document.getElementById(
+                    "transfer-amount"
+                ).value
+            );
+
+        if (from === to) {
+
+            alert(
+                "Tài khoản nguồn và đích phải khác nhau."
+            );
+
+            return;
+
+        }
+
+        if (!amount || amount <= 0) {
+
+            alert(
+                "Số tiền không hợp lệ."
+            );
+
+            return;
+
+        }
+
+        const source =
+            this.state.accounts.find(
+                a => a.id === from
+            );
+
+        const target =
+            this.state.accounts.find(
+                a => a.id === to
+            );
+
+        if (!source || !target) return;
+
+        source.balance -= amount;
+
+        target.balance += amount;
+
+        this.state.transfers.push({
+
+            id: crypto.randomUUID(),
+
+            from,
+
+            to,
+
+            amount,
+
+            date:
+                new Date().toISOString()
+
+        });
+
+        this.save();
+
+        this.closeModal();
+
+        this.renderAll();
+
+    },
+
+
+    showTransferHistory() {
+
+        const list =
+            this.state.transfers;
+
+        this.openModal(
+            "Lịch sử chuyển tiền",
+            list.length
+                ? list.map(t => {
+
+                    const from =
+                        this.state.accounts.find(
+                            a => a.id === t.from
+                        );
+
+                    const to =
+                        this.state.accounts.find(
+                            a => a.id === t.to
+                        );
+
+                    return `
+
+                    <div class="account-item">
+
+                        <div class="account-info">
+
+                            <strong>
+                                ${this.escape(from?.name || "")}
+                                →
+                                ${this.escape(to?.name || "")}
+                            </strong>
+
+                            <span>
+                                ${this.money(t.amount)}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    `;
+
+                }).join("")
+                :
+                `
+                <div class="empty-card small">
+                    Chưa có lịch sử chuyển tiền.
+                </div>
+                `
+        );
+
+    },
+
+
+    /* =====================================================
+       SAVINGS
+    ===================================================== */
+
+    openAddSavings() {
+
+        this.openModal(
+            "Thêm sổ tiết kiệm",
+            `
+
+            <div class="form-group">
+
+                <label>
+                    Tên sổ
+                </label>
+
+                <input
+                    id="saving-name"
+                    placeholder="Sổ tiết kiệm"
+                >
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>
+                        Số tiền
+                    </label>
+
+                    <input
+                        id="saving-amount"
+                        type="number"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Lãi suất %
+                    </label>
+
+                    <input
+                        id="saving-rate"
+                        type="number"
+                        step="0.01"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Ngày đáo hạn
+                </label>
+
+                <input
+                    id="saving-date"
+                    type="date"
+                >
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="App.saveSavings()"
+            >
+                Thêm sổ
+            </button>
+
+            `
+        );
+
+    },
+
+
+    saveSavings() {
+
+        this.state.savings.push({
+
+            id: crypto.randomUUID(),
+
+            name:
+                document.getElementById(
+                    "saving-name"
+                ).value,
+
+            amount:
+                Number(
+                    document.getElementById(
+                        "saving-amount"
+                    ).value
+                ) || 0,
+
+            rate:
+                Number(
+                    document.getElementById(
+                        "saving-rate"
+                    ).value
+                ) || 0,
+
+            maturity:
+                document.getElementById(
+                    "saving-date"
+                ).value
+
+        });
+
+        this.save();
+
+        this.closeModal();
+
+        this.renderAll();
+
+    },
+
+
+    /* =====================================================
+       LOANS
+    ===================================================== */
+
+    renderLoans() {
+
+        const container =
+            document.getElementById(
+                "loan-list"
+            );
+
+        if (!container) return;
+
+        if (!this.state.loans.length) {
+
+            container.className =
+                "empty-card";
+
+            container.innerHTML = `
+
+                <div class="empty-icon">
+                    💵
+                </div>
+
+                <strong>
+                    Chưa có khoản vay
+                </strong>
+
+                <span>
+                    Nhấn + để thêm khoản vay hoặc trả góp
+                </span>
+
+            `;
+
+            return;
+
+        }
+
+        container.className =
+            "account-list";
+
+        container.innerHTML =
+            this.state.loans.map(
+                loan => `
+
+                <div class="account-item">
+
+                    <div class="account-icon bank">
+                        💵
+                    </div>
+
+                    <div class="account-info">
+
+                        <strong>
+                            ${this.escape(loan.name)}
+                        </strong>
+
+                        <span>
+                            Còn ${this.money(loan.remaining)}
+                        </span>
+
+                    </div>
+
+                    <button
+                        onclick="App.deleteLoan('${loan.id}')"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+                `
+            ).join("");
+
+    },
+
+
+    openAddLoan() {
+
+        this.openModal(
+            "Thêm khoản vay",
+            `
+
+            <div class="form-group">
+
+                <label>
+                    Tên khoản vay
+                </label>
+
+                <input
+                    id="loan-name"
+                    placeholder="Ví dụ: Trả góp điện thoại"
+                >
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label>
+                        Tổng khoản vay
+                    </label>
+
+                    <input
+                        id="loan-total"
+                        type="number"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Lãi suất %
+                    </label>
+
+                    <input
+                        id="loan-rate"
+                        type="number"
+                        step="0.01"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Ngày đến hạn
+                </label>
+
+                <input
+                    id="loan-due"
+                    type="date"
+                >
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="App.saveLoan()"
+            >
+                Thêm khoản vay
+            </button>
+
+            `
+        );
+
+    },
+
+
+    saveLoan() {
+
+        const total =
+            Number(
+                document.getElementById(
+                    "loan-total"
+                ).value
+            ) || 0;
+
+        this.state.loans.push({
+
+            id: crypto.randomUUID(),
+
+            name:
+                document.getElementById(
+                    "loan-name"
+                ).value,
+
+            total,
+
+            remaining: total,
+
+            rate:
+                Number(
+                    document.getElementById(
+                        "loan-rate"
+                    ).value
+                ) || 0,
+
+            due:
+                document.getElementById(
+                    "loan-due"
+                ).value
+
+        });
+
+        this.save();
+
+        this.closeModal();
+
+        this.renderLoans();
+
+    },
+
+
+    deleteLoan(id) {
+
+        this.state.loans =
+            this.state.loans.filter(
+                l => l.id !== id
+            );
+
+        this.save();
+
+        this.renderLoans();
+
+    },
+
+
+    /* =====================================================
+       INVESTMENTS
+    ===================================================== */
+
+    renderInvestments() {
+
+        const container =
+            document.getElementById(
+                "investment-list"
+            );
+
+        if (!container) return;
+
+        if (!this.state.investments.length) {
+
+            container.className =
+                "empty-card";
+
+            container.innerHTML = `
+
+                <div class="empty-icon">
+                    📈
+                </div>
+
+                <strong>
+                    Chưa có khoản đầu tư
+                </strong>
+
+                <span>
+                    Nhấn + để thêm vàng, bạc, crypto hoặc các khoản đầu tư khác
+                </span>
+
+            `;
+
+            return;
+
+        }
+
+        container.className =
+            "account-list";
+
+        container.innerHTML =
+            this.state.investments.map(
+                inv => `
+
+                <div class="account-item">
+
+                    <div class="account-icon bank">
+                        📈
+                    </div>
+
+                    <div class="account-info">
+
+                        <strong>
+                            ${this.escape(inv.name)}
+                        </strong>
+
+                        <span>
+                            ${this.money(inv.value)}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                `
+            ).join("");
+
+    },
+
+
+    openAddInvestment() {
+
+        this.openModal(
+            "Thêm khoản đầu tư",
+            `
+
+            <div class="form-group">
+
+                <label>
+                    Tên khoản đầu tư
+                </label>
+
+                <input
+                    id="investment-name"
+                    placeholder="BTC, Vàng, Cổ phiếu..."
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Giá trị hiện tại
+                </label>
+
+                <input
+                    id="investment-value"
+                    type="number"
+                >
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="App.saveInvestment()"
+            >
+                Thêm đầu tư
+            </button>
+
+            `
+        );
+
+    },
+
+
+    saveInvestment() {
+
+        this.state.investments.push({
+
+            id: crypto.randomUUID(),
+
+            name:
+                document.getElementById(
+                    "investment-name"
+                ).value,
+
+            value:
+                Number(
+                    document.getElementById(
+                        "investment-value"
+                    ).value
+                ) || 0
+
+        });
+
+        this.save();
+
+        this.closeModal();
+
+        this.renderInvestments();
+
+    },
+
+
+    refreshMarket() {
+
+        alert(
+            "Đã cập nhật dữ liệu thị trường mẫu."
+        );
+
+    },
+
+
+    /* =====================================================
+       BUDGET
+    ===================================================== */
+
+    renderBudgets() {
+
+        const container =
+            document.getElementById(
+                "budget-list"
+            );
+
+        if (!container) return;
+
+        if (!this.state.budgets.length) {
+
+            container.className =
+                "empty-card budget-empty";
+
+            container.innerHTML = `
+
+                <div class="empty-icon">
+                    ▣123
+                </div>
+
+                <strong>
+                    Chưa có ngân sách
+                </strong>
+
+                <span>
+                    Tạo ngân sách để theo dõi chi tiêu
+                </span>
+
+            `;
+
+            return;
+
+        }
+
+        container.className =
+            "account-list";
+
+        container.innerHTML =
+            this.state.budgets.map(
+                budget => {
+
+                    const percent =
+                        budget.limit > 0
+                            ? Math.min(
+                                100,
+                                budget.spent /
+                                budget.limit *
+                                100
+                            )
+                            : 0;
+
+                    return `
+
+                    <div class="account-item">
+
+                        <div class="account-icon">
+                            $
+                        </div>
+
+                        <div class="account-info">
+
+                            <strong>
+                                ${this.escape(budget.name)}
+                            </strong>
+
+                            <span>
+                                ${this.money(budget.spent)}
+                                /
+                                ${this.money(budget.limit)}
+                            </span>
+
+                            <div
+                                style="
+                                    margin-top:10px;
+                                    height:8px;
+                                    background:#333;
+                                    border-radius:10px;
+                                    overflow:hidden;
+                                "
+                            >
+                                <div
+                                    style="
+                                        width:${percent}%;
+                                        height:100%;
+                                        background:#72abe8;
+                                    "
+                                ></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    `;
+
+                }
+            ).join("");
+
+    },
+
+
+    openAddBudget() {
+
+        this.openModal(
+            "Tạo ngân sách",
+            `
+
+            <div class="form-group">
+
+                <label>
+                    Tên ngân sách
+                </label>
+
+                <input
+                    id="budget-name"
+                    placeholder="Ăn uống"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Hạn mức
+                </label>
+
+                <input
+                    id="budget-limit"
+                    type="number"
+                >
+
+            </div>
+
+
+            <button
+                class="submit-btn"
+                onclick="App.saveBudget()"
+            >
+                Tạo ngân sách
+            </button>
+
+            `
+        );
+
+    },
+
+
+    saveBudget() {
+
+        this.state.budgets.push({
+
+            id: crypto.randomUUID(),
+
+            name:
+                document.getElementById(
+                    "budget-name"
+                ).value,
+
+            limit:
+                Number(
+                    document.getElementById(
+                        "budget-limit"
+                    ).value
+                ) || 0,
+
+            spent: 0
+
+        });
+
+        this.save();
+
+        this.closeModal();
+
+        this.renderBudgets();
+
+    },
+
+
+    addBudgetMember() {
+
+        alert(
+            "Tính năng chia sẻ ngân sách đã được mở."
+        );
+
+    },
+
+
+    /* =====================================================
+       PRO
+    ===================================================== */
+
+    openPro() {
+
+        this.openModal(
+            "Mở khóa toàn bộ CapMoney",
+            `
+
+            <div class="empty-card small">
+
+                <div class="empty-icon">
+                    ♛
+                </div>
+
+                <div>
+
+                    <strong>
+                        CapMoney Pro
+                    </strong>
+
+                    <span>
+                        Mở khóa toàn bộ tính năng cao cấp.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            ${this.proFeature(
+                "∞",
+                "Giao dịch không giới hạn",
+                "Thêm bao nhiêu giao dịch tùy thích"
+            )}
+
+            ${this.proFeature(
+                "▣",
+                "Mọi loại tài khoản",
+                "Thẻ tín dụng, tiết kiệm, ví điện tử, khoản vay..."
+            )}
+
+            ${this.proFeature(
+                "👥",
+                "Chia sẻ với người thân",
+                "Dùng chung tài khoản ngân hàng, ngân sách"
+            )}
+
+            ${this.proFeature(
+                "ϟ",
+                "Lưu chuyển khoản siêu tốc",
+                "Tự động lưu giao dịch"
+            )}
+
+            ${this.proFeature(
+                "▣",
+                "Video 3 giây",
+                "Quay khoảnh khắc cùng giao dịch"
+            )}
+
+            ${this.proFeature(
+                "▥",
+                "Thống kê nâng cao",
+                "Biểu đồ và phân tích chi tiết"
+            )}
+
+            ${this.proFeature(
+                "🗂",
+                "Danh mục tùy chỉnh",
+                "Tạo danh mục riêng"
+            )}
+
+            ${this.proFeature(
+                "▦",
+                "Widget màn hình chính",
+                "Xem chi tiêu ngay trên màn hình"
+            )}
+
+            ${this.proFeature(
+                "↥",
+                "Xuất dữ liệu",
+                "Xuất báo cáo PDF, Excel"
+            )}
+
+            <button
+                class="submit-btn"
+                onclick="App.activatePro()"
+            >
+                Nâng cấp Pro
+            </button>
+
+            `
+        );
+
+    },
+
+
+    proFeature(
+        icon,
+        title,
+        description
+    ) {
+
+        return `
+
+        <div
+            style="
+                display:flex;
+                gap:15px;
+                padding:14px 0;
+                border-bottom:1px solid rgba(255,255,255,.06);
+            "
+        >
+
+            <div
+                style="
+                    width:48px;
+                    height:48px;
+                    border-radius:14px;
+                    background:#293241;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-size:23px;
+                "
+            >
+                ${icon}
+            </div>
+
+            <div style="flex:1">
+
+                <strong>
+                    ${title}
+                </strong>
+
+                <div
+                    style="
+                        color:#aaa;
+                        margin-top:4px;
+                    "
+                >
+                    ${description}
+                </div>
+
+            </div>
+
+            <span
+                style="
+                    color:#86d78b;
+                    font-size:28px;
+                "
+            >
+                ✓
+            </span>
+
+        </div>
+
+        `;
+
+    },
+
+
+    activatePro() {
+
+        alert(
+            "Đây là bản PWA demo. Module Pro đã được tích hợp giao diện và sẵn sàng để kết nối hệ thống thanh toán."
+        );
+
+    },
+
+
+    /* =====================================================
+       PROFILE / SETTINGS
+    ===================================================== */
+
+    renderProfile() {
+
+        const totals =
+            this.getTotals();
+
+        document.getElementById(
+            "profile-transactions"
+        ).textContent =
+            this.state.transactions.length;
+
+        document.getElementById(
+            "profile-income"
+        ).textContent =
+            this.money(totals.income);
+
+        document.getElementById(
+            "profile-expense"
+        ).textContent =
+            this.money(totals.expense);
+
+        document.getElementById(
+            "profile-balance"
+        ).textContent =
+            this.money(
+                totals.income -
+                totals.expense
+            );
+
+    },
+
+
+    changeAvatar() {
+
+        alert(
+            "Có thể kết nối trình chọn ảnh tại đây."
+        );
+
+    },
+
+
+    appleLogin() {
+
+        alert(
+            "Đăng nhập Apple cần backend/OAuth thực tế."
+        );
+
+    },
+
+
+    changeLanguage() {
+
+        alert(
+            "Ngôn ngữ hiện tại: Tiếng Việt"
+        );
+
+    },
+
+
+    changeTheme() {
+
+        alert(
+            "Giao diện hiện tại: Tối"
+        );
+
+    },
+
+
+    changeCurrency() {
+
+        alert(
+            "Tiền tệ hiện tại: VND"
+        );
+
+    },
+
+
+    rateApp() {
+
+        alert(
+            "Cảm ơn bạn đã đánh giá CapMoney."
+        );
+
+    },
+
+
+    feedback() {
+
+        alert(
+            "Bạn có thể gửi góp ý tại đây."
+        );
+
+    },
+
+
+    async shareApp() {
+
+        if (
+            navigator.share
+        ) {
+
+            try {
+
+                await navigator.share({
+
+                    title: "CapMoney",
+
+                    text:
+                        "Ứng dụng quản lý tài chính cá nhân CapMoney.",
+
+                    url:
+                        location.href
+
+                });
+
+            } catch {}
+
+        } else {
+
+            alert(
+                "Trình duyệt không hỗ trợ chia sẻ."
+            );
+
+        }
+
+    },
+
+
+    showFriends() {
+
+        this.simpleFeature(
+            "Bạn bè",
+            "Quản lý danh sách bạn bè và chia sẻ giao dịch."
+        );
+
+    },
+
+
+    showGroups() {
+
+        this.simpleFeature(
+            "Nhóm",
+            "Tạo nhóm chi tiêu và theo dõi số tiền từng thành viên."
+        );
+
+    },
+
+
+    showSharedTransactions() {
+
+        this.simpleFeature(
+            "Giao dịch được chia sẻ",
+            "Các giao dịch được chia sẻ với người khác."
+        );
+
+    },
+
+
+    showSplitMoney() {
+
+        this.simpleFeature(
+            "Chia tiền",
+            "Chia hóa đơn cho nhiều người."
+        );
+
+    },
+
+
+    showRecurring() {
+
+        this.simpleFeature(
+            "Giao dịch định kỳ",
+            "Tự động tạo giao dịch theo ngày, tuần hoặc tháng."
+        );
+
+    },
+
+
+    openSettings() {
+
+        this.openModal(
+            "Cài đặt",
+            `
+
+            <div class="settings-list">
+
+                <button>
+                    🔐
+                    <span>Bảo mật</span>
+                    <b>›</b>
+                </button>
+
+                <button>
+                    🔔
+                    <span>Thông báo</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.exportData()">
+                    📤
+                    <span>Xuất dữ liệu</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.importData()">
+                    📥
+                    <span>Nhập dữ liệu</span>
+                    <b>›</b>
+                </button>
+
+                <button onclick="App.clearData()">
+                    🗑
+                    <span>Xóa toàn bộ dữ liệu</span>
+                    <b>›</b>
+                </button>
+
+            </div>
+
+            `
+        );
+
+    },
+
+
+    openCategories() {
+
+        this.openModal(
+            "Danh mục",
+            `
+
+            <div class="form-group">
+
+                <input
+                    id="new-category"
+                    placeholder="Tên danh mục mới"
+                >
+
+            </div>
+
+            <button
+                class="submit-btn"
+                onclick="App.addCategory()"
+            >
+                ＋ Thêm danh mục
+            </button>
+
+            `
+        );
+
+    },
+
+
+    addCategory() {
+
+        const input =
+            document.getElementById(
+                "new-category"
+            );
+
+        if (!input.value.trim())
+            return;
+
+        this.state.categories.push(
+            input.value.trim()
+        );
+
+        this.save();
+
+        input.value = "";
+
+        alert(
+            "Đã thêm danh mục."
+        );
+
+    },
+
+
+    simpleFeature(
+        title,
+        text
+    ) {
+
+        this.openModal(
+            title,
+            `
+
+            <div class="empty-card small">
+
+                <div class="empty-icon">
+                    ✓
+                </div>
+
+                <span>
+                    ${text}
+                </span>
+
+            </div>
+
+            `
+        );
+
+    },
+
+
+    /* =====================================================
+       EXPORT / IMPORT
+    ===================================================== */
+
+    exportData() {
+
+        const data =
+            JSON.stringify(
+                this.state,
+                null,
+                2
+            );
+
+        const blob =
+            new Blob(
+                [data],
+                {
+                    type:
+                        "application/json"
+                }
+            );
+
+        const url =
+            URL.createObjectURL(blob);
+
+        const a =
+            document.createElement(
+                "a"
+            );
+
+        a.href = url;
+
+        a.download =
+            "capmoney-backup.json";
+
+        a.click();
+
+        URL.revokeObjectURL(url);
+
+    },
+
+
+    importData() {
+
+        const input =
+            document.createElement(
+                "input"
+            );
+
+        input.type = "file";
+
+        input.accept =
+            ".json,application/json";
+
+        input.onchange =
+            async event => {
+
+                const file =
+                    event.target.files[0];
+
+                if (!file) return;
+
+                try {
+
+                    const text =
+                        await file.text();
+
+                    const data =
+                        JSON.parse(text);
+
+                    this.state = {
+                        ...this.state,
+                        ...data
+                    };
+
+                    this.save();
+
+                    this.renderAll();
+
+                    alert(
+                        "Đã nhập dữ liệu."
+                    );
+
+                } catch {
+
+                    alert(
+                        "File dữ liệu không hợp lệ."
+                    );
+
+                }
+
+            };
+
+        input.click();
+
+    },
+
+
+    clearData() {
+
+        if (
+            !confirm(
+                "Xóa toàn bộ dữ liệu CapMoney?"
+            )
+        )
+            return;
+
+        localStorage.removeItem(
+            "capmoney-data"
+        );
+
+        location.reload();
+
+    },
+
+
+    /* =====================================================
+       SEARCH
+    ===================================================== */
+
+    searchTransactions() {
+
+        this.openModal(
+            "Tìm kiếm giao dịch",
+            `
+
+            <div class="form-group">
+
+                <input
+                    id="search-query"
+                    placeholder="Tìm theo danh mục, ghi chú..."
+                >
+
+            </div>
+
+            <button
+                class="submit-btn"
+                onclick="App.performSearch()"
+            >
+                Tìm kiếm
+            </button>
+
+            <div
+                id="search-results"
+                style="margin-top:20px"
+            ></div>
+
+            `
+        );
+
+    },
+
+
+    performSearch() {
+
+        const query =
+            document
+                .getElementById(
+                    "search-query"
+                )
+                .value
+                .toLowerCase();
+
+        const results =
+            this.state.transactions.filter(
+                t =>
+                    `${t.category} ${t.note || ""}`
+                        .toLowerCase()
+                        .includes(query)
+            );
+
+        document.getElementById(
+            "search-results"
+        ).innerHTML =
+            results.length
+                ? results.map(
+                    t => `
+
+                    <div class="account-item">
+
+                        <div class="account-info">
+
+                            <strong>
+                                ${this.escape(t.category)}
+                            </strong>
+
+                            <span>
+                                ${this.money(t.amount)}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    `
+                ).join("")
+                :
+                `
+                <p style="color:#aaa">
+                    Không tìm thấy giao dịch.
+                </p>
+                `;
+
+    },
+
+
+    /* =====================================================
+       MODAL
+    ===================================================== */
+
+    openModal(
+        title,
+        content
+    ) {
+
+        document.getElementById(
+            "modal-title"
+        ).textContent = title;
+
+        document.getElementById(
+            "modal-content"
+        ).innerHTML = content;
+
+        document.getElementById(
+            "modal"
+        ).classList.add("open");
+
+    },
+
+
+    closeModal(event) {
+
+        if (
+            event &&
+            event.target !== event.currentTarget
+        )
+            return;
+
+        document.getElementById(
+            "modal"
+        ).classList.remove("open");
+
+    },
+
+
+    /* =====================================================
+       UTILS
+    ===================================================== */
+
+    monthLabel(date) {
+
+        return `tháng ${
+            date.getMonth() + 1
+        } ${
+            date.getFullYear()
+        }`;
+
+    },
+
+
+    escape(value) {
+
+        return String(value ?? "")
+            .replaceAll("&","&amp;")
+            .replaceAll("<","&lt;")
+            .replaceAll(">","&gt;")
+            .replaceAll('"',"&quot;")
+            .replaceAll("'","&#039;");
+
     }
-
-  ],
-
-  transactions: [
-
-    {
-      id: 1,
-      type: "income",
-      amount: 9000000,
-      category: "Khác",
-      account: "bank",
-      date: "2026-09-01",
-      note: "Thu nhập",
-      image: null
-    },
-
-    {
-      id: 2,
-      type: "expense",
-      amount: 1807000,
-      category: "Khác",
-      account: "bank",
-      date: "2026-09-02",
-      note: "Chi khác",
-      image: null
-    },
-
-    {
-      id: 3,
-      type: "expense",
-      amount: 1442000,
-      category: "Ăn uống",
-      account: "wallet",
-      date: "2026-09-04",
-      note: "Ăn uống",
-      image: null
-    },
-
-    {
-      id: 4,
-      type: "expense",
-      amount: 200000,
-      category: "Sức khỏe",
-      account: "wallet",
-      date: "2026-09-04",
-      note: "Sức khỏe",
-      image: null
-    }
-
-  ]
 
 };
 
 
-let state =
-  JSON.parse(localStorage.getItem(KEY) || "null")
-  || seed;
-
-
-let activeTab = "home";
-
-let txType = "expense";
-
-
-/* =========================
-   HELPERS
-========================= */
-
-const fmt = n =>
-  new Intl.NumberFormat(
-    "vi-VN",
-    {
-      style: "currency",
-      currency: "VND",
-      maximumFractionDigits: 0
-    }
-  ).format(n);
-
-
-const todayISO = () =>
-  new Date()
-    .toISOString()
-    .slice(0, 10);
-
-
-const save = () =>
-  localStorage.setItem(
-    KEY,
-    JSON.stringify(state)
-  );
-
-
-const totalBalance = () =>
-  state.accounts.reduce(
-    (s, a) => s + a.balance,
-    0
-  );
-
-
-const incomeTotal = () =>
-  state.transactions
-    .filter(t => t.type === "income")
-    .reduce(
-      (s, t) => s + t.amount,
-      0
-    );
-
-
-const expenseTotal = () =>
-  state.transactions
-    .filter(t => t.type === "expense")
-    .reduce(
-      (s, t) => s + t.amount,
-      0
-    );
-
-
-const accountName = id =>
-  state.accounts.find(
-    a => a.id === id
-  )?.name || "—";
-
-
-const escapeHtml = s =>
-  String(s ?? "").replace(
-    /[&<>"']/g,
-    c => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    }[c])
-  );
-
-
-const typeSign = t =>
-  t.type === "income"
-    ? "+"
-    : "-";
-
-
-/* =========================
-   MAIN RENDER
-========================= */
-
-function render() {
-
-  $("#todayLabel").textContent =
-    new Intl.DateTimeFormat(
-      "vi-VN",
-      {
-        weekday: "long",
-        day: "numeric",
-        month: "long"
-      }
-    ).format(new Date());
-
-
-  $("#userName").textContent =
-    state.user || "Bạn";
-
-
-  $$(".tab").forEach(
-    b =>
-      b.classList.toggle(
-        "active",
-        b.dataset.tab === activeTab
-      )
-  );
-
-
-  const screens = {
-
-    home: renderHome,
-
-    stats: renderStats,
-
-    accounts: renderAccounts,
-
-    budget: renderBudget,
-
-    profile: renderProfile
-
-  };
-
-
-  screens[activeTab]();
-
-
-  fillAccounts();
-
-}
-
-
-/* =========================
-   HOME
-========================= */
-
-function renderHome() {
-
-  const inc = incomeTotal();
-
-  const exp = expenseTotal();
-
-
-  const days = {};
-
-
-  state.transactions.forEach(
-    t => {
-
-      if (!days[t.date]) {
-        days[t.date] = [];
-      }
-
-      days[t.date].push(t);
-
-    }
-  );
-
-
-  const dates =
-    Object.keys(days)
-      .sort()
-      .reverse();
-
-
-  $("#screen").innerHTML = `
-
-    <div class="balance-grid">
-
-      <div class="balance-card">
-
-        <div class="label">
-          ↗ Chi tiêu
-        </div>
-
-        <div class="value expense">
-          ${fmt(exp)}
-        </div>
-
-      </div>
-
-
-      <div class="balance-card">
-
-        <div class="label">
-          ↙ Thu nhập
-        </div>
-
-        <div class="value income">
-          ${fmt(inc)}
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="toolbar">
-
-      <button class="pill active">
-        Tất cả
-      </button>
-
-      <button class="pill">
-        Ví tiền
-      </button>
-
-      <button class="pill">
-        Ngân hàng
-      </button>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="section-head">
-
-        <h2>
-          Số dư hiện tại
-        </h2>
-
-        <span class="income">
-          ${fmt(totalBalance())}
-        </span>
-
-      </div>
-
-
-      <div class="stat-grid">
-
-        <div class="stat">
-
-          <span>
-            Giao dịch
-          </span>
-
-          <b>
-            ${state.transactions.length}
-          </b>
-
-        </div>
-
-
-        <div class="stat">
-
-          <span>
-            Ngân sách tháng
-          </span>
-
-          <b>
-            ${fmt(
-              Math.max(
-                0,
-                state.budget - exp
-              )
-            )}
-          </b>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="section-head">
-
-      <h2>
-        Giao dịch gần đây
-      </h2>
-
-      <button
-        class="link"
-        onclick="
-          activeTab='stats';
-          render();
-        ">
-
-        Xem tất cả
-
-      </button>
-
-    </div>
-
-
-    ${
-      dates.length
-
-      ? dates
-          .map(
-            d => dayHtml(
-              d,
-              days[d]
-            )
-          )
-          .join("")
-
-      : `
-        <div class="card empty">
-          Chưa có giao dịch.<br>
-          Nhấn ＋ để thêm khoản thu hoặc chi.
-        </div>
-      `
-    }
-
-  `;
-
-}
-
-
-/* =========================
-   DAY
-========================= */
-
-function dayHtml(d, items) {
-
-  const exp =
-    items
-      .filter(
-        x => x.type === "expense"
-      )
-      .reduce(
-        (s, x) => s + x.amount,
-        0
-      );
-
-
-  return `
-
-    <div class="day-card">
-
-      <div class="day-row">
-
-        <div class="day-date">
-
-          ${
-            new Intl.DateTimeFormat(
-              "vi-VN",
-              {
-                weekday: "short",
-                day: "numeric",
-                month: "numeric"
-              }
-            ).format(
-              new Date(
-                d + "T12:00:00"
-              )
-            )
-          }
-
-        </div>
-
-
-        <div class="day-total">
-
-          ${
-            exp
-              ? fmt(exp)
-              : ""
-          }
-
-        </div>
-
-      </div>
-
-
-      <div class="transactions">
-
-        ${items.map(txHtml).join("")}
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-/* =========================
-   TRANSACTION HTML
-========================= */
-
-function txHtml(t) {
-
-  const icon = {
-
-    "Ăn uống": "🍜",
-
-    "Di chuyển": "🛵",
-
-    "Mua sắm": "🛍️",
-
-    "Sức khỏe": "💊",
-
-    "Hóa đơn": "🧾",
-
-    "Giải trí": "🎮",
-
-    "Khác": "💳"
-
-  }[t.category] || "💳";
-
-
-  return `
-
-    <div class="tx">
-
-      ${
-        t.image
-
-        ? `
-          <img
-            class="thumb"
-            src="${t.image}"
-            alt="">
-        `
-
-        : `
-          <div class="thumb">
-            ${icon}
-          </div>
-        `
-      }
-
-
-      <div>
-
-        <div class="tx-title">
-          ${escapeHtml(
-            t.note || t.category
-          )}
-        </div>
-
-        <div class="tx-sub">
-
-          ${escapeHtml(t.category)}
-
-          ·
-
-          ${escapeHtml(
-            accountName(t.account)
-          )}
-
-        </div>
-
-      </div>
-
-
-      <div
-        class="tx-amount ${
-          t.type === "income"
-            ? "income"
-            : "expense"
-        }">
-
-        ${typeSign(t)}
-        ${fmt(t.amount)}
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-/* =========================
-   STATS
-========================= */
-
-function renderStats() {
-
-  const exp = expenseTotal();
-
-
-  const byCat = {};
-
-
-  state.transactions
-
-    .filter(
-      t => t.type === "expense"
-    )
-
-    .forEach(
-      t =>
-        byCat[t.category] =
-          (byCat[t.category] || 0)
-          + t.amount
-    );
-
-
-  const bars =
-    [
-      "T2",
-      "T3",
-      "T4",
-      "T5",
-      "T6",
-      "T7",
-      "CN"
-    ]
-
-    .map(
-      (d, i) => {
-
-        const val =
-          Math.round(
-            exp *
-            (.12 + i * .02)
-          );
-
-
-        return `
-
-          <div class="bar-wrap">
-
-            <div
-              class="bar"
-              style="
-                height:
-                ${Math.max(
-                  8,
-                  val /
-                  Math.max(exp, 1) *
-                  100
-                )}%;
-              ">
-            </div>
-
-            <div class="bar-label">
-              ${d}
-            </div>
-
-          </div>
-
-        `;
-
-      }
-    )
-
-    .join("");
-
-
-  const cats =
-    Object.entries(byCat)
-      .sort(
-        (a, b) => b[1] - a[1]
-      );
-
-
-  $("#screen").innerHTML = `
-
-    <div class="section-head">
-
-      <h2>
-        Thống kê
-      </h2>
-
-      <span class="pill active">
-        Tháng này
-      </span>
-
-    </div>
-
-
-    <div class="stat-grid">
-
-      <div class="stat">
-
-        <span>
-          Tổng chi
-        </span>
-
-        <b class="expense">
-          ${fmt(exp)}
-        </b>
-
-      </div>
-
-
-      <div class="stat">
-
-        <span>
-          Tổng thu
-        </span>
-
-        <b class="income">
-          ${fmt(incomeTotal())}
-        </b>
-
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="section-head">
-
-        <h2>
-          Chi tiêu theo ngày
-        </h2>
-
-      </div>
-
-
-      <div class="chart">
-
-        ${bars}
-
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="section-head">
-
-        <h2>
-          Chi tiêu theo danh mục
-        </h2>
-
-      </div>
-
-
-      ${
-        cats.length
-
-        ? cats
-            .map(
-              ([c, v]) => `
-
-                <div
-                  class="section-head"
-                  style="
-                    margin:
-                    14px 0;
-                  ">
-
-                  <span>
-                    ${escapeHtml(c)}
-                  </span>
-
-                  <b>
-                    ${fmt(v)}
-                  </b>
-
-                </div>
-
-              `
-            )
-            .join("")
-
-        : `
-          <div class="empty">
-            Chưa có dữ liệu.
-          </div>
-        `
-      }
-
-    </div>
-
-  `;
-
-}
-
-
-/* =========================
-   ACCOUNTS
-========================= */
-
-function renderAccounts() {
-
-  $("#screen").innerHTML = `
-
-    <div class="section-head">
-
-      <h2>
-        Tài khoản
-      </h2>
-
-      <button
-        class="link"
-        id="addAccount">
-
-        ＋ Thêm
-
-      </button>
-
-    </div>
-
-
-    <div class="card">
-
-      <div
-        style="
-          color:#aaa;
-          font-size:12px;
-        ">
-
-        Tổng số dư
-
-      </div>
-
-
-      <div
-        style="
-          font-size:30px;
-          font-weight:800;
-          margin:6px 0;
-        ">
-
-        ${fmt(totalBalance())}
-
-      </div>
-
-
-      <div class="stat-grid">
-
-        <div class="stat">
-
-          <span>
-            Thu nhập
-          </span>
-
-          <b class="income">
-            ${fmt(incomeTotal())}
-          </b>
-
-        </div>
-
-
-        <div class="stat">
-
-          <span>
-            Chi tiêu
-          </span>
-
-          <b class="expense">
-            ${fmt(expenseTotal())}
-          </b>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    ${
-      state.accounts
-
-        .map(
-          a => `
-
-            <div
-              class="
-                account
-                ${
-                  a.id === "bank"
-                    ? "bank"
-                    : ""
-                }
-              ">
-
-              <div class="account-icon">
-
-                ${
-                  a.id === "bank"
-                    ? "🏦"
-                    : "💼"
-                }
-
-              </div>
-
-
-              <div class="account-info">
-
-                <div class="account-name">
-
-                  ${escapeHtml(
-                    a.name
-                  )}
-
-                </div>
-
-
-                <div class="account-sub">
-
-                  ${
-                    a.id === "bank"
-                      ? "Mặc định"
-                      : "Ví cá nhân"
-                  }
-
-                </div>
-
-              </div>
-
-
-              <div class="account-balance">
-
-                ${fmt(a.balance)}
-
-              </div>
-
-            </div>
-
-          `
-        )
-
-        .join("")
-    }
-
-
-    <div class="card">
-
-      <button
-        class="primary full"
-        id="transferBtn">
-
-        ⇄ Chuyển tiền giữa tài khoản
-
-      </button>
-
-    </div>
-
-  `;
-
-
-  $("#addAccount").onclick =
-    () => addAccount();
-
-
-  $("#transferBtn").onclick =
-    () => openTransfer();
-
-}
-
-
-/* =========================
-   BUDGET
-========================= */
-
-function renderBudget() {
-
-  const spent =
-    expenseTotal();
-
-
-  const pct =
-    Math.min(
-      100,
-      Math.round(
-        spent /
-        state.budget *
-        100
-      )
-    );
-
-
-  const remain =
-    Math.max(
-      0,
-      state.budget - spent
-    );
-
-
-  $("#screen").innerHTML = `
-
-    <div class="section-head">
-
-      <h2>
-        Ngân sách tháng
-      </h2>
-
-      <span class="pill">
-        Tháng
-        ${new Date().getMonth() + 1}
-      </span>
-
-    </div>
-
-
-    <div class="card budget-top">
-
-      <div class="percent">
-
-        ${pct}%
-
-      </div>
-
-
-      <p>
-        Đã chi
-      </p>
-
-
-      <div class="progress">
-
-        <i
-          style="
-            width:${pct}%;
-          ">
-        </i>
-
-      </div>
-
-
-      <div class="budget-numbers">
-
-        <div>
-
-          <span>
-            Đã chi
-          </span>
-
-          <b class="expense">
-            ${fmt(spent)}
-          </b>
-
-        </div>
-
-
-        <div>
-
-          <span>
-            Còn lại
-          </span>
-
-          <b class="income">
-            ${fmt(remain)}
-          </b>
-
-        </div>
-
-
-        <div>
-
-          <span>
-            Ngân sách
-          </span>
-
-          <b>
-            ${fmt(state.budget)}
-          </b>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="stat-grid">
-
-      <div class="stat">
-
-        <span>
-          Chi tiêu/ngày
-        </span>
-
-        <b>
-
-          ${
-            fmt(
-              Math.round(
-                remain /
-                Math.max(
-                  1,
-                  30 -
-                  new Date().getDate()
-                )
-              )
-            )
-          }
-
-        </b>
-
-        <span>
-          Còn lại
-        </span>
-
-      </div>
-
-
-      <div class="stat">
-
-        <span>
-          Giao dịch
-        </span>
-
-        <b>
-          ${state.transactions.length}
-        </b>
-
-        <span>
-          tháng này
-        </span>
-
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="section-head">
-
-        <h2>
-          Ngân sách
-        </h2>
-
-      </div>
-
-
-      <button
-        class="primary full"
-        id="editBudget">
-
-        Chỉnh sửa ngân sách
-
-      </button>
-
-    </div>
-
-  `;
-
-
-  $("#editBudget").onclick =
-    () => {
-
-      const v =
-        prompt(
-          "Ngân sách tháng (VND)",
-          state.budget
-        );
-
-
-      if (
-        v !== null &&
-        !isNaN(+v) &&
-        +v > 0
-      ) {
-
-        state.budget = +v;
-
-        save();
-
-        render();
-
-      }
-
-    };
-
-}
-
-
-/* =========================
-   PROFILE
-========================= */
-
-function renderProfile() {
-
-  $("#screen").innerHTML = `
-
-    <div class="section-head">
-
-      <h2>
-        Hồ sơ & cài đặt
-      </h2>
-
-    </div>
-
-
-    <div class="card">
-
-
-      <div class="profile-row">
-
-        <span>
-          👤
-        </span>
-
-        <div>
-
-          <b>
-            Tên hiển thị
-          </b>
-
-          <small>
-            ${escapeHtml(state.user)}
-          </small>
-
-        </div>
-
-        <button
-          class="link"
-          id="editName">
-
-          Sửa
-
-        </button>
-
-      </div>
-
-
-      <div class="profile-row">
-
-        <span>
-          💾
-        </span>
-
-        <div>
-
-          <b>
-            Dữ liệu
-          </b>
-
-          <small>
-            Lưu cục bộ trên thiết bị
-          </small>
-
-        </div>
-
-      </div>
-
-
-      <div class="profile-row">
-
-        <span>
-          📱
-        </span>
-
-        <div>
-
-          <b>
-            PWA
-          </b>
-
-          <small>
-            Có thể cài lên màn hình chính
-          </small>
-
-        </div>
-
-      </div>
-
-
-    </div>
-
-
-    <div class="card">
-
-      <button
-        class="primary full"
-        id="exportBtn">
-
-        Xuất dữ liệu JSON
-
-      </button>
-
-
-      <br>
-      <br>
-
-
-      <button
-        class="primary full"
-        id="resetBtn"
-        style="
-          background:#3a2024;
-        ">
-
-        Đặt lại dữ liệu mẫu
-
-      </button>
-
-    </div>
-
-  `;
-
-
-  $("#editName").onclick =
-    () => {
-
-      const n =
-        prompt(
-          "Tên hiển thị",
-          state.user
-        );
-
-
-      if (n) {
-
-        state.user = n;
-
-        save();
-
-        render();
-
-      }
-
-    };
-
-
-  $("#exportBtn").onclick =
-    exportData;
-
-
-  $("#resetBtn").onclick =
-    () => {
-
-      if (
-        confirm(
-          "Xóa dữ liệu hiện tại và khôi phục dữ liệu mẫu?"
-        )
-      ) {
-
-        state =
-          structuredClone(seed);
-
-        save();
-
-        render();
-
-      }
-
-    };
-
-}
-
-
-/* =========================
-   ACCOUNT SELECT
-========================= */
-
-function fillAccounts() {
-
-  const s =
-    $("#account");
-
-
-  if (!s) return;
-
-
-  s.innerHTML =
-    state.accounts
-
-      .map(
-        a => `
-
-          <option value="${a.id}">
-
-            ${escapeHtml(a.name)}
-
-          </option>
-
-        `
-      )
-
-      .join("");
-
-}
-
-
-/* =========================
-   ADD TRANSACTION MODAL
-========================= */
-
-function openModal() {
-
-  $("#modalBackdrop")
-    .classList
-    .remove("hidden");
-
-
-  $("#amount").focus();
-
-
-  $("#date").value =
-    todayISO();
-
-
-  $("#photoPreview")
-    .innerHTML = "";
-
-
-  $("#photoPreview")
-    .classList
-    .add("hidden");
-
-}
-
-
-function closeModal() {
-
-  $("#modalBackdrop")
-    .classList
-    .add("hidden");
-
-}
-
-
-/* =========================
-   TOAST
-========================= */
-
-function showToast(s) {
-
-  const t =
-    $("#toast");
-
-
-  t.textContent = s;
-
-
-  t.classList.add("show");
-
-
-  setTimeout(
-    () =>
-      t.classList.remove("show"),
-    1800
-  );
-
-}
-
-
-/* =========================
-   ADD ACCOUNT
-========================= */
-
-function addAccount() {
-
-  const name =
-    prompt(
-      "Tên tài khoản mới"
-    );
-
-
-  if (!name) return;
-
-
-  const id =
-    "a" + Date.now();
-
-
-  state.accounts.push({
-
-    id,
-
-    name,
-
-    balance: 0
-
-  });
-
-
-  save();
-
-  render();
-
-  showToast(
-    "Đã thêm tài khoản"
-  );
-
-}
-
-
-/* =========================
-   TRANSFER
-========================= */
-
-function openTransfer() {
-
-  const from =
-    prompt(
-      "Tài khoản chuyển đi:\n" +
-
-      state.accounts
-
-        .map(
-          (a, i) =>
-            `${i + 1}. ${a.name}`
-        )
-
-        .join("\n")
-    );
-
-
-  const fi =
-    +from - 1;
-
-
-  if (
-    !Number.isInteger(fi) ||
-    !state.accounts[fi]
-  ) return;
-
-
-  const to =
-    prompt(
-      "Tài khoản nhận:\n" +
-
-      state.accounts
-
-        .map(
-          (a, i) =>
-            `${i + 1}. ${a.name}`
-        )
-
-        .join("\n")
-    );
-
-
-  const ti =
-    +to - 1;
-
-
-  if (
-    !Number.isInteger(ti) ||
-    !state.accounts[ti] ||
-    ti === fi
-  ) return;
-
-
-  const amount =
-    +prompt(
-      "Số tiền chuyển (VND)",
-      100000
-    );
-
-
-  if (
-    !amount ||
-    amount <= 0 ||
-    amount >
-      state.accounts[fi].balance
-  ) {
-
-    return alert(
-      "Số tiền không hợp lệ hoặc số dư không đủ."
-    );
-
-  }
-
-
-  state.accounts[fi].balance -=
-    amount;
-
-
-  state.accounts[ti].balance +=
-    amount;
-
-
-  save();
-
-  render();
-
-  showToast(
-    "Đã chuyển tiền"
-  );
-
-}
-
-
-/* =========================
-   EXPORT
-========================= */
-
-function exportData() {
-
-  const blob =
-    new Blob(
-      [
-        JSON.stringify(
-          state,
-          null,
-          2
-        )
-      ],
-      {
-        type:
-          "application/json"
-      }
-    );
-
-
-  const a =
-    document.createElement("a");
-
-
-  a.href =
-    URL.createObjectURL(blob);
-
-
-  a.download =
-    "moneytrack-data.json";
-
-
-  a.click();
-
-
-  URL.revokeObjectURL(
-    a.href
-  );
-
-}
-
-
-/* =========================
-   NAVIGATION
-========================= */
-
-$$(".tab").forEach(
-  b => {
-
-    b.onclick = () => {
-
-      activeTab =
-        b.dataset.tab;
-
-      render();
-
-    };
-
-  }
+/* =========================================================
+   START APP
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => App.init()
 );
 
 
-$("#profileQuick").onclick =
-  () => {
-
-    activeTab = "profile";
-
-    render();
-
-  };
-
-
-/* =========================
-   ADD BUTTON
-========================= */
-
-$("#addBtn").onclick =
-  openModal;
-
-
-/* =========================
-   CLOSE MODAL
-========================= */
-
-$("#closeModal").onclick =
-  closeModal;
-
-
-$("#modalBackdrop")
-  .addEventListener(
-    "click",
-    e => {
-
-      if (
-        e.target.id ===
-        "modalBackdrop"
-      ) {
-
-        closeModal();
-
-      }
-
-    }
-  );
-
-
-/* =========================
-   TRANSACTION TYPE
-========================= */
-
-$$(".seg").forEach(
-  b => {
-
-    b.onclick = () => {
-
-      $$(".seg").forEach(
-        x =>
-          x.classList.remove(
-            "active"
-          )
-      );
-
-
-      b.classList.add(
-        "active"
-      );
-
-
-      txType =
-        b.dataset.type;
-
-    };
-
-  }
-);
-
-
-/* =========================
-   PHOTO
-========================= */
-
-$("#photo").onchange =
-  e => {
-
-    const f =
-      e.target.files?.[0];
-
-
-    if (!f) return;
-
-
-    const r =
-      new FileReader();
-
-
-    r.onload = () => {
-
-      $("#photoPreview")
-        .innerHTML = `
-
-          <img
-            src="${r.result}"
-            alt="Ảnh giao dịch">
-
-        `;
-
-
-      $("#photoPreview")
-        .classList
-        .remove("hidden");
-
-
-      $("#photoPreview")
-        .dataset
-        .src =
-        r.result;
-
-    };
-
-
-    r.readAsDataURL(f);
-
-  };
-
-
-/* =========================
-   SAVE TRANSACTION
-========================= */
-
-$("#transactionForm")
-  .onsubmit = e => {
-
-    e.preventDefault();
-
-
-    const amount =
-      +$("#amount").value;
-
-
-    if (
-      !amount ||
-      amount <= 0
-    ) return;
-
-
-    const acc =
-      $("#account").value;
-
-
-    const date =
-      $("#date").value ||
-      todayISO();
-
-
-    const tx = {
-
-      id: Date.now(),
-
-      type: txType,
-
-      amount,
-
-      category:
-        $("#category").value,
-
-      account: acc,
-
-      date,
-
-      note:
-        $("#note").value.trim(),
-
-      image:
-        $("#photoPreview")
-          .dataset.src ||
-        null
-
-    };
-
-
-    const account =
-      state.accounts.find(
-        a => a.id === acc
-      );
-
-
-    if (!account) return;
-
-
-    if (
-      txType === "income"
-    ) {
-
-      account.balance +=
-        amount;
-
-    }
-
-
-    else if (
-      txType === "expense"
-    ) {
-
-      account.balance -=
-        amount;
-
-    }
-
-
-    state.transactions.push(
-      tx
-    );
-
-
-    save();
-
-
-    closeModal();
-
-
-    e.target.reset();
-
-
-    render();
-
-
-    showToast(
-      "Đã lưu giao dịch"
-    );
-
-  };
-
-
-/* =========================
-   INITIAL RENDER
-========================= */
-
-render();
-
-
-/* =========================
-   SERVICE WORKER
-========================= */
-
-if (
-  "serviceWorker"
-  in navigator
-) {
-
-  window.addEventListener(
-    "load",
-    () => {
-
-      navigator.serviceWorker
-        .register("./sw.js");
-
-    }
-  );
-
-}
+/* =========================================================
+   GLOBAL ACCESS
+========================================================= */
+
+window.App = App;
