@@ -1,159 +1,56 @@
+# MoneyTrack / CapMoney PWA
 
+Cập nhật: 2026-09-13. Xem **PROJECT_STATE.md** trong cùng thư mục để biết trạng thái, kiến trúc, giới hạn và việc cần làm.
 
-## Cấu trúc
+## Chạy tại máy
 
-moneymanager-pwa/
+Cần Node.js hỗ trợ node:sqlite; đã thử với Node 24.19.0. Từ thư mục chứa file này:
 
-├── index.html
-├── style.css
-├── app.js
-├── manifest.json
-├── sw.js
-├── icon-192.svg
-├── icon-512.svg
-└── README.md
+```sh
+node serve.cjs
+```
 
-## Chạy
+Mở http://127.0.0.1:8081/. Địa chỉ chỉ dùng trên máy đang chạy máy chủ. Không nhấp đúp index.html nếu muốn dùng API, PWA hoặc ngoại tuyến.
 
-PWA cần chạy qua HTTP/HTTPS để Service Worker hoạt động.
+Không cần cài npm để chạy. Các thư viện web đã nằm trong vendor/. Giữ nguyên cấu trúc và các file hỗ trợ của Tesseract.
 
-Không nên mở trực tiếp:
+## Các nhóm tính năng
 
-file:///...
+Thu/chi/chuyển tiền; danh mục; tài khoản; ngân sách; thống kê; lịch định kỳ; tiết kiệm và hoàn tiền ước tính; khoản vay/đầu tư thủ công; nhóm chia tiền; OCR nhận diện biên lai trên thiết bị; video; PDF/XLSX/CSV; sao lưu JSON kèm video; đăng nhập và sổ dùng chung có phân quyền.
 
-Có thể dùng:
+Các tính năng không bị khóa theo gói Pro. Dung lượng vẫn phụ thuộc thiết bị và giới hạn file được hiển thị trong giao diện. Chi tiết đã kiểm chứng và chưa hoàn tất nằm trong PROJECT_STATE.md.
 
-- VS Code Live Server
-- XAMPP
-- Node.js
-- GitHub Pages
-- Netlify
-- Vercel
+## Dữ liệu và máy chủ
 
-## Chức năng
+- Sổ cá nhân dùng LocalStorage khóa capmoney-local-v2. Video ở IndexedDB capmoney-media/files.
+- Sổ chung dùng SQLite. Mặc định dữ liệu nằm tại ../../work/capmoney-data tính từ thư mục ứng dụng. Đặt CAPMONEY_DATA_DIR thành đường dẫn riêng nếu đóng gói/triển khai nơi khác.
+- PORT mặc định 8081; HOST mặc định 127.0.0.1.
+- Khi triển khai, đặt PUBLIC_ORIGIN bằng nguồn HTTPS thực tế (không có dấu / cuối), cấu hình máy chủ HTTPS phía trước và lưu DB ngoài thư mục được phục vụ công khai.
+- Không dùng GitHub Pages đơn lẻ cho API sổ chung. Có thể phục vụ phần cá nhân tĩnh nhưng các chức năng máy chủ sẽ không hoạt động.
+- Không tự đồng bộ sổ cá nhân lên máy chủ. Người dùng tạo hoặc tham gia từng sổ chung.
+- Chưa triển khai máy chủ công khai trong phiên này.
 
-### Trang chủ
+## Apple, Shortcuts và widget
 
-- Ngày / tháng
-- Lịch giao dịch
-- Thu nhập
-- Chi tiêu
-- Wallet
-- Bank
-- Thêm giao dịch
-- Tìm kiếm
-- Ẩn/hiện số dư
+Apple login cần APPLE_CLIENT_ID và APPLE_REDIRECT_URI hợp lệ từ tài khoản Apple Developer, HTTPS và kiểm tra đầu-cuối. Không điền bí mật vào JavaScript phía trình duyệt.
 
-### Thống kê
+Shortcuts có hai luồng: mở URL ?receipt=TEXT đã mã hóa để điền trước giao dịch cá nhân; hoặc gửi JSON đến api/quick với khóa riêng của sổ chung. Hướng dẫn nằm trong giao diện Quét biên lai và Sổ dùng chung. Mã yêu cầu requestId phải ổn định khi thử lại cùng một lần ghi, mới cho giao dịch mới.
 
-- Tuần
-- Tháng
-- Năm
-- Tổng số dư
-- Tổng thu nhập
-- Tổng chi tiêu
-- Danh mục
-- Bản đồ
+Thư mục ios/ chứa nguồn ứng dụng WKWebView và WidgetKit. Trên macOS có Xcode/XcodeGen: thay com.example.capmoney và group.com.example.capmoney bằng định danh đã đăng ký ở cả Swift và project.yml; cấu hình Signing Team; chạy xcodegen generate trong ios/; mở dự án sinh ra, build và cài lên thiết bị. Nhập địa chỉ HTTPS của web khi mở ứng dụng. Widget hiển thị dữ liệu lần mở gần nhất, không đọc trực tiếp LocalStorage của Safari. Mã iOS chưa được biên dịch hoặc thử trong môi trường Windows này.
 
-### Tài khoản
+Tài liệu đối chiếu:
+- https://developer.apple.com/documentation/widgetkit/creating-a-widget-extension
+- https://developer.apple.com/documentation/signinwithapplerestapi
+- https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API
+- https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+- https://github.com/naptha/tesseract.js/blob/master/docs/api.md
 
-- Wallet
-- Bank
-- Thêm tài khoản
-- Chỉnh sửa
-- Xóa
-- Sắp xếp
-- Chuyển tiền
-- Lịch sử chuyển tiền
-- Sổ tiết kiệm
+## Cải tiến gần nhất
 
-### Khoản vay
+Thêm ảnh đại diện (xem trước, cắt vuông tự động, lưu/bỏ ảnh), danh sách theo ngày, bộ biểu tượng SVG, căn giữa nút cộng và hiệu ứng kính mờ/chuyển cảnh có chế độ giảm chuyển động.
 
-- Thêm khoản vay
-- Số tiền vay
-- Lãi suất
-- Ngày đến hạn
-- Số dư còn lại
+Bỏ quét biên lai trùng ở Hồ sơ, giữ ở Trang chủ. Hộp thoại có Hủy, xác nhận Xóa và trạng thái xử lý. Sổ chung giữ phiên khi mạng lỗi. Khôi phục video dùng ID mới và thu hồi phần nhập khi lưu thất bại; chưa bảo đảm nguyên tử khi thiết bị tắt đột ngột.
 
-### Đầu tư
+## Kiểm chứng
 
-- SJC
-- BTC
-- ETH
-- Thêm khoản đầu tư
-- Cập nhật giá
-
-### Ngân sách
-
-- Tạo ngân sách
-- Hạn mức
-- Theo dõi mức sử dụng
-
-### Hồ sơ
-
-- Tổng quan
-- Bạn bè
-- Nhóm
-- Chia tiền
-- Giao dịch chia sẻ
-- Giao dịch định kỳ
-- Cài đặt
-- Danh mục
-- Ngôn ngữ
-- Giao diện
-- Tiền tệ
-- Xuất dữ liệu
-- Nhập dữ liệu
-
-### CapMoney Pro
-
-- Giao dịch không giới hạn
-- Nhiều loại tài khoản
-- Chia sẻ với người thân
-- Lưu chuyển khoản siêu tốc
-- Video 3 giây
-- Thống kê nâng cao
-- Danh mục tùy chỉnh
-- Widget
-- Xuất dữ liệu
-
-## Lưu dữ liệu
-
-Dữ liệu hiện được lưu trên thiết bị bằng:
-
-localStorage
-
-Key:
-
-capmoney-data
-
-## Backup
-
-Có thể vào:
-
-Cài đặt
-→ Xuất dữ liệu
-
-để tạo file JSON backup.
-
-## Import
-
-Cài đặt
-→ Nhập dữ liệu
-
-để khôi phục dữ liệu.
-
-## Lưu ý
-
-Các chức năng cần server thực tế như:
-
-- Apple Sign In
-- Đồng bộ tài khoản
-- Chia sẻ dữ liệu nhiều người
-- API ngân hàng
-- OCR hóa đơn
-- API giá vàng
-- API crypto
-- Thanh toán Pro
-
-cần backend/API riêng.
+52 kiểm tra tự động đã đạt trong phiên (chi tiết ở PROJECT_STATE.md). Trình duyệt đã thử thêm/xóa giao dịch, nhận diện mẫu 250.000 VND, tạo PDF/XLSX và tải lại giao diện khi giả lập mất mạng. Chưa thử quay camera, định vị, cài đặt PWA hay Apple/widget trên iPhone thật. Các thư viện Pro cần được tải thành công trước khi dùng ngoại tuyến.

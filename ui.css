@@ -1,0 +1,31 @@
+/* Shared geometry: icons use a 24px drawing grid, never a font baseline. */
+button{vertical-align:middle;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button[data-action]{display:inline-flex;align-items:center;justify-content:center;gap:9px;line-height:1.35}
+button[data-action]>span{min-width:0;overflow-wrap:anywhere}
+svg{display:block;width:22px;height:22px;flex-shrink:0;stroke-width:1.7}
+[hidden]{display:none!important}
+.fab{display:grid!important;place-items:center;padding:0;width:60px;height:60px;line-height:1;border:1px solid #c9e6ff66;background:linear-gradient(145deg,#9bcdf6,#5f9ed5);box-shadow:0 8px 24px #0d345955,inset 0 1px 1px #fff8;isolation:isolate}
+.fab[hidden]{display:none!important}.fab svg{width:28px;height:28px;stroke-width:2.2}
+.avatar{display:grid;place-items:center;padding:0;overflow:hidden;flex-shrink:0;line-height:1}
+.avatar img,.profile-avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.profile-avatar{overflow:hidden;line-height:1;background:linear-gradient(145deg,#384f70,#413b58);border:2px solid #9acaff80;box-shadow:0 8px 28px #0003}
+.avatar-preview{width:120px;height:120px;margin:16px auto}
+.avatar-upload{padding:16px;border:1px dashed var(--blue);border-radius:18px}.avatar-upload input{max-width:100%}
+.row>*{min-width:0}.row>button{flex-shrink:0}.quick-pro{align-items:center;gap:10px}.quick-pro small{line-height:1.5}.quick-pro button{font-size:13px;padding:10px 12px}
+.day-picker{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:12px;margin:18px 0;padding:12px;background:var(--panel);border-radius:22px}
+.day-picker label{margin:0;text-align:center;font-size:12px}.day-picker input{min-width:0;text-align:center;margin-top:4px;width:100%;padding:8px}
+.day-picker button{display:grid;place-items:center;padding:0;font-size:24px}
+.metric-label{display:flex;align-items:center;gap:8px}.metric-label svg{width:18px;height:18px}
+.menu[data-action]{justify-content:flex-start;gap:14px}.menu[data-action]>svg{color:var(--blue)}.menu[data-action]>span{flex:1}.menu[data-action]::after{content:'';width:7px;height:7px;flex:none;border-top:1.5px solid var(--muted);border-right:1.5px solid var(--muted);transform:rotate(45deg);margin:0 3px}
+.pro-banner>strong{display:flex;align-items:center;gap:10px}.chips button{display:inline-flex;align-items:center;gap:7px}.chips svg{width:17px;height:17px}
+.transaction .details{overflow:hidden}.txamount{flex-shrink:0}.dialog-head{gap:12px;align-items:center}.dialog-head h2{line-height:1.35}.dialog-head button{display:grid;place-items:center;padding:0;width:44px;height:44px;flex-shrink:0}
+.form-actions{position:sticky;bottom:-1px;background:var(--panel);border-top:1px solid var(--line);padding:12px 0 max(12px,env(safe-area-inset-bottom));z-index:2}.form-actions button{justify-content:center;line-height:1.4}
+nav{background:#2b3340ed;box-shadow:0 12px 32px #0005,inset 0 1px 0 #ffffff20;border-color:#ffffff25;overflow:hidden}
+nav::before{content:'';position:absolute;z-index:-1;left:6px;top:6px;bottom:6px;width:calc((100% - 12px)/5);border-radius:32px;background:linear-gradient(145deg,#86b5e533,#aad6ff12);border:1px solid #b5d8ff33;box-sizing:border-box;pointer-events:none}
+nav:has([data-page=stats].active)::before{transform:translateX(100%)}nav:has([data-page=accounts].active)::before{transform:translateX(200%)}nav:has([data-page=budget].active)::before{transform:translateX(300%)}nav:has([data-page=profile].active)::before{transform:translateX(400%)}
+nav{gap:0}nav button{background:transparent!important;min-width:0}nav button.active{color:var(--blue)}nav svg{width:24px;height:24px}
+@supports(backdrop-filter:blur(1px)){nav{background:#27303dcc;backdrop-filter:blur(24px) saturate(145%);-webkit-backdrop-filter:blur(24px) saturate(145%)}}
+[data-theme=light] nav{background:#edf3fbd9;border-color:#fff9}[data-theme=light] nav::before{background:#ffffffbb;border-color:#aac4dc88}
+@media(max-width:380px){.row.section{flex-wrap:wrap}.quick-pro{align-items:flex-start}.quick-pro small{font-size:12px}.quick-pro button{font-size:12px}.transaction{gap:8px}.badge{width:36px;height:36px}.txamount{font-size:12px}.segments button{font-size:13px}.menu[data-action]{gap:10px}}
+@media(prefers-reduced-motion:no-preference){button{transition:background-color .18s,color .18s,box-shadow .18s,transform .16s}button:active:not(:disabled){transform:scale(.96)}nav::before{transition:transform .3s cubic-bezier(.2,.8,.2,1)}.bar i{transition:width .35s ease}dialog[open]{animation:sheet-in .24s cubic-bezier(.2,.7,.2,1)}dialog::backdrop{animation:backdrop-in .2s ease}@keyframes sheet-in{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}@keyframes backdrop-in{from{opacity:0}to{opacity:1}}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
