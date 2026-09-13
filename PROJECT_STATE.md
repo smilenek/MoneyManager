@@ -43,6 +43,8 @@ outputs/capmoney/
 ├─ style.css                 # Giao diện gốc
 ├─ pro.js                    # Tính năng Pro và mở rộng giao diện
 ├─ ui.css              # Bố cục, biểu tượng, kính mờ, chuyển động
+├─ location.js         # Định vị nhanh, điền địa chỉ và bảo vệ chỉnh sửa tay
+├─ geocode.cjs         # Tra địa chỉ qua máy chủ, giới hạn/cache Nominatim
 ├─ profile.js          # Xử lý ảnh đại diện
 ├─ pro.css                   # Giao diện mở rộng, sáng/tối
 ├─ finance.js                # Hàm tính tiền, lịch, chia nợ, đọc số tiền
@@ -152,7 +154,7 @@ capmoney-local-v2 = LocalStorage: sổ cá nhân, version=2
 capmoney-media = IndexedDB: cơ sở dữ liệu video, version=1
 files = IndexedDB object store: mediaId -> Blob
 capmoney-session = sessionStorage: bearer token sổ chung, không phải dữ liệu cá nhân
-capmoney-shell-v5 = CacheStorage: tài nguyên giao diện hiện tại; có thể đổi khi cập nhật ứng dụng
+capmoney-shell-v6 = CacheStorage: tài nguyên giao diện hiện tại; có thể đổi khi cập nhật ứng dụng
 capmoney-complete-1 = Định danh định dạng bản sao lưu đầy đủ {format,state,media}
 group.com.example.capmoney = App Group mẫu trong mã iOS, phải cấu hình thành nhóm thực
 summary = UserDefaults App Group: số liệu widget
@@ -272,6 +274,8 @@ Status: Tên, danh mục, sáng/tối/hệ thống, tỷ giá báo cáo, sao lư
 
 ### 2026-09-13
 
+- Đợt vị trí/bố cục: khôi phục thư mục nguồn bị thiếu từ ZIP gần nhất. Thêm location.js + geocode.cjs: định vị nhanh maximumAge 30 giây/timeout 5 giây, địa chỉ Nominatim qua máy chủ, cache và giới hạn tần suất. Gom địa chỉ/tọa độ một nhóm; tách biểu tượng các chức năng Hồ sơ. Đã đạt 8 kiểm tra mô phỏng geocoder/client và 14 kiểm tra lõi. UI: 320/375/430/768/1280 px không tràn ngang, cuộn dọc, ẩn thanh cuộn, khóa/khôi phục nền; 14 mục Hồ sơ có 14 SVG khác nhau. Chưa thử GPS/địa chỉ thật trên iPhone.
+
 - UI mới: thêm profile.js (chọn/xem trước/thu nhỏ/bỏ ảnh đại diện; state.avatar tùy chọn), ui.css (SVG đồng bộ, căn tâm nút cộng, kính mờ, chuyển cảnh và giảm chuyển động). Danh sách lọc đúng ngày và có bộ chọn ngày. Đã đạt 14 kiểm tra lõi và 5 kiểm tra mới. Trình duyệt 375 px: xác nhận chọn ảnh → xem trước → lưu → tải lại còn ảnh → bỏ ảnh mẫu; nút cộng có độ lệch tâm SVG x=0/y=0 px. Không tràn ngang ở 320 và 375 px; console không có lỗi trong luồng thử. Bộ chuyển cảnh 240 ms và chỉ báo điều hướng 300 ms; tắt chuyển động khi có yêu cầu giảm chuyển động.
 
 - Khôi phục video: đọc/kiểm tra các video được tham chiếu trước, lưu với ID mới, chỉ đổi sổ sau khi lưu video thành công; lỗi thì thu hồi video vừa ghi. Không ghi đè video của sổ cũ. IndexedDB xử lý cả abort (`pro.js`, `media.js`). Đã đạt 6 kiểm tra khôi phục: giữ video cũ, ánh xạ ID dùng chung, rollback lỗi ghi JSON/video, thiếu video, MIME sai và tương thích sao lưu cũ.
@@ -293,6 +297,9 @@ Status: Tên, danh mục, sáng/tối/hệ thống, tỷ giá báo cáo, sao lư
 ---
 
 ## Known Issues
+
+- Địa chỉ tự điền là địa chỉ gần nhất do Nominatim cung cấp, không đảm bảo có đúng số nhà/ngõ. Tra địa chỉ cần mạng và serve.cjs mới; máy chủ 8081 đã khởi động lại. Chưa kiểm tra thực tế nhà cung cấp hoặc GPS trên thiết bị thật. GEOCODE_URL cho phép cấu hình máy chủ Nominatim tương thích khác; proxy chỉ lưu cache tọa độ/địa chỉ trong RAM tối đa 24 giờ/200 mục, không ghi vào SQLite.
+- Chế độ định vị nhanh dùng cache tối đa 30 giây, độ chính xác thường, timeout 5 giây; thời gian chờ người dùng cấp quyền và GPS phụ thuộc thiết bị. Không cam kết tốc độ hay tương thích hoàn hảo mọi máy.
 
 1. Chưa hoàn tất xác minh end-to-end trên iPhone: cài PWA, camera/video, Apple login và widget. Không được tuyên bố đã hoàn thành toàn bộ Pro trên iOS.
 2. Đã sửa việc mất phiên khi lỗi mạng tạm thời; sổ chung chưa có tự cập nhật nền hoặc hàng đợi ngoại tuyến.
@@ -342,11 +349,14 @@ node work/test-recovery.cjs
 node work/test-session.cjs
 node work/test-restore.cjs
 node work/test-ui-refresh.cjs
+node work/test-location.cjs
 ```
 
-Kết quả trong phiên: **52 kiểm tra tự động đã đạt** (14 nền tảng + 15 Pro/API + 2 xuất file + 4 xử lý lỗi + 6 phiên đăng nhập + 6 khôi phục + 5 giao diện/dữ liệu), cộng kiểm tra UI lưu/xóa giao dịch, OCR mẫu 250.000 VND, tạo PDF/XLSX và tải lại ngoại tuyến. Đợt mới đã kiểm tra trình duyệt: Home giữ nút quét, Hồ sơ không còn nút trùng, Hủy đóng hộp thoại, tải lại không có lỗi console. Chưa thử toàn bộ vòng khôi phục video qua giao diện. Đây không phải bộ kiểm tra bao phủ toàn bộ sản phẩm.
+Kết quả trong phiên: **60 kiểm tra tự động đã đạt** (14 nền tảng + 15 Pro/API + 2 xuất file + 4 xử lý lỗi + 6 phiên đăng nhập + 6 khôi phục + 5 giao diện/dữ liệu + 8 vị trí), cộng kiểm tra UI lưu/xóa giao dịch, OCR mẫu 250.000 VND, tạo PDF/XLSX và tải lại ngoại tuyến. Đợt mới đã kiểm tra trình duyệt: Home giữ nút quét, Hồ sơ không còn nút trùng, Hủy đóng hộp thoại, tải lại không có lỗi console. Chưa thử toàn bộ vòng khôi phục video qua giao diện. Đây không phải bộ kiểm tra bao phủ toàn bộ sản phẩm.
 
 ---
+
+Nguồn kỹ thuật: [Nominatim Reverse](https://nominatim.org/release-docs/develop/api/Reverse/) và [Nominatim Usage Policy](https://operations.osmfoundation.org/policies/nominatim/). Không suy ra chính xác số nhà từ tọa độ; giới hạn máy chủ dưới 1 yêu cầu/giây, có nhận diện ứng dụng, attribution và cache.
 
 ## Important Decisions
 

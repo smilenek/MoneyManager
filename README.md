@@ -47,10 +47,12 @@ Tài liệu đối chiếu:
 
 ## Cải tiến gần nhất
 
+Hộp thoại cố định, chỉ cuộn dọc và ẩn thanh cuộn. 14 mục tính năng Hồ sơ có biểu tượng riêng. Nút vị trí lấy tọa độ trước rồi tra địa chỉ qua Nominatim; cần chạy lại serve.cjs sau cập nhật. Tọa độ được gửi tới dịch vụ khi người dùng nhấn nút. Địa chỉ có thể thiếu số nhà; cho phép sửa tay. GEOCODE_URL hỗ trợ máy chủ Nominatim tương thích khác. Chưa thử GPS thật trên iPhone.
+
 Thêm ảnh đại diện (xem trước, cắt vuông tự động, lưu/bỏ ảnh), danh sách theo ngày, bộ biểu tượng SVG, căn giữa nút cộng và hiệu ứng kính mờ/chuyển cảnh có chế độ giảm chuyển động.
 
 Bỏ quét biên lai trùng ở Hồ sơ, giữ ở Trang chủ. Hộp thoại có Hủy, xác nhận Xóa và trạng thái xử lý. Sổ chung giữ phiên khi mạng lỗi. Khôi phục video dùng ID mới và thu hồi phần nhập khi lưu thất bại; chưa bảo đảm nguyên tử khi thiết bị tắt đột ngột.
 
 ## Kiểm chứng
 
-52 kiểm tra tự động đã đạt trong phiên (chi tiết ở PROJECT_STATE.md). Trình duyệt đã thử thêm/xóa giao dịch, nhận diện mẫu 250.000 VND, tạo PDF/XLSX và tải lại giao diện khi giả lập mất mạng. Chưa thử quay camera, định vị, cài đặt PWA hay Apple/widget trên iPhone thật. Các thư viện Pro cần được tải thành công trước khi dùng ngoại tuyến.
+60 kiểm tra tự động đã đạt trong phiên (chi tiết ở PROJECT_STATE.md). Trình duyệt đã thử thêm/xóa giao dịch, nhận diện mẫu 250.000 VND, tạo PDF/XLSX và tải lại giao diện khi giả lập mất mạng. Chưa thử quay camera, định vị, cài đặt PWA hay Apple/widget trên iPhone thật. Các thư viện Pro cần được tải thành công trước khi dùng ngoại tuyến.

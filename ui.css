@@ -1,4 +1,16 @@
 /* Shared geometry: icons use a 24px drawing grid, never a font baseline. */
+html,body{max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}
+*{scrollbar-width:none}*::-webkit-scrollbar{display:none;width:0;height:0}
+dialog{position:fixed;inset:0;margin:auto;width:min(540px,calc(100% - 24px));max-width:calc(100% - 24px);max-height:calc(100dvh - 32px);padding:18px;overflow:hidden;overscroll-behavior:none;touch-action:pan-y pinch-zoom}
+dialog[open]{display:flex;flex-direction:column;transform:none}
+dialog .dialog-head{flex:none;margin:0;padding-bottom:12px}
+dialog #form{min-height:0;min-width:0;max-width:100%;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;touch-action:pan-y pinch-zoom;-webkit-overflow-scrolling:touch}
+dialog input,dialog select,dialog textarea{max-width:100%;font-size:16px}
+dialog .grid>*{min-width:0}dialog .row{flex-wrap:wrap}dialog .row>button{flex-shrink:1}
+dialog button,nav button{appearance:none;-webkit-appearance:none;box-sizing:border-box;letter-spacing:normal}
+.location-group{min-width:0;margin:18px 0;padding:14px;border:1px solid var(--line);border-radius:20px}
+.location-group legend{padding:0 8px;font-weight:650}.location-group label{margin:12px 0}.location-group p{font-size:13px;margin:10px 0}.location-group details{margin:12px 0}.location-group summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--blue);font-size:14px}.location-group summary::before{content:'›';margin-right:8px}.location-group details[open] summary::before{transform:rotate(90deg)}
+@media(max-width:380px){dialog{padding:14px}.location-group .grid{grid-template-columns:1fr}.location-group .grid label{margin:6px 0}}
 button{vertical-align:middle;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 button[data-action]{display:inline-flex;align-items:center;justify-content:center;gap:9px;line-height:1.35}
 button[data-action]>span{min-width:0;overflow-wrap:anywhere}
@@ -29,3 +41,5 @@ nav{gap:0}nav button{background:transparent!important;min-width:0}nav button.act
 @media(max-width:380px){.row.section{flex-wrap:wrap}.quick-pro{align-items:flex-start}.quick-pro small{font-size:12px}.quick-pro button{font-size:12px}.transaction{gap:8px}.badge{width:36px;height:36px}.txamount{font-size:12px}.segments button{font-size:13px}.menu[data-action]{gap:10px}}
 @media(prefers-reduced-motion:no-preference){button{transition:background-color .18s,color .18s,box-shadow .18s,transform .16s}button:active:not(:disabled){transform:scale(.96)}nav::before{transition:transform .3s cubic-bezier(.2,.8,.2,1)}.bar i{transition:width .35s ease}dialog[open]{animation:sheet-in .24s cubic-bezier(.2,.7,.2,1)}dialog::backdrop{animation:backdrop-in .2s ease}@keyframes sheet-in{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}@keyframes backdrop-in{from{opacity:0}to{opacity:1}}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* Keep opening motion strictly vertical; avoid the lateral shift of scaling. */
+@keyframes sheet-in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}

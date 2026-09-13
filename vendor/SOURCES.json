@@ -1,0 +1,12 @@
+{
+  "tesseract.min.js": "https://cdn.jsdelivr.net/npm/tesseract.js@6.0.1/dist/tesseract.min.js",
+  "worker.min.js": "https://cdn.jsdelivr.net/npm/tesseract.js@6.0.1/dist/worker.min.js",
+  "tesseract-core-lstm.wasm.js": "https://cdn.jsdelivr.net/npm/tesseract.js-core@6.0.0/tesseract-core-lstm.wasm.js",
+  "tesseract-core-lstm.wasm": "https://cdn.jsdelivr.net/npm/tesseract.js-core@6.0.0/tesseract-core-lstm.wasm",
+  "eng.traineddata": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/main/eng.traineddata",
+  "vie.traineddata": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/main/vie.traineddata",
+  "pdf-lib.min.js": "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js",
+  "fontkit.umd.min.js": "https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js",
+  "exceljs.min.js": "https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js",
+  "NotoSans-Regular.ttf": "https://raw.githubusercontent.com/notofonts/noto-fonts/main/hinted/ttf/NotoSans/NotoSans-Regular.ttf"
+}

@@ -27,8 +27,9 @@ const icons={
  category:'M3 4h7v7H3zm11 0h7v7h-7zM3 15h7v6H3zm11 0h7v6h-7z',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0',
  help:'M9 8a3 3 0 1 1 5 2c-2 1-2 2-2 4m0 3v1M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0',crown:'m3 7 4 4 5-7 5 7 4-4-3 13H6z',sort:'M8 3v18m-4-4 4 4 4-4M16 21V3m-4 4 4-4 4 4'
 };
+Object.assign(icons,{"friend":"M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8M2 21v-2a7 7 0 0 1 11-6M18 12v8m-4-4h8","group":"M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6M16 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6M1 20v-3a7 7 0 0 1 14 0v3m2-7a5 5 0 0 1 6 5v2","split":"M12 3v7M5 21v-6l7-5 7 5v6m-17-3 3 3 3-3m8 0 3 3 3-3","saving":"M4 9 12 3l8 6H4m2 3v6m6-6v6m6-6v6M3 21h18","widget":"M3 3h18v18H3zM3 9h18M10 9v12","download":"M12 3v12m-4-4 4 4 4-4M4 17v4h16v-4","feedback":"M3 4h18v13H9l-6 4V4m4 5h10m-10 4h6","share":"M8 12 16 6M8 12l8 6M7 12a2 2 0 1 0-4 0 2 2 0 0 0 4 0M20 5a2 2 0 1 0-4 0 2 2 0 0 0 4 0M20 19a2 2 0 1 0-4 0 2 2 0 0 0 4 0","cashback":"M4 5h16v5H4zM4 10v9h8m3-5 3-3 3 3m-3-3v8m-4-2a4 4 0 0 0 7 3","shared":"M5 3h10l4 4v8M5 3v18h6M15 3v5h4M14 16h8m-3-3 3 3-3 3M8 8h3m-3 4h4","locate":"M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10M12 2v3m0 14v3M2 12h3m14 0h3","accountAdd":"M3 5h13v15H3zM3 10h13m2 3h5m-2.5-2.5v5","budgetAdd":"M3 4h14v16H3zM6 8h5m-5 4h3m9 1v8m-4-4h8"});
 const icon = name => `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${icons[name]||icons.budget}"/></svg>`;
-const actionIcon={transaction:'plus',transfer:'transfer',account:'plus',budget:'plus',name:'edit',scan:'scan',cloud:'cloud',friends:'users',groups:'users',split:'users',recurring:'repeat',savings:'accounts',settings:'settings',categories:'category',reports:'export',widget:'category',install:'help',feedback:'edit','share-app':'export','pro-status':'crown','sort-accounts':'sort',cashback:'accounts',today:'calendar',hide:'eye',prev:'prev',next:'next','previous-day':'prev','following-day':'next',close:'close'};
+const actionIcon={transaction:'plus',transfer:'transfer',account:'accountAdd',budget:'budgetAdd',name:'edit',scan:'scan',cloud:'cloud',friends:'friend',groups:'group',split:'split',recurring:'repeat',savings:'saving',settings:'settings',categories:'category',reports:'export',widget:'widget',install:'download',feedback:'feedback','share-app':'share','shared-records':'shared',locate:'locate','pro-status':'crown','sort-accounts':'sort',cashback:'cashback',today:'calendar',hide:'eye',prev:'prev',next:'next','previous-day':'prev','following-day':'next',close:'close'};
 const avatarMarkup=()=>state.avatar?`<img src="${esc(state.avatar)}" alt="Ảnh đại diện">`:esc(state.user[0]||'N');
 
 const empty = (title,description='') => `<div class="empty">${icon('empty')}<strong>${title}</strong><p>${description}</p></div>`;
@@ -75,8 +76,15 @@ function renderBudget(){const budgets=state.budgets.filter(b=>b.month===month);$
 function renderProfile(){$('#screen').innerHTML=`<div class="card hero"><div class="profile-avatar">${esc(state.user[0]||'N')}</div><h2>${esc(state.user)}</h2>${btn('Chỉnh sửa tên','name','link')}</div><div class="grid"><div class="card"><small>Giao dịch</small><strong class="amount">${state.transactions.length}</strong></div><div class="card"><small>Tài khoản</small><strong class="amount">${state.accounts.length}</strong></div></div><div class="card">${[['Danh mục','categories'],['Xuất bản sao lưu JSON','export'],['Khôi phục bản sao lưu','import'],['Xuất giao dịch CSV','csv'],['Hướng dẫn cài ứng dụng','install'],['Các tính năng kết nối','roadmap']].map(([l,a])=>btn(l+' <span>›</span>',a,'menu')).join('')}</div><p class="saved-note">CapMoney PWA · Tiếng Việt · VND<br>Dữ liệu được lưu trên trình duyệt này. Hãy xuất bản sao lưu định kỳ.</p>`;}
 const field=(label,name,value='',type='text',extra='')=>`<label>${label}<input name="${name}" type="${type}" value="${esc(value)}" ${extra}></label>`;
 const select=(label,name,options,value)=>`<label>${label}<select name="${name}">${options.map(o=>{const [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${esc(v)}" ${v===value?'selected':''}>${esc(l)}</option>`;}).join('')}</select></label>`;
+let dialogScroll=null;
+function lockDialogPage(){
+ if(!document.body||dialogScroll)return;
+ dialogScroll={y:window.scrollY,css:document.body.style.cssText};
+ Object.assign(document.body.style,{position:'fixed',top:`-${dialogScroll.y}px`,left:'0',right:'0',width:'100%'});
+ $('#dialog').addEventListener('close',()=>{const saved=dialogScroll;if(!saved)return;dialogScroll=null;document.body.style.cssText=saved.css;window.scrollTo({top:saved.y,behavior:'instant'});},{once:true});
+}
 function modal(title,body,submit,submitLabel='Lưu'){
- const form=$('#form');
+ const form=$('#form');lockDialogPage();form.scrollTop=0;
  $('#dialogTitle').textContent=title;
  form.innerHTML=body+'<p id="formError" class="error" role="alert" tabindex="-1"></p>'+(submit?'<div class="form-actions"><button type="button" data-action="close" class="secondary">Hủy</button><button class="'+(submitLabel==='Xóa'?'danger':'primary')+'" type="submit">'+esc(submitLabel)+'</button></div>':'');
  let saving=false;
@@ -130,3 +138,4 @@ document.addEventListener('change',e=>{if(['weekDate','dayDate'].includes(e.targ
 window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue){try{const next=JSON.parse(e.newValue);validate(next);state=next;if($('#dialog').open)$('#dialog').close();render();toast('Dữ liệu đã được cập nhật từ thẻ khác.');}catch{toast('Không đọc được thay đổi từ thẻ khác.');}}});
 render();
 if('serviceWorker' in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('./sw.js').catch(()=>toast('Chưa bật được chế độ ngoại tuyến.'));
+

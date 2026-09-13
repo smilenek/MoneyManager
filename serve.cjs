@@ -3,6 +3,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const root = __dirname;
+const geocode = require('./geocode.cjs').createGeocoder();
 const api = require('./api.cjs').createAPI(process.env.CAPMONEY_DATA_DIR || path.resolve(root,'../../work/capmoney-data'));
 const types = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.wasm':'application/wasm','.traineddata':'application/octet-stream','.ttf':'font/ttf'};
 http.createServer(async (request, response) => {
@@ -11,6 +12,7 @@ http.createServer(async (request, response) => {
   if (!['127.0.0.1','localhost','[::1]'].includes((request.headers.host||'').replace(/:\d+$/,'')) && request.headers.host !== allowedHost) { response.writeHead(403).end(); return; }
   response.setHeader('X-Content-Type-Options','nosniff');
   response.setHeader('Referrer-Policy','no-referrer');
+  if(await geocode(request,response,url))return;
   if(await api.handle(request,response,url))return;
   let pathname;
   try { pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname); }
