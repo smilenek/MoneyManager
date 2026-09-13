@@ -47,7 +47,9 @@ Tài liệu đối chiếu:
 
 ## Cải tiến gần nhất
 
-Hộp thoại cố định, chỉ cuộn dọc và ẩn thanh cuộn. 14 mục tính năng Hồ sơ có biểu tượng riêng. Nút vị trí lấy tọa độ trước rồi tra địa chỉ qua Nominatim; cần chạy lại serve.cjs sau cập nhật. Tọa độ được gửi tới dịch vụ khi người dùng nhấn nút. Địa chỉ có thể thiếu số nhà; cho phép sửa tay. GEOCODE_URL hỗ trợ máy chủ Nominatim tương thích khác. Chưa thử GPS thật trên iPhone.
+Ô ngày có lớp bọc chống tràn Safari; đã đo trên Chromium, cần xác nhận iPhone thật. Thay Góp ý bằng Ghi chú cá nhân có lưu. Bản cập nhật không tự được đưa lên GitHub Pages: cần thay các file trong repo triển khai bằng bản nguồn mới.
+
+Hộp thoại cố định, chỉ cuộn dọc và ẩn thanh cuộn. Hồ sơ đã bỏ banner Pro, mục widget hướng dẫn và lối vào sổ chung trùng; trên GitHub Pages ẩn sổ chung chưa có backend. Nút vị trí có deadline 2 giây; localhost dùng proxy, GitHub Pages tra trực tiếp Nominatim. Không bảo đảm GPS/địa chỉ luôn kịp thời hạn. Có chọn địa điểm cũ để điền ngay. Tọa độ được gửi tới dịch vụ khi người dùng nhấn nút. Địa chỉ có thể thiếu số nhà; cho phép sửa tay. GEOCODE_URL hỗ trợ máy chủ Nominatim tương thích khác. Chưa thử GPS thật trên iPhone.
 
 Thêm ảnh đại diện (xem trước, cắt vuông tự động, lưu/bỏ ảnh), danh sách theo ngày, bộ biểu tượng SVG, căn giữa nút cộng và hiệu ứng kính mờ/chuyển cảnh có chế độ giảm chuyển động.
 
@@ -55,4 +57,4 @@ Bỏ quét biên lai trùng ở Hồ sơ, giữ ở Trang chủ. Hộp thoại c
 
 ## Kiểm chứng
 
-60 kiểm tra tự động đã đạt trong phiên (chi tiết ở PROJECT_STATE.md). Trình duyệt đã thử thêm/xóa giao dịch, nhận diện mẫu 250.000 VND, tạo PDF/XLSX và tải lại giao diện khi giả lập mất mạng. Chưa thử quay camera, định vị, cài đặt PWA hay Apple/widget trên iPhone thật. Các thư viện Pro cần được tải thành công trước khi dùng ngoại tuyến.
+64 kiểm tra tự động đã đạt trong phiên (chi tiết ở PROJECT_STATE.md). Trình duyệt đã thử thêm/xóa giao dịch, nhận diện mẫu 250.000 VND, tạo PDF/XLSX và tải lại giao diện khi giả lập mất mạng. Chưa thử quay camera, định vị, cài đặt PWA hay Apple/widget trên iPhone thật. Các thư viện Pro cần được tải thành công trước khi dùng ngoại tuyến.

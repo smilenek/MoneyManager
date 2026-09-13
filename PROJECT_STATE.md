@@ -154,7 +154,7 @@ capmoney-local-v2 = LocalStorage: sổ cá nhân, version=2
 capmoney-media = IndexedDB: cơ sở dữ liệu video, version=1
 files = IndexedDB object store: mediaId -> Blob
 capmoney-session = sessionStorage: bearer token sổ chung, không phải dữ liệu cá nhân
-capmoney-shell-v6 = CacheStorage: tài nguyên giao diện hiện tại; có thể đổi khi cập nhật ứng dụng
+capmoney-shell-v7 = CacheStorage: tài nguyên giao diện hiện tại; có thể đổi khi cập nhật ứng dụng
 capmoney-complete-1 = Định danh định dạng bản sao lưu đầy đủ {format,state,media}
 group.com.example.capmoney = App Group mẫu trong mã iOS, phải cấu hình thành nhóm thực
 summary = UserDefaults App Group: số liệu widget
@@ -274,6 +274,8 @@ Status: Tên, danh mục, sáng/tối/hệ thống, tỷ giá báo cáo, sao lư
 
 ### 2026-09-13
 
+- Sửa từ ảnh iPhone: GitHub Pages tra Nominatim trực tiếp, timeout chung 2 giây cho GPS + địa chỉ; không cam kết luôn có kết quả. Thêm địa điểm đã dùng. Bỏ banner Pro, widget hướng dẫn và mục sổ chung trùng; ẩn sổ chung trên github.io. Đổi Góp ý thành Ghi chú cá nhân. Bọc ô ngày và khống chế width Safari. Đã đạt 14 kiểm tra lõi, 8 vị trí hồi quy và 4 kiểm tra mới (web tĩnh, cache, địa điểm cũ, GPS treo nhả nút sau 2 giây). UI 320/430/768 px: ô ngày nằm trong khung, form không tràn; chưa xác nhận Safari/iPhone thật.
+
 - Đợt vị trí/bố cục: khôi phục thư mục nguồn bị thiếu từ ZIP gần nhất. Thêm location.js + geocode.cjs: định vị nhanh maximumAge 30 giây/timeout 5 giây, địa chỉ Nominatim qua máy chủ, cache và giới hạn tần suất. Gom địa chỉ/tọa độ một nhóm; tách biểu tượng các chức năng Hồ sơ. Đã đạt 8 kiểm tra mô phỏng geocoder/client và 14 kiểm tra lõi. UI: 320/375/430/768/1280 px không tràn ngang, cuộn dọc, ẩn thanh cuộn, khóa/khôi phục nền; 14 mục Hồ sơ có 14 SVG khác nhau. Chưa thử GPS/địa chỉ thật trên iPhone.
 
 - UI mới: thêm profile.js (chọn/xem trước/thu nhỏ/bỏ ảnh đại diện; state.avatar tùy chọn), ui.css (SVG đồng bộ, căn tâm nút cộng, kính mờ, chuyển cảnh và giảm chuyển động). Danh sách lọc đúng ngày và có bộ chọn ngày. Đã đạt 14 kiểm tra lõi và 5 kiểm tra mới. Trình duyệt 375 px: xác nhận chọn ảnh → xem trước → lưu → tải lại còn ảnh → bỏ ảnh mẫu; nút cộng có độ lệch tâm SVG x=0/y=0 px. Không tràn ngang ở 320 và 375 px; console không có lỗi trong luồng thử. Bộ chuyển cảnh 240 ms và chỉ báo điều hướng 300 ms; tắt chuyển động khi có yêu cầu giảm chuyển động.
@@ -298,8 +300,8 @@ Status: Tên, danh mục, sáng/tối/hệ thống, tỷ giá báo cáo, sao lư
 
 ## Known Issues
 
-- Địa chỉ tự điền là địa chỉ gần nhất do Nominatim cung cấp, không đảm bảo có đúng số nhà/ngõ. Tra địa chỉ cần mạng và serve.cjs mới; máy chủ 8081 đã khởi động lại. Chưa kiểm tra thực tế nhà cung cấp hoặc GPS trên thiết bị thật. GEOCODE_URL cho phép cấu hình máy chủ Nominatim tương thích khác; proxy chỉ lưu cache tọa độ/địa chỉ trong RAM tối đa 24 giờ/200 mục, không ghi vào SQLite.
-- Chế độ định vị nhanh dùng cache tối đa 30 giây, độ chính xác thường, timeout 5 giây; thời gian chờ người dùng cấp quyền và GPS phụ thuộc thiết bị. Không cam kết tốc độ hay tương thích hoàn hảo mọi máy.
+- Địa chỉ tự điền là địa chỉ gần nhất do Nominatim cung cấp, không đảm bảo có đúng số nhà/ngõ. Tra địa chỉ cần mạng: localhost dùng proxy, các host web dùng Nominatim trực tiếp với Referer origin; GitHub Pages không còn cần serve.cjs. Chưa kiểm tra thực tế nhà cung cấp hoặc GPS trên thiết bị thật. GEOCODE_URL cho phép cấu hình máy chủ Nominatim tương thích khác; proxy chỉ lưu cache tọa độ/địa chỉ trong RAM tối đa 24 giờ/200 mục, không ghi vào SQLite.
+- Chế độ định vị nhanh dùng cache tối đa 30 giây, độ chính xác thường, timeout GPS 1,8 giây, deadline toàn thao tác 2 giây kể cả GPS không phản hồi; hết hạn giữ tọa độ nếu đã có, cho phép nhập/lưu. Kết quả chính xác trong 2 giây không được đảm bảo. Không cam kết tốc độ hay tương thích hoàn hảo mọi máy.
 
 1. Chưa hoàn tất xác minh end-to-end trên iPhone: cài PWA, camera/video, Apple login và widget. Không được tuyên bố đã hoàn thành toàn bộ Pro trên iOS.
 2. Đã sửa việc mất phiên khi lỗi mạng tạm thời; sổ chung chưa có tự cập nhật nền hoặc hàng đợi ngoại tuyến.
@@ -350,13 +352,16 @@ node work/test-session.cjs
 node work/test-restore.cjs
 node work/test-ui-refresh.cjs
 node work/test-location.cjs
+node work/test-static-location.cjs
 ```
 
-Kết quả trong phiên: **60 kiểm tra tự động đã đạt** (14 nền tảng + 15 Pro/API + 2 xuất file + 4 xử lý lỗi + 6 phiên đăng nhập + 6 khôi phục + 5 giao diện/dữ liệu + 8 vị trí), cộng kiểm tra UI lưu/xóa giao dịch, OCR mẫu 250.000 VND, tạo PDF/XLSX và tải lại ngoại tuyến. Đợt mới đã kiểm tra trình duyệt: Home giữ nút quét, Hồ sơ không còn nút trùng, Hủy đóng hộp thoại, tải lại không có lỗi console. Chưa thử toàn bộ vòng khôi phục video qua giao diện. Đây không phải bộ kiểm tra bao phủ toàn bộ sản phẩm.
+Kết quả trong phiên: **64 kiểm tra tự động đã đạt** (14 nền tảng + 15 Pro/API + 2 xuất file + 4 xử lý lỗi + 6 phiên đăng nhập + 6 khôi phục + 5 giao diện/dữ liệu + 8 vị trí + 4 web tĩnh/timeout), cộng kiểm tra UI lưu/xóa giao dịch, OCR mẫu 250.000 VND, tạo PDF/XLSX và tải lại ngoại tuyến. Đợt mới đã kiểm tra trình duyệt: Home giữ nút quét, Hồ sơ không còn nút trùng, Hủy đóng hộp thoại, tải lại không có lỗi console. Chưa thử toàn bộ vòng khôi phục video qua giao diện. Đây không phải bộ kiểm tra bao phủ toàn bộ sản phẩm.
 
 ---
 
 Nguồn kỹ thuật: [Nominatim Reverse](https://nominatim.org/release-docs/develop/api/Reverse/) và [Nominatim Usage Policy](https://operations.osmfoundation.org/policies/nominatim/). Không suy ra chính xác số nhà từ tọa độ; giới hạn máy chủ dưới 1 yêu cầu/giây, có nhận diện ứng dụng, attribution và cache.
+
+Bổ sung triển khai web tĩnh: reverseAddress dùng bộ nhớ đệm trong RAM tối đa 100 địa chỉ và cách các yêu cầu trực tiếp ít nhất 1,1 giây trong thẻ. Khi triển khai đông người dùng cần proxy có giới hạn chung hoặc nhà cung cấp riêng; giới hạn theo thẻ không thay thế hạn mức toàn ứng dụng. Chưa kiểm tra kết nối Nominatim thật/CORS trên GitHub Pages trong phiên này.
 
 ## Important Decisions
 
